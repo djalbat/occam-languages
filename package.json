@@ -1,0 +1,33 @@
+{
+  "name": "occam-languages",
+  "author": "James Smith",
+  "version": "0.0.2",
+  "license": "MIT, Anti-996",
+  "homepage": "https://github.com/djalbat/occam-languages",
+  "description": "Occam's common language functionality.",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/djalbat/occam-languages"
+  },
+  "dependencies": {
+    "necessary": "^17.0.9"
+  },
+  "devDependencies": {
+    "@swc/core": "1.13.20",
+    "lively-cli": "^2.0.77",
+    "watchful-cli": "^1.7.67"
+  },
+  "scripts": {
+    "clean": "rm -rf ./lib",
+    "watchful": "watchful -m --transpiler=swc --source-directory=./src --lib-directory=./lib --pause=100",
+    "batch": "npm run watchful batch --",
+    "batch-debug": "npm run watchful batch -- --debug",
+    "incremental": "npm run watchful incremental --",
+    "incremental-debug": "npm run watchful incremental -- --debug",
+    "build": "npm run clean && npm run batch",
+    "build-debug": "npm run clean && npm run batch-debug",
+    "watch": "npm run clean && npm run batch && npm run incremental",
+    "watch-debug": "npm run clean && npm run batch-debug && npm run incremental-debug"
+  },
+  "main": "./lib/index.js"
+}
