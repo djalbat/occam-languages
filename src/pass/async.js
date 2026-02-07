@@ -1,26 +1,27 @@
 "use strict";
 
 import { nodeQuery } from "../utilities/query";
+import { asyncSome, asyncEvery } from "../utilities/asynchronous";
 
 const nonTerminalNodeQuery = nodeQuery("/*");
 
-export default class Pass {
-  run(node, ...remainingArguments) {
+export default class AsyncPass {
+  async run(node, ...remainingArguments) {
     let success;
 
-    const visited = this.visitNode(node, ...remainingArguments);
+    const visited = await this.visitNode(node, ...remainingArguments);
 
     success = visited;  ///
 
     return success;
   }
 
-  descend(childNodes, ...remainingArguments) {
+  async descend(childNodes, ...remainingArguments) {
     let descended = false;
 
-    const visited = childNodes.every((childNode) => {
+    const visited = await asyncEvery(childNodes, async (childNode) => {
       const node = childNode, ///
-            visited = this.visitNode(node, ...remainingArguments);
+            visited = await this.visitNode(node, ...remainingArguments);
 
       if (visited) {
         return true;
@@ -34,7 +35,7 @@ export default class Pass {
     return descended;
   }
 
-  visitNode(node, ...remainingArguments) {
+  async visitNode(node, ...remainingArguments) {
     let visited;
 
     const nodeTerminalNode = node.isTerminalNode();
@@ -42,23 +43,23 @@ export default class Pass {
     if (nodeTerminalNode) {
       const terminalNode = node;  ///
 
-      visited = this.visitTerminalNode(terminalNode, ...remainingArguments);
+      visited = await this.visitTerminalNode(terminalNode, ...remainingArguments);
     } else {
       const nonTerminalNode = node;  ///
 
-      visited = this.visitNonTerminalNode(nonTerminalNode, ...remainingArguments);
+      visited = await this.visitNonTerminalNode(nonTerminalNode, ...remainingArguments);
     }
 
     return visited;
   }
 
-  visitTerminalNode(terminalNode, ...remainingArguments) {
+  async visitTerminalNode(terminalNode, ...remainingArguments) {
     const visited = true;
 
     return visited;
   }
 
-  visitNonTerminalNode(nonTerminalNode, ...remainingArguments) {
+  async visitNonTerminalNode(nonTerminalNode, ...remainingArguments) {
     let visited = false;
 
     let { maps } = this.constructor;
@@ -67,11 +68,11 @@ export default class Pass {
       ...maps,
       {
         nodeQuery: nonTerminalNodeQuery,
-        run: (node, ...remainingArguments) => {
+        run: async (node, ...remainingArguments) => {
           let visited = false;
 
           const childNodes = nonTerminalNode.getChildNodes(), ///
-                descended = this.descend(childNodes, ...remainingArguments);
+                descended = await this.descend(childNodes, ...remainingArguments);
 
           if (descended) {
             visited = true;
@@ -82,15 +83,15 @@ export default class Pass {
       }
     ]
 
-    maps.some((map) => {
+    await asyncSome(maps, async (map) => {
       const { nodeQuery, run } = map;
 
       const node = nodeQuery(nonTerminalNode);
 
       if (node !== null) {
-        const success = run(node, ...remainingArguments);
+        const success = await run(node, ...remainingArguments);
 
-        visited = success;
+        visited = success;  ///
 
         return true;
       }
