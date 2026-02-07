@@ -3,7 +3,6 @@
 import { arrayUtilities } from "necessary";
 
 import { asyncResolve } from "../utilities/asynchronous";
-import { nominalLexer, nominalParser } from "../utilities/nominal";
 import { TRACE_LEVEL, DEBUG_LEVEL, INFO_LEVEL, WARNING_LEVEL, ERROR_LEVEL, BREAK_MESSAGE} from "../constants";
 
 const { push } = arrayUtilities;
@@ -36,18 +35,6 @@ export default class ReleaseContext {
     const releaseContext = this;  ///
 
     return releaseContext;
-  }
-
-  getLexer() {
-    const lexer = nominalLexer; ///
-
-    return lexer;
-  }
-
-  getParser() {
-    const parser = nominalParser; ///
-
-    return parser;
   }
 
   getProcedures() {
