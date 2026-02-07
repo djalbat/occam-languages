@@ -25,7 +25,7 @@ export default class ForwardPass {
     if (lastRemainingArgumentFunction) {
       const index = 0;
 
-      descended = this.descendAhead(index, childNodes, ...remainingArguments); ///
+      descended = this.descendForward(index, childNodes, ...remainingArguments); ///
     } else {
       const visited = childNodes.every((childNode) => {
         const node = childNode, ///
@@ -62,32 +62,32 @@ export default class ForwardPass {
     return visited;
   }
 
-  descendAhead(index, childNodes, ...remainingArguments) {
-    let descendedAhead = false;
+  descendForward(index, childNodes, ...remainingArguments) {
+    let descendedForward = false;
 
-    const descendAhead = remainingArguments.pop(), ///
+    const descendForward = remainingArguments.pop(), ///
           childNodesLength = childNodes.length;
 
     if (index === childNodesLength) {
-      descendedAhead = descendAhead();
+      descendedForward = descendForward();
     } else {
       const childNode = childNodes[index],
             node = childNode, ///
             visited = this.visitNode(node, ...remainingArguments, () => {
-              remainingArguments.push(descendAhead);
+              remainingArguments.push(descendForward);
 
               const aheadIndex = index + 1,
-                    descendedAhead = this.descendAhead(aheadIndex, childNodes, ...remainingArguments);
+                    descendedForward = this.descendForward(aheadIndex, childNodes, ...remainingArguments);
 
-              return descendedAhead;
+              return descendedForward;
             });
 
       if (visited) {
-        descendedAhead = true;
+        descendedForward = true;
       }
     }
 
-    return descendedAhead;
+    return descendedForward;
   }
 
   visitTerminalNode(terminalNode, ...remainingArguments) {
@@ -96,14 +96,14 @@ export default class ForwardPass {
     const lastRemainingArgumentFunction = isLastRemainingArgumentFunction(remainingArguments);
 
     if (lastRemainingArgumentFunction) {
-      const descendAhead = remainingArguments.pop(), ///
-            descendedAhead = descendAhead();
+      const descendForward = remainingArguments.pop(), ///
+            descendedForward = descendForward();
 
-      if (descendedAhead) {
+      if (descendedForward) {
         visited = true;
       }
 
-      remainingArguments.push(descendAhead);
+      remainingArguments.push(descendForward);
     } else {
       visited = true;
     }
