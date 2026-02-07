@@ -7,6 +7,8 @@ export { default as FileContext } from "./context/file";
 export { default as ReleaseContext } from "./context/release";
 export { default as NonTerminalNode } from "./nonTerminalNode";
 
+export { default as Pass } from "./process/pass";
+
 export { default as nodeUtilities } from "./utilities/node";
 export { default as queryUtilities } from "./utilities/query";
 export { default as contextUtilities } from "./utilities/context";
