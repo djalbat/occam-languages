@@ -19,3 +19,8 @@ export function fileContextsFromEntries(entries, fileContexts, releaseContext) {
     fileContexts.push(fileContext);
   });
 }
+
+export default {
+  fileContextsFromJSON,
+  fileContextsFromEntries
+};
