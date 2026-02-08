@@ -15,4 +15,5 @@ export const LEVELS = [
 export const EMPTY_STRING = "";
 export const SINGLE_SPACE = " ";
 export const DOUBLE_SPACE = "  ";
+export const BREAK_MESSAGE = ":: BREAK ::";
 export const LEVEL_MAXIMUM_LENGTH = 7;

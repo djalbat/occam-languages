@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 
 import { verifyTypePrefixes, verifyFileContexts } from "../utilities/verify";
 import { fileContextsFromJSON, fileContextsFromEntries } from "../utilities/fileContext";
-import { TRACE_LEVEL, DEBUG_LEVEL, INFO_LEVEL, WARNING_LEVEL, ERROR_LEVEL, BREAK_MESSAGE} from "../constants";
+import { TRACE_LEVEL, DEBUG_LEVEL, INFO_LEVEL, WARNING_LEVEL, ERROR_LEVEL, BREAK_MESSAGE } from "../constants";
 
 const { push, tail, first } = arrayUtilities;
 
