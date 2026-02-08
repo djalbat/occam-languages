@@ -4,7 +4,7 @@ import { nodeQuery } from "../utilities/query";
 
 const nonTerminalNodeQuery = nodeQuery("/*");
 
-export default class StandardPass {
+export default class SimplePass {
   run(node, ...remainingArguments) {
     let success;
 
