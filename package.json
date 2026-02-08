@@ -1,7 +1,7 @@
 {
   "name": "occam-languages",
   "author": "James Smith",
-  "version": "0.0.22",
+  "version": "0.0.23",
   "license": "MIT, Anti-996",
   "homepage": "https://github.com/djalbat/occam-languages",
   "description": "Occam's common language functionality.",
