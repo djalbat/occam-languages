@@ -2,7 +2,7 @@
 
 import { nonTerminalNodeQuery, terminalNodeMapFromNodes, areTerminalNodeMapsEqual, isLastRemainingArgumentFunction } from "../utilities/pass";
 
-export class ZipPass {
+export default class ZipPass {
   run(generalNode, specificNode, ...remainingArguments) {
     let success;
 
