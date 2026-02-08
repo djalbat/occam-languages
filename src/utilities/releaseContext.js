@@ -61,6 +61,76 @@ export async function createReleaseContext(dependency, dependentNames, context) 
   return success;
 }
 
+export async function verifyReleaseContext(releaseName, dependentName, dependentReleased, releaseContextMap) {
+  let releaseVerifies = false;
+
+  const releaseContext = releaseContextMap[releaseName];
+
+  if (releaseContext !== null) {
+    const released = releaseContext.isReleased();
+
+    if (released) {
+      releaseVerifies = true;
+    } else {
+      if (dependentReleased) {
+        releaseContext.warning(`The '${releaseName}' project cannot be verifies because its '${dependentName}' dependent is a package.`);
+      } else {
+        const dependentName = releaseName,  ///
+              dependentReleased = released, ///
+              dependencyReleaseContextsVerify = await verifyDependencyReleaseContexts(releaseContext, dependentName, dependentReleased, releaseContextMap);
+
+        if (dependencyReleaseContextsVerify) {
+          const releaseContextVerified = releaseContext.isVerified();
+
+          if (releaseContextVerified) {
+            releaseVerifies = true;
+          } else {
+            releaseContext.info(`Verifying the '${releaseName}' project...`);
+
+            const releaseContextVerifies = await releaseContext.verify();
+
+            if (releaseContextVerifies) {
+              releaseContext.info(`...verified the '${releaseName}' project.`);
+
+              releaseVerifies = true;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  return releaseVerifies;
+}
+
+export function initialiseReleaseContext(dependency, context) {
+  const { releaseContextMap } = context,
+    dependencyName = dependency.getName(),
+    releaseName = dependencyName, ///
+    releaseContext = releaseContextMap[releaseName] || null;
+
+  if (releaseContext === null) {
+    const { log } = context;
+
+    log.warning(`Unable to initialise the '${dependencyName}' context because it has not been created.`);
+  } else {
+    const releaseContextInitialised = releaseContext.isInitialised();
+
+    if (!releaseContextInitialised) {
+      initialiseDependencyReleaseContexts(dependency, releaseContext, context);
+
+      const { log } = context,
+        releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap);
+
+      log.info(`Initialising the '${dependencyName}' context...`);
+
+      releaseContext.initialise(releaseContexts);
+
+      log.debug(`...initialised the '${dependencyName}' context.`);
+    }
+  }
+}
+
 export function releaseContextFromJSON(json, context) {
   const { log, callback } = context,
         { name } = json;
@@ -80,34 +150,6 @@ export function releaseContextFromJSON(json, context) {
   const releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
 
   return releaseContext;
-}
-
-export function initialiseReleaseContext(dependency, context) {
-  const { releaseContextMap } = context,
-        dependencyName = dependency.getName(),
-        releaseName = dependencyName, ///
-        releaseContext = releaseContextMap[releaseName] || null;
-
-  if (releaseContext === null) {
-    const { log } = context;
-
-    log.warning(`Unable to initialise the '${dependencyName}' context because it has not been created.`);
-  } else {
-    const releaseContextInitialised = releaseContext.isInitialised();
-
-    if (!releaseContextInitialised) {
-      initialiseDependencyReleaseContexts(dependency, releaseContext, context);
-
-      const { log } = context,
-            releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap);
-
-      log.info(`Initialising the '${dependencyName}' context...`);
-
-      releaseContext.initialise(releaseContexts);
-
-      log.debug(`...initialised the '${dependencyName}' context.`);
-    }
-  }
 }
 
 export function releaseContextFromProject(project, context) {
@@ -133,6 +175,7 @@ export function releaseContextFromProject(project, context) {
 
 export default {
   createReleaseContext,
+  verifyReleaseContext,
   releaseContextFromJSON,
   initialiseReleaseContext,
   releaseContextFromProject
@@ -159,6 +202,21 @@ async function createDependencyReleaseContexts(dependency, releaseContext, depen
   });
 
   return success;
+}
+
+async function verifyDependencyReleaseContexts(releaseContext, dependentName, dependentReleased, releaseContextMap) {
+  const dependencies = releaseContext.getDependencies(),
+        dependencyReleaseContextsVerify = await asyncEveryDependency(dependencies, async (dependency) => {
+          const name = dependency.getName(),
+                releaseName = name, ///
+                releaseContextVerifies = await verifyReleaseContext(releaseName, dependentName, dependentReleased, releaseContextMap);
+
+          if (releaseContextVerifies) {
+            return true;
+          }
+        });
+
+  return dependencyReleaseContextsVerify;
 }
 
 function retrieveReleaseContexts(releaseContext, releaseContextMap) {
