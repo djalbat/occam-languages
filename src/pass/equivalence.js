@@ -2,7 +2,7 @@
 
 import { nonTerminalNodeQuery } from "../utilities/pass";
 
-export class EquivalencePass {
+export default class EquivalencePass {
   run(leftNode, rightNode, ...remainingArguments) {
     let success;
 

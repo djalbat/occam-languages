@@ -17,7 +17,7 @@ export class ZipPass {
     let descended = false;
 
     const generalChildNodesLength = generalChildNodes.length,
-      specificChildNodesLength = specificChildNodes.length;
+          specificChildNodesLength = specificChildNodes.length;
 
     if (generalChildNodesLength === specificChildNodesLength) {
       const specificTerminalNodeMap = terminalNodeMapFromNodes(specificChildNodes),
