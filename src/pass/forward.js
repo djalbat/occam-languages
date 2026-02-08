@@ -1,10 +1,6 @@
 "use strict";
 
-import { nodeQuery } from "../utilities/query";
-
-import { isLastRemainingArgumentFunction } from "../utilities/pass";
-
-const nonTerminalNodeQuery = nodeQuery("/*");
+import { nonTerminalNodeQuery, isLastRemainingArgumentFunction } from "../utilities/pass";
 
 export default class ForwardPass {
   run(node, ...remainingArguments) {

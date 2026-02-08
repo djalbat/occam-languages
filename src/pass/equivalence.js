@@ -1,8 +1,6 @@
 "use strict";
 
-import { nodeQuery } from "../utilities/query";
-
-const nonTerminalNodeQuery = nodeQuery("/*");
+import { nonTerminalNodeQuery } from "../utilities/pass";
 
 export class EquivalencePass {
   run(leftNode, rightNode, ...remainingArguments) {

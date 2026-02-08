@@ -1,8 +1,6 @@
 "use strict";
 
-import { nodeQuery } from "../utilities/query";
-
-const nonTerminalNodeQuery = nodeQuery("/*");
+import { nonTerminalNodeQuery } from "../utilities/pass";
 
 export default class SimplePass {
   run(node, ...remainingArguments) {

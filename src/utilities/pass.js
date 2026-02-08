@@ -2,9 +2,13 @@
 
 import { arrayUtilities } from "necessary";
 
+import { nodeQuery } from "../utilities/query";
+
 import { FUNCTION } from "../constants";
 
 const { match, last } = arrayUtilities;
+
+export const nonTerminalNodeQuery = nodeQuery("/*");
 
 export function terminalNodeMapFromNodes(nodes) {
   const terminalNodeMap = {};

@@ -1,10 +1,6 @@
 "use strict";
 
-import { nodeQuery } from "../utilities/query";
-
-import { terminalNodeMapFromNodes, areTerminalNodeMapsEqual, isLastRemainingArgumentFunction } from "../utilities/pass";
-
-const nonTerminalNodeQuery = nodeQuery("/*");
+import { nonTerminalNodeQuery, terminalNodeMapFromNodes, areTerminalNodeMapsEqual, isLastRemainingArgumentFunction } from "../utilities/pass";
 
 export class ZipPass {
   run(generalNode, specificNode, ...remainingArguments) {
@@ -107,7 +103,7 @@ export class ZipPass {
       visited = this.visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments);
     } else if (generalNodeNonTerminalNode && specificNodeNonTerminalNode) {
       const generalNonTerminalNode = generalNode,  ///
-        specificNonTerminalNode = specificNode; ///
+            specificNonTerminalNode = specificNode; ///
 
       visited = this.visitNonTerminalNode(generalNonTerminalNode, specificNonTerminalNode, ...remainingArguments);
     }

@@ -1,9 +1,7 @@
 "use strict";
 
-import { nodeQuery } from "../utilities/query";
+import { nonTerminalNodeQuery } from "../utilities/pass";
 import { asyncSome, asyncEvery } from "../utilities/asynchronous";
-
-const nonTerminalNodeQuery = nodeQuery("/*");
 
 export default class AsyncPass {
   async run(node, ...remainingArguments) {
