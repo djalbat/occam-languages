@@ -367,6 +367,18 @@ export default class ReleaseContext {
 
   findFile(filePath) { return this.entries.findFile(filePath); }
 
+  findFileContext(filePath) {
+    const fileContext = this.fileContexts.find((fileContext) => {
+      const filePathMatches = fileContext.matchFilePath(filePath);
+
+      if (filePathMatches) {
+        return true;
+      }
+    });
+
+    return fileContext;
+  }
+
   trace(message) {
     const level = TRACE_LEVEL;
 
