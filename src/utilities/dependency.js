@@ -1,8 +1,6 @@
 "use strict";
 
-import { asynchronousUtilities } from "occam-furtle";
-
-const { asyncEvery  } = asynchronousUtilities;
+import { asyncEvery  } from "../utilities/asynchronous";
 
 export async function asyncEveryDependency(dependencies, callback) {
   const array = dependencies.getArray();
