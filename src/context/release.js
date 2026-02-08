@@ -374,7 +374,7 @@ export default class ReleaseContext {
       if (filePathMatches) {
         return true;
       }
-    });
+    }) || null;
 
     return fileContext;
   }
