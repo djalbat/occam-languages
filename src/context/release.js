@@ -363,6 +363,8 @@ export default class ReleaseContext {
     return metatheorems;
   }
 
+  getDependencies() { return this.entries.getDependencies(); }
+
   matchShortenedVersion(shortenedVersion) { return this.entries.matchShortenedVersion(shortenedVersion); }
 
   findFile(filePath) { return this.entries.findFile(filePath); }
