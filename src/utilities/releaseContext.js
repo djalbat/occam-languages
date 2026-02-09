@@ -6,6 +6,7 @@ import { Entries, metaJSONUtilities } from "occam-model";
 import ReleaseContext from "../context/release";
 
 import { asyncEveryDependency } from "../utilities/dependency";
+import { customGrammarFromNameAndEntries } from "../utilities/customGrammar";
 
 const { last } = arrayUtilities,
       { isMetaJSONFileValid } = metaJSONUtilities;
@@ -147,7 +148,8 @@ export function releaseContextFromJSON(json, context) {
 
   json = contextJSON; ///
 
-  const releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
+  const customGrammar = customGrammarFromNameAndEntries(name, entries),
+        releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
 
   return releaseContext;
 }
@@ -164,7 +166,8 @@ export function releaseContextFromProject(project, context) {
       const { log, callback } = context,
             name = project.getName(),
             json = null,
-            entries = project.getEntries();
+            entries = project.getEntries(),
+            customGrammar = customGrammarFromNameAndEntries(name, entries);
 
       releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
     }
