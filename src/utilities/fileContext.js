@@ -5,21 +5,27 @@ export function fileContextsFromJSON(json, fileContexts, releaseContext, FileCon
 
   fileContextsJSON.forEach((fileContextJSON) => {
     const { filePath } = fileContextJSON,
-          json = fileContextJSON, ///
-          FileContext = FileContextFromFilePath(filePath),
-          fileContext = FileContext.fromJSON(json, releaseContext);
+          FileContext = FileContextFromFilePath(filePath);
 
-    fileContexts.push(fileContext);
+    if (FileContext !== null) {
+      const json = fileContextJSON, ///
+            fileContext = FileContext.fromJSON(json, releaseContext);
+
+      fileContexts.push(fileContext);
+    }
   });
 }
 
 export function fileContextsFromEntries(entries, fileContexts, releaseContext, FileContextFromFilePath) {
   entries.forEachFile((file) => {
     const filePath = file.getPath(),
-          FileContext = FileContextFromFilePath(filePath),
-          fileContext = FileContext.fromFile(file, releaseContext);
+          FileContext = FileContextFromFilePath(filePath);
 
-    fileContexts.push(fileContext);
+    if (FileContext !== null) {
+      const fileContext = FileContext.fromFile(file, releaseContext);
+
+      fileContexts.push(fileContext);
+    }
   });
 }
 
