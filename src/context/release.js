@@ -424,7 +424,7 @@ export default class ReleaseContext {
   initialise(releaseContexts, FileContextFromFilePath) {
     const released = this.isReleased(),
           releaseContext = this,  ///
-          releaseContextsTail = tail(releaseContext);
+          releaseContextsTail = tail(releaseContexts);
 
     released ?
       fileContextsFromJSON(this.json, this.fileContexts, releaseContext, FileContextFromFilePath) :
