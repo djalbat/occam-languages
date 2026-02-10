@@ -83,7 +83,7 @@ export async function verifyReleaseContext(releaseName, dependentName, dependent
               dependencyReleaseContextsVerify = await verifyDependencyReleaseContexts(releaseContext, dependentName, dependentReleased, releaseContextMap);
 
         if (dependencyReleaseContextsVerify) {
-          const releaseContextVerified = releaseContext.isVerified();
+          const releaseContextVerified = releaseContext.hasVerified();
 
           if (releaseContextVerified) {
             releaseVerifies = true;

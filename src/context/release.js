@@ -73,6 +73,12 @@ export default class ReleaseContext {
     return releaseContext;
   }
 
+  hasVerified() {
+    const verified = this.verifies; ///
+
+    return verified;
+  }
+
   isReleased() {
     const released = (this.json !== null);
 
@@ -458,11 +464,11 @@ export default class ReleaseContext {
             fileContextsVerify = await verifyFileContexts(this.fileContexts, verifiedFileContexts);
 
       if (fileContextsVerify) {
-        this.fileContexts = verifiedFileContexts; ///
-
-        this.verifies = true;
-
         verifies = true;
+
+        this.verifies = verifies;
+
+        this.fileContexts = verifiedFileContexts; ///
       }
     }
 
