@@ -11,10 +11,6 @@ export default class Context {
     return this.context;
   }
 
-  setContext(context) {
-    this.context = context;
-  }
-
   getDepth() {
     let depth = this.context.getDepth();
 

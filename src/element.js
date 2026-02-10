@@ -19,6 +19,18 @@ export default class Element {
     return this.node;
   }
 
+  setContext(context) {
+    this.context = context;
+  }
+
+  setString(string) {
+    this.string = string;
+  }
+
+  setNode(node) {
+    this.node = node;
+  }
+
   async break(context) {
     await context.break(this.node);
   }
