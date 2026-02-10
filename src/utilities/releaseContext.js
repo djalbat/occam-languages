@@ -14,13 +14,14 @@ const { last } = arrayUtilities,
 export async function createReleaseContext(dependency, dependentNames, context) {
   let success = false;
 
-  const { log, releaseContextMap } = context,
+  const { releaseContextMap } = context,
         dependencyName = dependency.getName(),
         releaseName = dependencyName, ///
         releaseContext = releaseContextMap[releaseName] || null;
 
   if (releaseContext !== null) {
-    const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
+    const { log } = context,
+          releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
 
     if (releaseMatchesDependency) {
       log.debug(`The '${releaseName}' context has already been created.`);
@@ -28,7 +29,8 @@ export async function createReleaseContext(dependency, dependentNames, context) 
       success = true;
     }
   } else {
-    const dependencyString = dependency.asString(),
+    const { log } = context,
+          dependencyString = dependency.asString(),
           dependentNamesLength = dependentNames.length;
 
     if (dependentNamesLength === 0) {
@@ -106,9 +108,9 @@ export async function verifyReleaseContext(releaseName, dependentName, dependent
 
 export function initialiseReleaseContext(dependency, context) {
   const { releaseContextMap } = context,
-    dependencyName = dependency.getName(),
-    releaseName = dependencyName, ///
-    releaseContext = releaseContextMap[releaseName] || null;
+        dependencyName = dependency.getName(),
+        releaseName = dependencyName, ///
+        releaseContext = releaseContextMap[releaseName] || null;
 
   if (releaseContext === null) {
     const { log } = context;
@@ -121,11 +123,13 @@ export function initialiseReleaseContext(dependency, context) {
       initialiseDependencyReleaseContexts(dependency, releaseContext, context);
 
       const { log } = context,
-        releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap);
+            releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap);
 
       log.info(`Initialising the '${dependencyName}' context...`);
 
-      releaseContext.initialise(releaseContexts);
+      const { FileContextFromFilePath } = context;
+
+      releaseContext.initialise(releaseContexts, FileContextFromFilePath);
 
       log.debug(`...initialised the '${dependencyName}' context.`);
     }

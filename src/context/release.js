@@ -421,15 +421,16 @@ export default class ReleaseContext {
     return depth;
   }
 
-  initialise(releaseContexts, fileContextFromJSON) {
+  initialise(releaseContexts, FileContextFromFilePath) {
     const released = this.isReleased(),
-          releaseContext = this;  ///
+          releaseContext = this,  ///
+          releaseContextsTail = tail(releaseContext);
 
     released ?
-      fileContextsFromJSON(this.json, this.fileContexts, releaseContext, fileContextFromJSON) :
-        fileContextsFromEntries(this.entries, this.fileContexts, releaseContext);
+      fileContextsFromJSON(this.json, this.fileContexts, releaseContext, FileContextFromFilePath) :
+        fileContextsFromEntries(this.entries, this.fileContexts, releaseContext, FileContextFromFilePath);
 
-    this.dependencyReleaseContexts = tail(releaseContexts); ///
+    this.dependencyReleaseContexts = releaseContextsTail; ///
 
     this.initialised = true;
   }
