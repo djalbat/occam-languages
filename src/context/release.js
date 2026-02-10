@@ -3,6 +3,7 @@
 import { arrayUtilities } from "necessary";
 
 import { verifyTypePrefixes, verifyFileContexts } from "../utilities/verify";
+import { combinedCustomGrammarFromReleaseContexts } from "../utilities/customGrammar";
 import { fileContextsFromJSON, fileContextsFromEntries } from "../utilities/fileContext";
 import { TRACE_LEVEL, DEBUG_LEVEL, INFO_LEVEL, WARNING_LEVEL, ERROR_LEVEL, BREAK_MESSAGE } from "../constants";
 
@@ -437,6 +438,8 @@ export default class ReleaseContext {
         fileContextsFromEntries(this.entries, this.fileContexts, releaseContext, FileContextFromFilePath);
 
     this.dependencyReleaseContexts = releaseContextsTail; ///
+
+    this.combinedCustomGrammar = combinedCustomGrammarFromReleaseContexts(releaseContexts);
 
     this.initialised = true;
   }

@@ -1,6 +1,8 @@
 "use strict";
 
-import { CustomGrammar } from "occam-custom-grammars"
+import { CustomGrammar, customGrammarUtilities } from "occam-custom-grammars";
+
+const { combinedCustomGrammarFromCustomGrammars } = customGrammarUtilities;
 
 export function customGrammarFromNameAndEntries(name, entries) {
   const termBNF = entries.getTermBNF(),
@@ -10,4 +12,16 @@ export function customGrammarFromNameAndEntries(name, entries) {
         customGrammar = CustomGrammar.fromNameTermBNFStatementBNFTypeVocabularyAndSymbolVocabulary(name, termBNF, statementBNF, typeVocabulary, symbolVocabulary);
 
   return customGrammar;
+}
+
+export function combinedCustomGrammarFromReleaseContexts(releaseContexts) {
+  const customGrammars = releaseContexts.map((releaseContext) => {
+    const customGrammar = releaseContext.getCustomGrammar();
+
+    return customGrammar;
+  });
+
+  const combinedCustomGrammar = combinedCustomGrammarFromCustomGrammars(customGrammars);
+
+  return combinedCustomGrammar;
 }
