@@ -26,6 +26,13 @@ export default class FileContext extends Context {
     return this.node;
   }
 
+  findFile() {
+    const releaseContext = this.getReleaseContext(),
+          file = releaseContext.findFile(this.filePath);
+
+    return file;
+  }
+
   matchFilePath(filePath) {
     const filePathMatches = (this.filePath === filePath);
 
@@ -49,7 +56,7 @@ export default class FileContext extends Context {
       return;
     }
 
-    const file = this.findFile(this.filePath),
+    const file = this.findFile(),
           lexer = this.getLexer(),
           parser = this.getParser(),
           content = file.getContent();
