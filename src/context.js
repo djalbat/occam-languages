@@ -21,6 +21,10 @@ export default class Context {
 
   getReleaseContext() { return this.context.getReleaseContext(); }
 
+  nodesAsString(node) { return this.context.nodesAsString[node]; }
+
+  nodeAsString(node) { return this.context.nodeAsString[node]; }
+
   trace(message) {
     const level = TRACE_LEVEL;
 
