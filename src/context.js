@@ -62,6 +62,8 @@ export default class Context {
     releaseContext.writeToLog(level, message);
   }
 
+  async break(node) { await this.context.break(node); }
+
   static fromNothing(Class, ...remainingArguments) {
     let context = remainingArguments.pop();
 
