@@ -15,7 +15,6 @@ export { default as EquivalencePass } from "./pass/equivalence";
 
 export { default as nodeUtilities } from "./utilities/node";
 export { default as queryUtilities } from "./utilities/query";
-export { default as contextUtilities } from "./utilities/context";
 export { default as fileContextUtilities } from "./utilities/fileContext";
 export { default as asynchronousUtilities } from "./utilities/asynchronous";
 export { default as releaseContextUtilities } from "./utilities/releaseContext";
