@@ -74,6 +74,12 @@ export default class ReleaseContext {
     return releaseContext;
   }
 
+  getDepth() {
+    const depth = 0;
+
+    return depth;
+  }
+
   hasVerified() {
     const verified = this.verifies; ///
 
@@ -420,12 +426,6 @@ export default class ReleaseContext {
 
   writeToLog(level, message, filePath = null, lineIndex = null) {
     this.log.write(level, message, filePath, lineIndex);
-  }
-
-  getDepth() {
-    const depth = 0;
-
-    return depth;
   }
 
   initialise(releaseContexts, FileContextFromFilePath) {
