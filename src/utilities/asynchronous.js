@@ -10,9 +10,9 @@ export async function asyncSome(array, callback) {
   const length = array.length;
 
   for (let index = 0; index < length; index += 1) {
-    const item = array[index];
+    const element = array[index];
 
-    result = await callback(item, index, array);
+    result = await callback(element, index, array);
 
     if (result) {
       break;
@@ -28,9 +28,9 @@ export async function asyncEvery(array, callback) {
   const length = array.length;
 
   for (let index = 0; index < length; index += 1) {
-    const item = array[index];
+    const element = array[index];
 
-    result = await callback(item, index, array);
+    result = await callback(element, index, array);
 
     if (!result) {
       break;
@@ -46,9 +46,9 @@ export async function asyncReduce(array, callback, initialValue) {
   const length = array.length;
 
   for (let index = 0; index < length; index += 1) {
-    const item = array[index];
+    const element = array[index];
 
-    value = await callback(value, item, index, array);
+    value = await callback(value, element, index, array);
   }
 
   return value;
@@ -58,9 +58,9 @@ export async function asyncForEach(array, callback) {
   const length = array.length;
 
   for (let index = 0; index < length; index += 1) {
-    const item = array[index];
+    const element = array[index];
 
-    await callback(item, index, array);
+    await callback(element, index, array);
   }
 }
 
@@ -80,8 +80,8 @@ export async function asyncResolve(arrayA, arrayB, callback) {
 
     let resolved = false;
 
-    await asyncForEach(arrayA, async (elementA) => {
-      const passed = await callback(elementA);
+    await asyncForEach(arrayA, async (elementA, index) => {
+      const passed = await callback(elementA, index, arrayA);
 
       if (passed) {
         const elementB = elementA;  ///
@@ -117,7 +117,7 @@ export async function asyncForwardsEvery(array, callback) {
 
   for (let index = 0; index < length; index++) {
     const element = array[index],
-          passed = await callback(element, index);
+          passed = await callback(element, index, array);
 
     if (!passed) {
       return false;
@@ -132,7 +132,7 @@ export async function asyncBackwardsEvery(array, callback) {
 
   for (let index = length - 1; index >= 0; index--) {
     const element = array[index],
-          passed = await callback(element, index);
+          passed = await callback(element, index, array);
 
     if (!passed) {
       return false;
