@@ -112,10 +112,42 @@ export async function asyncResolve(arrayA, arrayB, callback) {
   return resolved;
 }
 
+export async function asyncForwardsEvery(array, callback) {
+  const length = array.length;
+
+  for (let index = 0; index < length; index++) {
+    const element = array[index],
+          passed = await callback(element, index);
+
+    if (!passed) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+export async function asyncBackwardsEvery(array, callback) {
+  const length = array.length;
+
+  for (let index = length - 1; index >= 0; index--) {
+    const element = array[index],
+          passed = await callback(element, index);
+
+    if (!passed) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
 export default {
   asyncSome,
   asyncEvery,
   asyncReduce,
   asyncForEach,
-  asyncResolve
+  asyncResolve,
+  asyncForwardsEvery,
+  asyncBackwardsEvery
 };
