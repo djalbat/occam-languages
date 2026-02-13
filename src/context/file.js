@@ -153,11 +153,4 @@ export default class FileContext extends Context {
 
     return fileContext;
   }
-
-  static fromFilePathTokensAndNode(Class, filePath, tokens, node, ...remainingArguments) {
-    const context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
-
-    return fileContext;
-  }
 }
