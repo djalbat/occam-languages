@@ -145,7 +145,7 @@ export default class FileContext extends Context {
     return json;
   }
 
-  static fromFileLexerAndParer(Class, file, lexer, parser, ...remainingArguments) {
+  static fromFileLexerAndParser(Class, file, lexer, parser, ...remainingArguments) {
     const filePath = file.getPath(),
           tokens = null,
           node = null,
