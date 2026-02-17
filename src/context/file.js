@@ -36,6 +36,26 @@ export default class FileContext extends Context {
     return this.parser;
   }
 
+  setFilePath(filePath) {
+    this.filePath = filePath;
+  }
+
+  setTokens(tokens) {
+    this.tokens = tokens;
+  }
+
+  setNode(node) {
+    this.node = node;
+  }
+
+  setLexer(lexer) {
+    this.lexer = lexer;
+  }
+
+  setParser(parser) {
+    this.parser = parser;
+  }
+
   findFile() {
     const releaseContext = this.getReleaseContext(),
           file = releaseContext.findFile(this.filePath);
