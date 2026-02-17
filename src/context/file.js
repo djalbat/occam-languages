@@ -6,12 +6,14 @@ import { lineIndexFromNodeAndTokens } from "../utilities/lineIndex";
 import { nodeAsString, nodesAsString } from "../utilities/node";
 
 export default class FileContext extends Context {
-  constructor(context, filePath, tokens, node) {
+  constructor(context, filePath, tokens, node, lexer, parser) {
     super(context);
 
     this.filePath = filePath;
     this.tokens = tokens;
     this.node = node;
+    this.lexer = lexer;
+    this.parser = parser;
   }
 
   getFilePath() {
@@ -24,6 +26,14 @@ export default class FileContext extends Context {
 
   getNode() {
     return this.node;
+  }
+
+  getLexer() {
+    return this.lexer;
+  }
+
+  getParser() {
+    return this.parser;
   }
 
   findFile() {
@@ -135,21 +145,21 @@ export default class FileContext extends Context {
     return json;
   }
 
-  static fromFile(Class, file, ...remainingArguments) {
+  static fromFileLexerAndParer(Class, file, lexer, parser, ...remainingArguments) {
     const filePath = file.getPath(),
           tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
+          fileContext = new Class(context, filePath, tokens, node, lexer, parser, ...remainingArguments);
 
     return fileContext;
   }
 
-  static fromFilePath(Class, filePath, ...remainingArguments) {
+  static fromFilePathLexerAndParser(Class, filePath, lexer, parser, ...remainingArguments) {
     const tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
+          fileContext = new Class(context, filePath, tokens, node, lexer, parser, ...remainingArguments);
 
     return fileContext;
   }
