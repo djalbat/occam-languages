@@ -6,14 +6,12 @@ import { lineIndexFromNodeAndTokens } from "../utilities/lineIndex";
 import { nodeAsString, nodesAsString } from "../utilities/node";
 
 export default class FileContext extends Context {
-  constructor(context, filePath, tokens, node, lexer, parser) {
+  constructor(context, filePath, tokens, node) {
     super(context);
 
     this.filePath = filePath;
     this.tokens = tokens;
     this.node = node;
-    this.lexer = lexer;
-    this.parser = parser;
   }
 
   getFilePath() {
@@ -29,38 +27,15 @@ export default class FileContext extends Context {
   }
 
   getLexer() {
-    return this.lexer;
+    const lexer = null;
+
+    return lexer;
   }
 
   getParser() {
-    return this.parser;
-  }
+    const parser = null;
 
-  setFilePath(filePath) {
-    this.filePath = filePath;
-  }
-
-  setTokens(tokens) {
-    this.tokens = tokens;
-  }
-
-  setNode(node) {
-    this.node = node;
-  }
-
-  setLexer(lexer) {
-    this.lexer = lexer;
-  }
-
-  setParser(parser) {
-    this.parser = parser;
-  }
-
-  findFile() {
-    const releaseContext = this.getReleaseContext(),
-          file = releaseContext.findFile(this.filePath);
-
-    return file;
+    return parser;
   }
 
   getCombinedCustomGrammar() {
@@ -74,6 +49,13 @@ export default class FileContext extends Context {
     const filePathMatches = (this.filePath === filePath);
 
     return filePathMatches;
+  }
+
+  findFile() {
+    const releaseContext = this.getReleaseContext(),
+          file = releaseContext.findFile(this.filePath);
+
+    return file;
   }
 
   nodeAsString(node) {
@@ -165,21 +147,21 @@ export default class FileContext extends Context {
     return json;
   }
 
-  static fromFileLexerAndParser(Class, file, lexer, parser, ...remainingArguments) {
+  static fromFile(Class, file, ...remainingArguments) {
     const filePath = file.getPath(),
           tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, lexer, parser, ...remainingArguments);
+          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
 
     return fileContext;
   }
 
-  static fromFilePathLexerAndParser(Class, filePath, lexer, parser, ...remainingArguments) {
+  static fromFilePath(Class, filePath, ...remainingArguments) {
     const tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, lexer, parser, ...remainingArguments);
+          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
 
     return fileContext;
   }
