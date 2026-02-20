@@ -1,6 +1,6 @@
 "use strict";
 
-import { nonTerminalNodeQuery, terminalNodeMapFromNodes, areTerminalNodeMapsEqual, isLastRemainingArgumentFunction } from "../utilities/pass";
+import { nonTerminalNodeQuery, terminalNodeMapFromNodes, areTerminalNodeMapsEqual } from "../utilities/pass";
 
 export default class ZipPass {
   run(generalNode, specificNode, ...remainingArguments) {
@@ -25,65 +25,24 @@ export default class ZipPass {
             terminalNodeMapsEqual = areTerminalNodeMapsEqual(generalTerminalNodeMap, specificTerminalNodeMap);
 
       if (terminalNodeMapsEqual) {
-        const lastRemainingArgumentFunction = isLastRemainingArgumentFunction(remainingArguments);
-
-        if (lastRemainingArgumentFunction) {
-          const index = 0,
-                descendedAhead = this.descendAhead(index, generalChildNodes, specificChildNodes,...remainingArguments);
-
-          if (descendedAhead) {
-            descended = true;
-          }
-        } else {
-          const visited = generalChildNodes.every((generalChildNode, index) => {
-            const specificChildNode = specificChildNodes[index],
-                  specificNode = specificChildNode, ///
-                  generalNode = generalChildNode, ///
-                  visited = this.visitNode(generalNode, specificNode, ...remainingArguments);
-
-            if (visited) {
-              return true;
-            }
-          });
+        const visited = generalChildNodes.every((generalChildNode, index) => {
+          const specificChildNode = specificChildNodes[index],
+                specificNode = specificChildNode, ///
+                generalNode = generalChildNode, ///
+                visited = this.visitNode(generalNode, specificNode, ...remainingArguments);
 
           if (visited) {
-            descended = true;
+            return true;
           }
+        });
+
+        if (visited) {
+          descended = true;
         }
       }
     }
 
     return descended;
-  }
-
-  descendAhead(index, generalChildNodes, specificChildNodes, ...remainingArguments) {
-    let descendedAhead = false;
-
-    const descendAhead = remainingArguments.pop(), ///
-          generalChildNodesLength = generalChildNodes.length;
-
-    if (index === generalChildNodesLength) {
-      descendedAhead = descendAhead();
-    } else {
-      const generalChildNode = generalChildNodes[index],
-            specificChildNode = specificChildNodes[index],
-            generalNode = generalChildNode, ///
-            specificNode = specificChildNode, ///
-            visited = this.visitNode(generalNode, specificNode, ...remainingArguments, () => {
-              remainingArguments.push(descendAhead); ///
-
-              const aheadIndex = index + 1,
-                    descendedAhead = this.descendAhead(aheadIndex, generalChildNodes, specificChildNodes, ...remainingArguments);
-
-              return descendedAhead;
-            });
-
-      if (visited) {
-        descendedAhead = true;
-      }
-    }
-
-    return descendedAhead;
   }
 
   visitNode(generalNode, specificNode, ...remainingArguments) {
@@ -112,22 +71,9 @@ export default class ZipPass {
   }
 
   visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments) { ///
-    let visited = false;
+    let visited;
 
-    const lastRemainingArgumentFunction = isLastRemainingArgumentFunction(remainingArguments);
-
-    if (lastRemainingArgumentFunction) {
-      const descendAhead = remainingArguments.pop(),
-            descendedAhead = descendAhead();
-
-      if (descendAhead) {
-        visited = descendedAhead;  ///
-      }
-
-      remainingArguments.push(descendAhead);
-    } else {
-      visited = true;
-    }
+    visited = true;
 
     return visited;
   }
