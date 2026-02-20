@@ -1,6 +1,6 @@
 "use strict";
 
-import { nonTerminalNodeQuery, isLastRemainingArgumentFunction } from "../utilities/pass";
+import { nonTerminalNodeQuery } from "../utilities/pass";
 
 export default class ForwardPass {
   run(node, ...remainingArguments) {
@@ -13,31 +13,32 @@ export default class ForwardPass {
     return success;
   }
 
-  descend(childNodes, ...remainingArguments) {
-    let descended = false;
+  descend(index, childNodes, ...remainingArguments) {
+    let descendedForward = false;
 
-    const lastRemainingArgumentFunction = isLastRemainingArgumentFunction(remainingArguments);
+    const descendForward = remainingArguments.pop(), ///
+          childNodesLength = childNodes.length;
 
-    if (lastRemainingArgumentFunction) {
-      const index = 0;
-
-      descended = this.descendForward(index, childNodes, ...remainingArguments); ///
+    if (index === childNodesLength) {
+      descendedForward = descendForward();
     } else {
-      const visited = childNodes.every((childNode) => {
-        const node = childNode, ///
-              visited = this.visitNode(node, ...remainingArguments);
+      const childNode = childNodes[index],
+            node = childNode, ///
+            visited = this.visitNode(node, ...remainingArguments, () => {
+              remainingArguments.push(descendForward);
 
-        if (visited) {
-          return true;
-        }
-      });
+              const aheadIndex = index + 1,
+                    descendedForward = this.descend(aheadIndex, childNodes, ...remainingArguments);
+
+              return descendedForward;
+            });
 
       if (visited) {
-        descended = true;
+        descendedForward = true;
       }
     }
 
-    return descended;
+    return descendedForward;
   }
 
   visitNode(node, ...remainingArguments) {
@@ -58,51 +59,17 @@ export default class ForwardPass {
     return visited;
   }
 
-  descendForward(index, childNodes, ...remainingArguments) {
-    let descendedForward = false;
-
-    const descendForward = remainingArguments.pop(), ///
-          childNodesLength = childNodes.length;
-
-    if (index === childNodesLength) {
-      descendedForward = descendForward();
-    } else {
-      const childNode = childNodes[index],
-            node = childNode, ///
-            visited = this.visitNode(node, ...remainingArguments, () => {
-              remainingArguments.push(descendForward);
-
-              const aheadIndex = index + 1,
-                    descendedForward = this.descendForward(aheadIndex, childNodes, ...remainingArguments);
-
-              return descendedForward;
-            });
-
-      if (visited) {
-        descendedForward = true;
-      }
-    }
-
-    return descendedForward;
-  }
-
   visitTerminalNode(terminalNode, ...remainingArguments) {
     let visited = false;
 
-    const lastRemainingArgumentFunction = isLastRemainingArgumentFunction(remainingArguments);
+    const descendForward = remainingArguments.pop(), ///
+          descendedForward = descendForward();
 
-    if (lastRemainingArgumentFunction) {
-      const descendForward = remainingArguments.pop(), ///
-            descendedForward = descendForward();
-
-      if (descendedForward) {
-        visited = true;
-      }
-
-      remainingArguments.push(descendForward);
-    } else {
+    if (descendedForward) {
       visited = true;
     }
+
+    remainingArguments.push(descendForward);
 
     return visited;
   }
@@ -119,8 +86,9 @@ export default class ForwardPass {
         run: (node, ...remainingArguments) => {
           let visited = false;
 
-          const childNodes = nonTerminalNode.getChildNodes(), ///
-                descended = this.descend(childNodes, ...remainingArguments);
+          const index = 0,
+                childNodes = nonTerminalNode.getChildNodes(), ///
+                descended = this.descend(index, childNodes, ...remainingArguments);
 
           if (descended) {
             visited = true;
