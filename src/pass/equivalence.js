@@ -1,6 +1,6 @@
 "use strict";
 
-import { nonTerminalNodeQuery, terminalNodeMapFromNodes } from "../utilities/pass";
+import { nonTerminalNodeQuery, terminalNodeMapFromNodes, areTerminalNodeMapsEqual } from "../utilities/pass";
 
 export default class EquivalencePass {
   run(leftNode, rightNode, ...remainingArguments) {
