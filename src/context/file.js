@@ -38,6 +38,13 @@ export default class FileContext extends Context {
     return parser;
   }
 
+  getTypePrefix() {
+    const context = this.getContext(),
+          typePrefix = context.getTypePrefix();
+
+    return typePrefix;
+  }
+
   getCombinedCustomGrammar() {
     const releaseContext = this.getReleaseContext(),
           combinedCustomGrammar = releaseContext.getCombinedCustomGrammar();
