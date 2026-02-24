@@ -433,13 +433,13 @@ export default class ReleaseContext {
           releaseContext = this,  ///
           releaseContextsTail = tail(releaseContexts);
 
-    released ?
-      fileContextsFromJSON(this.json, this.fileContexts, releaseContext, FileContextFromFilePath) :
-        fileContextsFromEntries(this.entries, this.fileContexts, releaseContext, FileContextFromFilePath);
-
     this.dependencyReleaseContexts = releaseContextsTail; ///
 
     this.combinedCustomGrammar = combinedCustomGrammarFromReleaseContexts(releaseContexts);
+
+    released ?
+      fileContextsFromJSON(this.json, this.fileContexts, releaseContext, FileContextFromFilePath) :
+        fileContextsFromEntries(this.entries, this.fileContexts, releaseContext, FileContextFromFilePath);
 
     this.initialised = true;
   }

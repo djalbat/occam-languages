@@ -8,7 +8,8 @@ export function fileContextsFromJSON(json, fileContexts, releaseContext, FileCon
           FileContext = FileContextFromFilePath(filePath);
 
     if (FileContext !== null) {
-      const fileContext = FileContext.fromFilePath(filePath, releaseContext);
+      const json = fileContextJSON, ///
+            fileContext = FileContext.fromJSON(json, releaseContext);
 
       fileContexts.push(fileContext);
     }
