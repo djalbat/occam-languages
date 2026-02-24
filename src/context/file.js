@@ -142,18 +142,6 @@ export default class FileContext extends Context {
     return verifies;
   }
 
-  toJSON() {
-    const file = this.findFile(this.filePath),
-          filePath = this.filePath, ///
-          content = file.getContent(),
-          json = {
-            filePath,
-            content
-          };
-
-    return json;
-  }
-
   static fromFile(Class, file, ...remainingArguments) {
     const filePath = file.getPath(),
           tokens = null,
