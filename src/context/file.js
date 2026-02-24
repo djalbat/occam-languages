@@ -45,13 +45,6 @@ export default class FileContext extends Context {
     return typePrefix;
   }
 
-  getCombinedCustomGrammar() {
-    const releaseContext = this.getReleaseContext(),
-          combinedCustomGrammar = releaseContext.getCombinedCustomGrammar();
-
-    return combinedCustomGrammar;
-  }
-
   matchFilePath(filePath) {
     const filePathMatches = (this.filePath === filePath);
 
