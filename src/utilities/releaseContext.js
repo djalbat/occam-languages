@@ -54,7 +54,7 @@ export function releaseContextFromProject(project, context) {
   return releaseContext;
 }
 
-export function releaseContextFromPelease(release, context) {
+export function releaseContextFromRelease(release, context) {
   let releaseContext = null;
 
   if (release !== null) {
@@ -73,5 +73,5 @@ export function releaseContextFromPelease(release, context) {
 export default {
   releaseContextFromJSON,
   releaseContextFromProject,
-  releaseContextFromPelease
+  releaseContextFromRelease
 };
