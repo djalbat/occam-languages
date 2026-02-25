@@ -33,19 +33,21 @@ export function releaseContextFromJSON(json, context) {
 export function releaseContextFromProject(project, context) {
   let releaseContext = null;
 
-  const metaJSONFile = project.getMetaJSONFile();
+  if (project !== null) {
+    const metaJSONFile = project.getMetaJSONFile();
 
-  if (metaJSONFile !== null) {
-    const metaJSONFileValid = isMetaJSONFileValid(metaJSONFile);
+    if (metaJSONFile !== null) {
+      const metaJSONFileValid = isMetaJSONFileValid(metaJSONFile);
 
-    if (metaJSONFileValid) {
-      const { log, callback } = context,
-            name = project.getName(),
-            json = null,
-            entries = project.getEntries(),
-            customGrammar = customGrammarFromNameAndEntries(name, entries);
+      if (metaJSONFileValid) {
+        const { log, callback } = context,
+              name = project.getName(),
+              json = null,
+              entries = project.getEntries(),
+              customGrammar = customGrammarFromNameAndEntries(name, entries);
 
-      releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
+        releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
+      }
     }
   }
 
@@ -53,12 +55,17 @@ export function releaseContextFromProject(project, context) {
 }
 
 export function releaseContextFromPelease(release, context) {
-  const { log, callback } = context,
-        name = release.getName(),
-        json = null,
-        entries = release.getEntries(),
-        customGrammar = customGrammarFromNameAndEntries(name, entries),
-        releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
+  let releaseContext = null;
+
+  if (release !== null) {
+    const { log, callback } = context,
+          name = release.getName(),
+          json = null,
+          entries = release.getEntries(),
+          customGrammar = customGrammarFromNameAndEntries(name, entries);
+
+    releaseContext = ReleaseContext.fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar);
+  }
 
   return releaseContext;
 }
