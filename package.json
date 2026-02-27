@@ -1,7 +1,7 @@
 {
   "name": "occam-languages",
   "author": "James Smith",
-  "version": "0.0.111",
+  "version": "0.0.112",
   "license": "MIT, Anti-996",
   "homepage": "https://github.com/djalbat/occam-languages",
   "description": "Occam's common language functionality.",
@@ -17,7 +17,7 @@
   "devDependencies": {
     "@swc/core": "1.13.20",
     "lively-cli": "^2.0.77",
-    "watchful-cli": "^1.7.67"
+    "watchful-cli": "^1.7.84"
   },
   "scripts": {
     "clean": "rm -rf ./lib",
