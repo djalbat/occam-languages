@@ -12,13 +12,13 @@ export function releaseContextFromJSON(json, context) {
   const { log, callback } = context,
         { name } = json;
 
-  ({context} = json); ///
-
   let { entries } = json;
 
   json = entries; ///
 
   entries = Entries.fromJSON(json);
+
+  ({context} = json); ///
 
   const contextJSON = context;  ///
 
