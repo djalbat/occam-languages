@@ -93,7 +93,7 @@ export async function createReleaseContext(dependency, dependentNames, context) 
 }
 
 export async function verifyReleaseContext(releaseName, dependentName, dependentReleased, releaseContextMap) {
-  let releaseVerifies = false;
+  let releaseContextVerifies = false;
 
   const releaseContext = releaseContextMap[releaseName];
 
@@ -101,7 +101,7 @@ export async function verifyReleaseContext(releaseName, dependentName, dependent
     const released = releaseContext.isReleased();
 
     if (released) {
-      releaseVerifies = true;
+      releaseContextVerifies = true;
     } else {
       if (dependentReleased) {
         releaseContext.warning(`The '${releaseName}' project cannot be verifies because its '${dependentName}' dependent is a package.`);
@@ -114,16 +114,16 @@ export async function verifyReleaseContext(releaseName, dependentName, dependent
           const releaseContextVerified = releaseContext.hasVerified();
 
           if (releaseContextVerified) {
-            releaseVerifies = true;
+            releaseContextVerifies = true;
           } else {
             releaseContext.info(`Verifying the '${releaseName}' project...`);
 
-            const releaseContextVerifies = await releaseContext.verify();
+            const verifies = await releaseContext.verify();
 
-            if (releaseContextVerifies) {
+            if (verifies) {
               releaseContext.info(`...verified the '${releaseName}' project.`);
 
-              releaseVerifies = true;
+              releaseContextVerifies = true;
             }
           }
         }
@@ -131,7 +131,7 @@ export async function verifyReleaseContext(releaseName, dependentName, dependent
     }
   }
 
-  return releaseVerifies;
+  return releaseContextVerifies;
 }
 
 export default {
