@@ -7,14 +7,12 @@ import { asyncEveryDependency } from "../utilities/dependency";
 const { last } = arrayUtilities;
 
 export function initialiseReleaseContext(dependency, context) {
-  const { releaseContextMap } = context,
+  const { log, releaseContextMap } = context,
         dependencyName = dependency.getName(),
         releaseName = dependencyName, ///
         releaseContext = releaseContextMap[releaseName] || null;
 
   if (releaseContext === null) {
-    const { log } = context;
-
     log.warning(`Unable to initialise the '${dependencyName}' context because it has not been created.`);
   } else {
     const releaseContextInitialised = releaseContext.isInitialised();
@@ -22,8 +20,7 @@ export function initialiseReleaseContext(dependency, context) {
     if (!releaseContextInitialised) {
       initialiseDependencyReleaseContexts(dependency, releaseContext, context);
 
-      const { log } = context,
-            releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap);
+      const releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap);
 
       log.info(`Initialising the '${dependencyName}' context...`);
 
@@ -37,25 +34,23 @@ export function initialiseReleaseContext(dependency, context) {
 }
 
 export async function createReleaseContext(dependency, dependentNames, context) {
-  let success = false;
+  let releaseContextCreated = false;
 
-  const { releaseContextMap } = context,
+  const { log, releaseContextMap } = context,
         dependencyName = dependency.getName(),
         releaseName = dependencyName, ///
         releaseContext = releaseContextMap[releaseName] || null;
 
   if (releaseContext !== null) {
-    const { log } = context,
-          releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
+    const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
 
     if (releaseMatchesDependency) {
       log.debug(`The '${releaseName}' context has already been created.`);
 
-      success = true;
+      releaseContextCreated = true;
     }
   } else {
-    const { log } = context,
-          dependencyString = dependency.asString(),
+    const dependencyString = dependency.asString(),
           dependentNamesLength = dependentNames.length;
 
     if (dependentNamesLength === 0) {
@@ -68,25 +63,33 @@ export async function createReleaseContext(dependency, dependentNames, context) 
     }
 
     const { releaseContextFromDependency } = context,
-          releaseContext = await releaseContextFromDependency(dependency, context),
-          releaseContextCreated = checkReleaseContextCreated(releaseContext, dependency, context);
+          releaseContext = await releaseContextFromDependency(dependency, context);
 
-    if (releaseContextCreated) {
+    if (releaseContext !== null) {
       const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
 
       if (releaseMatchesDependency) {
         releaseContextMap[releaseName] = releaseContext;
 
-        success = await createDependencyReleaseContexts(dependency, releaseContext, dependentNames, context);
+        const dependencyReleaseContextsCreated = await createDependencyReleaseContexts(dependency, releaseContext, dependentNames, context);
+
+        if (dependencyReleaseContextsCreated) {
+          releaseContextCreated = true;
+        }
       }
+    } else {
+      const dependencyName = dependency.getName(),
+            releaseName = dependencyName; ///
+
+      log.warning(`The '${releaseName}' context could not be created. Perhaps the 'meta.json' file is missing or invalid. Or there could be a dependency mismatch.`);
     }
 
-    success ?
+    releaseContextCreated ?
       log.debug(`...created the '${releaseName}' context.`) :
         log.warning(`...unable to create the '${releaseName}' context.`);
   }
 
-  return success;
+  return releaseContextCreated;
 }
 
 export async function verifyReleaseContext(releaseName, dependentName, dependentReleased, releaseContextMap) {
@@ -138,26 +141,26 @@ export default {
 };
 
 async function createDependencyReleaseContexts(dependency, releaseContext, dependentNames, context) {
-  let success;
+  let dependencyReleaseContextsCreated;
 
   const dependencyName = dependency.getName(),
         dependencies = releaseContext.getDependencies();
 
   dependentNames = [ ...dependentNames, dependencyName ];  ///
 
-  success = await asyncEveryDependency(dependencies, async (dependency) => {
-    let success = false;
-
+  dependencyReleaseContextsCreated = await asyncEveryDependency(dependencies, async (dependency) => {
     const cyclicDependencyExists = checkCyclicDependencyExists(dependency, dependentNames, context);
 
     if (!cyclicDependencyExists) {
-      success = await createReleaseContext(dependency, dependentNames, context);
-    }
+      const releaseContextCreated = await createReleaseContext(dependency, dependentNames, context);
 
-    return success;
+      if (releaseContextCreated) {
+        return true;
+      }
+    }
   });
 
-  return success;
+  return dependencyReleaseContextsCreated;
 }
 
 async function verifyDependencyReleaseContexts(releaseContext, dependentName, dependentReleased, releaseContextMap) {
@@ -210,20 +213,6 @@ function retrieveReleaseContexts(releaseContext, releaseContextMap) {
   }
 
   return releaseContexts;
-}
-
-function checkReleaseContextCreated(releaseContext, dependency, context) {
-  const releaseContextCreated = (releaseContext !== null);
-
-  if (!releaseContextCreated) {
-    const { log } = context,
-          dependencyName = dependency.getName(),
-          releaseName = dependencyName; ///
-
-    log.warning(`The '${releaseName}' context could not be created. Perhaps the 'meta.json' file is missing or invalid. Or there could be a dependency mismatch.`);
-  }
-
-  return releaseContextCreated;
 }
 
 function checkCyclicDependencyExists(dependency, dependentNames, context) {
