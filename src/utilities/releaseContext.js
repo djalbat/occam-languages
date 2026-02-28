@@ -14,11 +14,11 @@ export function releaseContextFromJSON(json, context) {
 
   let { entries } = json;
 
+  ({context} = json); ///
+
   json = entries; ///
 
   entries = Entries.fromJSON(json);
-
-  ({context} = json); ///
 
   const contextJSON = context;  ///
 
