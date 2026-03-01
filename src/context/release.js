@@ -475,13 +475,29 @@ export default class ReleaseContext {
     return json;
   }
 
-  static fromLogNameJSONEntriesCallbackAndCustomGrammar(log, name, json, entries, callback, customGrammar) {
+  static fromLogNameJSONEntriesCallbackAndCustomGrammar(Class, log, name, json, entries, callback, customGrammar) {
+    if (customGrammar === undefined) {
+      customGrammar = callback; ///
+
+      callback = entries; ///
+
+      entries = json; ///
+
+      json = name;  ///
+
+      name = log; ///
+
+      log = Class;  ///
+
+      Class = ReleaseContext; ///
+    }
+
     const verifies = false,
           initialised = false,
           fileContexts = [],
           combinedCustomGrammar = null,
           dependencyReleaseContexts = null,
-          releaseContext = new ReleaseContext(log, name, json, entries, callback, customGrammar, verifies, initialised, fileContexts, combinedCustomGrammar, dependencyReleaseContexts);
+          releaseContext = new Class(log, name, json, entries, callback, customGrammar, verifies, initialised, fileContexts, combinedCustomGrammar, dependencyReleaseContexts);
 
     return releaseContext;
   }
