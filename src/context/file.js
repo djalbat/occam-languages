@@ -56,13 +56,6 @@ export default class FileContext extends Context {
     return filePathMatches;
   }
 
-  findFile() {
-    const releaseContext = this.getReleaseContext(),
-          file = releaseContext.findFile(this.filePath);
-
-    return file;
-  }
-
   nodeAsString(node) {
     const string = nodeAsString(node, this.tokens);
 
@@ -80,10 +73,9 @@ export default class FileContext extends Context {
       return;
     }
 
-    const file = this.findFile(),
-          lexer = this.getLexer(),
+    const lexer = this.getLexer(),
           parser = this.getParser(),
-          content = file.getContent();
+          content = this.fileContent; ///
 
     this.tokens = lexer.tokenise(content);
 

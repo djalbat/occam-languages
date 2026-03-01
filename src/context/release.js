@@ -380,20 +380,6 @@ export default class ReleaseContext {
 
   matchShortenedVersion(shortenedVersion) { return this.entries.matchShortenedVersion(shortenedVersion); }
 
-  findFile(filePath) { return this.entries.findFile(filePath); }
-
-  findFileContext(filePath) {
-    const fileContext = this.fileContexts.find((fileContext) => {
-      const filePathMatches = fileContext.matchFilePath(filePath);
-
-      if (filePathMatches) {
-        return true;
-      }
-    }) || null;
-
-    return fileContext;
-  }
-
   trace(message) {
     const level = TRACE_LEVEL;
 
