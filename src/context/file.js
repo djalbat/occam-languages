@@ -6,12 +6,17 @@ import { lineIndexFromNodeAndTokens } from "../utilities/lineIndex";
 import { nodeAsString, nodesAsString } from "../utilities/node";
 
 export default class FileContext extends Context {
-  constructor(context, filePath, tokens, node) {
+  constructor(context, fileContent, filePath, tokens, node) {
     super(context);
 
+    this.fileContent = fileContent;
     this.filePath = filePath;
     this.tokens = tokens;
     this.node = node;
+  }
+
+  getFileContent() {
+    return this.fileContent;
   }
 
   getFilePath() {
@@ -136,21 +141,22 @@ export default class FileContext extends Context {
   }
 
   static fromFile(Class, file, ...remainingArguments) {
-    const filePath = file.getPath(),
+    const fileContent = file.getContent(),
+          filePath = file.getPath(),
           tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
+          fileContext = new Class(context, fileContent, filePath, tokens, node, ...remainingArguments);
 
     return fileContext;
   }
 
   static fromJSON(Class, json, ...remainingArguments) {
-    const { filePath } = json,
+    const { fileContent, filePath } = json,
           tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, filePath, tokens, node, ...remainingArguments);
+          fileContext = new Class(context, fileContent, filePath, tokens, node, ...remainingArguments);
 
     return fileContext;
   }
