@@ -35,7 +35,7 @@ export function initialiseReleaseContexts(dependency, context) {
     const { releaseContextMap } = context,
           releaseNames = Object.keys(releaseContextMap),
           orderedVertexNames = directedGraph.getOrderedVertexNames(),
-          orderedDependencyNames = orderedVertexNames;  ///
+          orderedDependencyNames = orderedVertexNames.reverse();  ///
 
     releaseNames.forEach((releaseName) => {
       const releaseContext = releaseContextMap[releaseName];
@@ -100,7 +100,7 @@ function addDependencyRelations(dependency, directedGraph, visitedDependencyName
 
   dependencies.forEachDependency((dependency) => {
     const dependencyName = dependency.getName(),
-      sourceVertexName = dependencyName;  ///
+          sourceVertexName = dependencyName;  ///
 
     directedGraph.addEdgeBySourceVertexNameAndTargetVertexName(sourceVertexName, targetVertexName);
 
