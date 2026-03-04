@@ -1,12 +1,11 @@
 "use strict";
 
-import { DirectedGraph } from "occam-directed-graphs";
 import { arrayUtilities } from "necessary";
 
-import {  SINGLE_SPACE} from "../constants";
+import { SINGLE_SPACE } from "../constants";
 import { asyncEveryDependency } from "../utilities/dependency";
 
-const { first, last } = arrayUtilities;
+const { last } = arrayUtilities;
 
 export async function createReleaseContexts(dependency, context) {
   let releaseContextsCreated = false;
@@ -21,42 +20,20 @@ export async function createReleaseContexts(dependency, context) {
   return releaseContextsCreated;
 }
 
-export function initialiseReleaseContexts(dependency, context) {
-  let releaseContextsInitialised = false;
+export function initialiseReleaseContexts(context) {
+  const { releaseContexts } = context;
 
-  const directedGraph = DirectedGraph.fromNothing(),
-        visitedDependencyNames = [];
-
-  addDependencyRelations(dependency, directedGraph, visitedDependencyNames, context);
-
-  const cyclicDependenciesPresent = checkCyclicDependenciesPresent(directedGraph, context);
-
-  if (!cyclicDependenciesPresent) {
-    const { releaseContextMap } = context,
-          releaseNames = Object.keys(releaseContextMap),
-          orderedVertexNames = directedGraph.getOrderedVertexNames(),
-          orderedDependencyNames = orderedVertexNames.reverse();  ///
-
-    releaseNames.forEach((releaseName) => {
-      const releaseContext = releaseContextMap[releaseName];
-
-      initialiseReleaseContext(releaseContext, orderedDependencyNames, context);
-    });
-
-    releaseContextsInitialised = true;
-  }
-
-  return releaseContextsInitialised;
+  releaseContexts.forEach((releaseContext) => {
+    initialiseReleaseContext(releaseContext, context);
+  });
 }
 
 export async function verifyReleaseContexts(dependency, context) {
   let releaseContextsVerify = false;
 
-  const dependencyName = dependency.getName(),
-        releaseName = dependencyName, ///
-        dependentName = null,
+  const dependentName = null,
         dependentReleased = false,
-        releaseContextVerifies = await verifyReleaseContext(releaseName, dependentName, dependentReleased, context);
+        releaseContextVerifies = await verifyReleaseContext(dependency, dependentName, dependentReleased, context);
 
   if (releaseContextVerifies) {
     releaseContextsVerify = true;
@@ -71,85 +48,19 @@ export default {
   verifyReleaseContexts
 };
 
-function addDependencyRelations(dependency, directedGraph, visitedDependencyNames, context) {
-  const dependencyName = dependency.getName(),
-        visitedDependencyNameIncludesDependencyName = visitedDependencyNames.includes(dependencyName);
-
-  if (visitedDependencyNameIncludesDependencyName) {
-    return;
-  }
-
-  const visiteddependencyName = dependencyName; ///
-
-  visitedDependencyNames.push(visiteddependencyName);
-
-  const { log, releaseContextMap } = context,
-        releaseName = dependencyName, ///
-        releaseContext = releaseContextMap[releaseName] || null;
-
-  if (releaseContext === null) {
-    const dependencyString = dependency.getString();
-
-    log.warning(`No package context has been created for the '${dependencyString}' dependency. `);
-
-    return;
-  }
-
-  const dependencies = releaseContext.getDependencies(),
-        targetVertexName = dependencyName;  ///
-
-  dependencies.forEachDependency((dependency) => {
-    const dependencyName = dependency.getName(),
-          sourceVertexName = dependencyName;  ///
-
-    directedGraph.addEdgeBySourceVertexNameAndTargetVertexName(sourceVertexName, targetVertexName);
-
-    addDependencyRelations(dependency, directedGraph, visitedDependencyNames, context);
-  });
-}
-
-function initialiseReleaseContext(releaseContext, orderedDependencyNames, context) {
-  const { log, releaseContextMap, FileContextFromFilePath } = context,
-        releaseContexts = retrieveReleaseContexts(releaseContext, releaseContextMap),
-        releaseContextName = releaseContext.getName();
-
-  releaseContexts.sort((releaseContextA, releaseContextB) => {
-    const releaseContextAName = releaseContextA.getName(),
-          releaseContextBName = releaseContextB.getName(),
-          dependencyNameA = releaseContextAName,  ///
-          dependencyNameB = releaseContextBName,  ///
-          indexA = orderedDependencyNames.indexOf(dependencyNameA),
-          indexB = orderedDependencyNames.indexOf(dependencyNameB);
-
-    return (indexA - indexB);
-  });
-
-  log.info(`Initialising the '${releaseContextName}' package context...`);
-
-  releaseContext.initialise(releaseContexts, FileContextFromFilePath);
-
-  log.debug(`...initialised the '${releaseContextName}' package context.`);
-}
-
 async function createReleaseContext(dependency, dependentNames, context) {
   let releaseContextCreated = false;
 
-  const { log, releaseContextMap, releaseContextFromDependency } = context,
-        dependencyName = dependency.getName(),
-        releaseName = dependencyName, ///
-        releaseContext = releaseContextMap[releaseName] || null;
+  const { log, releaseContextFromDependency } = context,
+        releaseContext = findReleaseContext(dependency, context);
 
   if (releaseContext !== null) {
-    const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
-
-    if (releaseMatchesDependency) {
-      log.debug(`The '${releaseName}' package context has already been created.`);
-
-      releaseContextCreated = true;
-    }
+    releaseContextCreated = true;
   } else {
-    const dependencyString = dependency.asString(),
-          dependentNamesLength = dependentNames.length;
+    const dependentNamesLength = dependentNames.length,
+          dependencyString = dependency.asString(),
+          dependencyName = dependency.getName(),
+          releaseName = dependencyName; ///
 
     if (dependentNamesLength === 0) {
       log.info(`Creating the '${releaseName}' package context...`);
@@ -162,23 +73,22 @@ async function createReleaseContext(dependency, dependentNames, context) {
 
     const releaseContext = await releaseContextFromDependency(dependency, context);
 
-    if (releaseContext !== null) {
+    if (releaseContext === null) {
+      log.warning(`The '${releaseName}' package context could not be created. Perhaps the 'meta.json' file is missing or invalid..`);
+    } else {
       const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
 
       if (releaseMatchesDependency) {
-        releaseContextMap[releaseName] = releaseContext;
-
         const dependencyReleaseContextsCreated = await createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context);
 
         if (dependencyReleaseContextsCreated) {
+          const { releaseContexts } = context;
+
+          releaseContexts.push(releaseContext);
+
           releaseContextCreated = true;
         }
       }
-    } else {
-      const dependencyName = dependency.getName(),
-            releaseName = dependencyName; ///
-
-      log.warning(`The '${releaseName}' package context could not be created. Perhaps the 'meta.json' file is missing or invalid. Or there could be a dependency mismatch.`);
     }
 
     releaseContextCreated ?
@@ -189,40 +99,37 @@ async function createReleaseContext(dependency, dependentNames, context) {
   return releaseContextCreated;
 }
 
-async function verifyReleaseContext(releaseName, dependentName, dependentReleased, releaseContextMap) {
+async function verifyReleaseContext(dependency, dependentName, dependentReleased, context) {
   let releaseContextVerifies = false;
 
-  const releaseContext = releaseContextMap[releaseName] || null;
+  const { log } = context,
+        releaseContext = findReleaseContext(dependency, context),
+        name = releaseContext.getName(),
+        released = releaseContext.isReleased(),
+        releaseName = name; ///
 
-  if (releaseContext !== null) {
-    const released = releaseContext.isReleased();
+  if (dependentReleased && !released) {
+    log.warning(`The '${releaseName}' project cannot be verified because its '${dependentName}' dependent is a package.`);
+  } else {
+    const dependencies = releaseContext.getDependencies(),
+          dependentName = releaseName,  ///
+          dependentReleased = released, ///
+          dependencyReleaseContextsVerify = await verifyDependencyReleaseContexts(dependencies, dependentName, dependentReleased, context);
 
-    if (released) {
-      releaseContextVerifies = true;
-    } else {
-      if (dependentReleased) {
-        releaseContext.warning(`The '${releaseName}' project cannot be verified because its '${dependentName}' dependent is a package.`);
+    if (dependencyReleaseContextsVerify) {
+      const verified = releaseContext.hasVerified();
+
+      if (verified || released) {
+        releaseContextVerifies = true;
       } else {
-        const dependentName = releaseName,  ///
-              dependentReleased = released, ///
-              dependencyReleaseContextsVerify = await verifyDependencyReleaseContexts(releaseContext, dependentName, dependentReleased, releaseContextMap);
+        log.info(`Verifying the '${releaseName}' project...`);
 
-        if (dependencyReleaseContextsVerify) {
-          const releaseContextVerified = releaseContext.hasVerified();
+        const verifies = await releaseContext.verify();
 
-          if (releaseContextVerified) {
-            releaseContextVerifies = true;
-          } else {
-            releaseContext.info(`Verifying the '${releaseName}' project...`);
+        if (verifies) {
+          log.info(`...verified the '${releaseName}' project.`);
 
-            const verifies = await releaseContext.verify();
-
-            if (verifies) {
-              releaseContext.info(`...verified the '${releaseName}' project.`);
-
-              releaseContextVerifies = true;
-            }
-          }
+          releaseContextVerifies = true;
         }
       }
     }
@@ -241,22 +148,23 @@ async function createDependencyReleaseContexts(releaseContext, dependency, depen
   dependentNames = [ ...dependentNames, dependencyName ];  ///
 
   dependencyReleaseContextsCreated = await asyncEveryDependency(dependencies, async (dependency) => {
-    const releaseContextCreated = await createReleaseContext(dependency, dependentNames, context);
+    const cyclicDependencPresent = checkCyclicDependencyPresent(dependency, dependentNames, context);
 
-    if (releaseContextCreated) {
-      return true;
+    if (!cyclicDependencPresent) {
+      const releaseContextCreated = await createReleaseContext(dependency, dependentNames, context);
+
+      if (releaseContextCreated) {
+        return true;
+      }
     }
   });
 
   return dependencyReleaseContextsCreated;
 }
 
-async function verifyDependencyReleaseContexts(releaseContext, dependentName, dependentReleased, releaseContextMap) {
-  const dependencies = releaseContext.getDependencies(),
-        dependencyReleaseContextsVerify = await asyncEveryDependency(dependencies, async (dependency) => {
-          const name = dependency.getName(),
-                releaseName = name, ///
-                releaseContextVerifies = await verifyReleaseContext(releaseName, dependentName, dependentReleased, releaseContextMap);
+async function verifyDependencyReleaseContexts(dependencies, dependentName, dependentReleased, context) {
+  const dependencyReleaseContextsVerify = await asyncEveryDependency(dependencies, async (dependency) => {
+          const releaseContextVerifies = await verifyReleaseContext(dependency, dependentName, dependentReleased, context);
 
           if (releaseContextVerifies) {
             return true;
@@ -266,26 +174,72 @@ async function verifyDependencyReleaseContexts(releaseContext, dependentName, de
   return dependencyReleaseContextsVerify;
 }
 
-function retrieveReleaseContexts(releaseContext, releaseContextMap, releaseContexts = []) {
+function findReleaseContext(dependency, context) {
+  const { releaseContexts } = context,
+        dependencyName = dependency.getName(),
+        releaseContext = releaseContexts.find((releaseContext) => {
+          const dependencyNameMatches = releaseContext.matchDependencyName(dependencyName);
+
+          if (dependencyNameMatches) {
+            return true;
+          }
+        }) || null;
+
+  return releaseContext;
+}
+
+function retrieveReleaseContexts(releaseContext, context, releaseContexts = []) {
   const releaseContextsIncludesReleaseContext = releaseContexts.includes(releaseContext);
 
-  if (releaseContextsIncludesReleaseContext) {
-    return;
+  if (!releaseContextsIncludesReleaseContext) {
+    const dependencies = releaseContext.getDependencies();
+
+    dependencies.forEachDependency((dependency) => {
+      const releaseContext = findReleaseContext(dependency, context);
+
+      retrieveReleaseContexts(releaseContext, context, releaseContexts);
+    });
+
+    releaseContexts.unshift(releaseContext);
   }
 
-  releaseContexts.push(releaseContext);
-
-  const dependencies = releaseContext.getDependencies();
-
-  dependencies.forEachDependency((dependency) => {
-    const dependencyName = dependency.getName(),
-          releaseName = dependencyName, ///
-          releaseContext = releaseContextMap[releaseName];
-
-    retrieveReleaseContexts(releaseContext, releaseContextMap, releaseContexts);
-  });
-
   return releaseContexts;
+}
+
+function initialiseReleaseContext(releaseContext, context) {
+  const { log, FileContextFromFilePath } = context,
+        name = releaseContext.getName(),
+        releaseName = name, ///
+        releaseContexts = retrieveReleaseContexts(releaseContext, context);
+
+  log.info(`Initialising the '${releaseName}' package context...`);
+
+  releaseContext.initialise(releaseContexts, FileContextFromFilePath);
+
+  log.debug(`...initialised the '${releaseName}' package context.`);
+}
+
+function checkCyclicDependencyPresent(dependency, dependentNames, context) {
+  let cyclicDependencPresent = false;
+
+  const dependencyName = dependency.getName(),
+        index = dependentNames.indexOf(dependencyName);
+
+  if (index > -1) {
+    const { log } = context,
+          circularDependentNames = dependentNames.slice(index),
+          circularDependencyNames = [
+            ...circularDependentNames,
+            dependencyName
+          ],
+          circularDependencyNamesString = circularDependencyNames.join(SINGLE_SPACE);
+
+    log.warning(`There is a cyclic dependency, '${circularDependencyNamesString}'.`);
+
+    cyclicDependencPresent = true;
+  }
+
+  return cyclicDependencPresent;
 }
 
 function checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context) {
@@ -311,28 +265,4 @@ function checkReleaseMatchesDependency(releaseContext, dependency, dependentName
   }
 
   return releaseMatchesDependency;
-}
-
-function checkCyclicDependenciesPresent(directedGraph, context) {
-  let cyclicDependenciesPresent = false;
-
-  const firstCycle = directedGraph.getFirstCycle();
-
-  if (firstCycle !== null) {
-    const { log } = context,
-          vertexNames = firstCycle.getVertexNames(),
-          dependencyNames = vertexNames,  ///
-          firstDependencyName = first(dependencyNames),
-          cyclicDependencyNames = [
-            ...dependencyNames,
-            firstDependencyName
-          ],
-          cycleString = cyclicDependencyNames.join(SINGLE_SPACE);
-
-    log.warning(`There is at least one '${cycleString}'. cyclic dependency`);
-
-    cyclicDependenciesPresent = true;
-  }
-
-  return cyclicDependenciesPresent;
 }
