@@ -81,7 +81,7 @@ async function verifyReleaseContext(releaseContext, context) {
 async function createReleaseContext(dependency, dependentNames, dependentReleased, context) {
   let releaseContextCreated = false;
 
-  const { log, releaseContextFromDependency } = context,
+  const { log } = context,
         dependencyName = dependency.getName();
 
   let releaseContext;
@@ -103,6 +103,8 @@ async function createReleaseContext(dependency, dependentNames, dependentRelease
       log.info(`Creating the '${dependencyName}' package context given the '${dependentName}' dependant's '${dependencyString}' dependency...`);
     }
 
+    const { releaseContextFromDependency } = context;
+
     releaseContext = await releaseContextFromDependency(dependency, context);
   }
 
@@ -121,9 +123,7 @@ async function createReleaseContext(dependency, dependentNames, dependentRelease
           const dependencyReleaseContextsCreated = await createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context);
 
           if (dependencyReleaseContextsCreated) {
-            const { releaseContexts } = context;
-
-            releaseContexts.push(releaseContext);
+            addReleaseContext(releaseContext, context);
 
             releaseContextCreated = true;
           }
@@ -169,6 +169,12 @@ async function createDependencyReleaseContexts(releaseContext, dependency, depen
   return dependencyReleaseContextsCreated;
 }
 
+function addReleaseContext(releaseContext, context) {
+  const { releaseContexts } = context;
+
+  releaseContexts.push(releaseContext);
+}
+
 function findReleaseContext(dependency, context) {
   const { releaseContexts } = context,
         dependencyName = dependency.getName(),
@@ -202,12 +208,14 @@ function retrieveReleaseContexts(releaseContext, context, releaseContexts = []) 
 }
 
 function initialiseReleaseContext(releaseContext, context) {
-  const { log, FileContextFromFilePath } = context,
+  const { log } = context,
         name = releaseContext.getName(),
         releaseName = name, ///
         releaseContexts = retrieveReleaseContexts(releaseContext, context);
 
   log.info(`Initialising the '${releaseName}' package context...`);
+
+  const { FileContextFromFilePath } = context;
 
   releaseContext.initialise(releaseContexts, FileContextFromFilePath);
 
