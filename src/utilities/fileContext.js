@@ -13,7 +13,7 @@ export function fileContextsFromJSON(json, fileContexts, releaseContext, FileCon
 
       fileContexts.push(fileContext);
 
-      fileContext.initialise();
+      fileContext.initialise(json);
     }
   });
 }
