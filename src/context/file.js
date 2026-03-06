@@ -82,20 +82,6 @@ export default class FileContext extends Context {
     this.node = parser.parse(this.tokens);
   }
 
-  initialise(json) {
-    const { content } = json,
-          lexer = this.getLexer(),
-          parser = this.getParser();
-
-    this.tokens = lexer.tokenise(content);
-
-    this.node = parser.parse(this.tokens);
-
-    this.clear();
-
-    this.addProcedures();
-  }
-
   async break(node) {
     const filePath = this.filePath,
           lineIndex = lineIndexFromNodeAndTokens(node, this.tokens),
