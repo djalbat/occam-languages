@@ -68,6 +68,18 @@ export default class ReleaseContext {
     return this.dependencyReleaseContexts;
   }
 
+  isFileContext() {
+    const fileContext = false;
+
+    return fileContext;
+  }
+
+  isReleaseContext() {
+    const releaseContext = true;
+
+    return releaseContext;
+  }
+
   matchDependencyName(dependencyName) {
     const dependencyNameMatches = (this.name === dependencyName);
 
