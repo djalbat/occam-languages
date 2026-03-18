@@ -25,18 +25,6 @@ export default class Context {
 
   getReleaseContext() { return this.context.getReleaseContext(); }
 
-  isFileContext() {
-    const fileContext = false;
-
-    return fileContext;
-  }
-
-  isReleaseContext() {
-    const releaseContext = false;
-
-    return releaseContext;
-  }
-
   nodesAsString(node) { return this.context.nodesAsString(node); }
 
   nodeAsString(node) { return this.context.nodeAsString(node); }
