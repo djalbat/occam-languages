@@ -80,6 +80,12 @@ export default class ReleaseContext {
     return releaseContext;
   }
 
+  getContext() {
+    const context = null;
+
+    return context;
+  }
+
   getDepth() {
     const depth = 0;
 
