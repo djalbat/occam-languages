@@ -2,7 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
-const { filter } = arrayUtilities;
+const { first, filter } = arrayUtilities;
 
 export async function asyncSome(array, callback) {
   let result = false;
@@ -52,6 +52,27 @@ export async function asyncReduce(array, callback, initialValue) {
   }
 
   return value;
+}
+
+export async function asyncExtract(array, callback) {
+  let deletedElement = undefined;
+
+  await asyncSome(array, async (element, index) => {
+    const passed = await callback(element, index);
+
+    if (passed) {
+      const start = index,  ///
+            deleteCount = 1,
+            deletedElements = array.splice(start, deleteCount),
+            firstDeletedElement = first(deletedElements);
+
+      deletedElement = firstDeletedElement;  ///
+
+      return true;
+    }
+  });
+
+  return deletedElement;
 }
 
 export async function asyncForEach(array, callback) {
@@ -147,6 +168,7 @@ export default {
   asyncEvery,
   asyncReduce,
   asyncForEach,
+  asyncExtract,
   asyncResolve,
   asyncForwardsEvery,
   asyncBackwardsEvery
