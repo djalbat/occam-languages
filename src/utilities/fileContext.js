@@ -12,8 +12,6 @@ export function fileContextsFromJSON(json, fileContexts, releaseContext, FileCon
             fileContext = FileContext.fromJSON(json, releaseContext);
 
       fileContexts.push(fileContext);
-
-      fileContext.initialise(json);
     }
   });
 }
