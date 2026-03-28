@@ -6,13 +6,14 @@ import { lineIndexFromNodeAndTokens } from "../utilities/lineIndex";
 import { nodeAsString, nodesAsString } from "../utilities/node";
 
 export default class FileContext extends Context {
-  constructor(context, fileContent, filePath, tokens, node) {
+  constructor(context, fileContent, filePath, tokens, node, json) {
     super(context);
 
     this.fileContent = fileContent;
     this.filePath = filePath;
     this.tokens = tokens;
     this.node = node;
+    this.json = json;
   }
 
   getFileContent() {
@@ -29,6 +30,10 @@ export default class FileContext extends Context {
 
   getNode() {
     return this.node;
+  }
+
+  getJSON() {
+    return this.json;
   }
 
   getLexer() {
@@ -117,8 +122,9 @@ export default class FileContext extends Context {
           filePath = file.getPath(),
           tokens = null,
           node = null,
+          json = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, fileContent, filePath, tokens, node, ...remainingArguments);
+          fileContext = new Class(context, fileContent, filePath, tokens, node, json, ...remainingArguments);
 
     return fileContext;
   }
@@ -128,7 +134,7 @@ export default class FileContext extends Context {
           tokens = null,
           node = null,
           context = remainingArguments.pop(), ///
-          fileContext = new Class(context, fileContent, filePath, tokens, node, ...remainingArguments);
+          fileContext = new Class(context, fileContent, filePath, tokens, node, json, ...remainingArguments);
 
     return fileContext;
   }
