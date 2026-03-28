@@ -68,20 +68,6 @@ export default class FileContext extends Context {
     return string;
   }
 
-  prepare() {
-    if (this.tokens !== null) {
-      return;
-    }
-
-    const lexer = this.getLexer(),
-          parser = this.getParser(),
-          content = this.fileContent; ///
-
-    this.tokens = lexer.tokenise(content);
-
-    this.node = parser.parse(this.tokens);
-  }
-
   async break(node) {
     const filePath = this.filePath,
           lineIndex = lineIndexFromNodeAndTokens(node, this.tokens),
@@ -92,8 +78,6 @@ export default class FileContext extends Context {
 
   async verify() {
     let verifies = false;
-
-    this.prepare();
 
     if (this.node === null) {
       this.warning(`Unable to verify the '${this.filePath}' file because it cannot be parsed.`);
@@ -116,6 +100,16 @@ export default class FileContext extends Context {
     }
 
     return verifies;
+  }
+
+  initialise() {
+    const lexer = this.getLexer(),
+          parser = this.getParser(),
+          content = this.fileContent; ///
+
+    this.tokens = lexer.tokenise(content);
+
+    this.node = parser.parse(this.tokens);
   }
 
   static fromFile(Class, file, ...remainingArguments) {

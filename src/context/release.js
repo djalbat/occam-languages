@@ -439,6 +439,10 @@ export default class ReleaseContext {
       fileContextsFromJSON(this.json, this.fileContexts, releaseContext, FileContextFromFilePath) :
         fileContextsFromEntries(this.entries, this.fileContexts, releaseContext, FileContextFromFilePath);
 
+    this.fileContexts.forEach((fileContext) => {
+      fileContext.initialise();
+    });
+
     this.initialised = true;
   }
 
