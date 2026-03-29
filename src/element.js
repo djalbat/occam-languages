@@ -1,10 +1,11 @@
 "use strict";
 
 export default class Element {
-  constructor(context, string, node) {
+  constructor(context, string, node, lineIndex) {
     this.context = context;
     this.string = string;
     this.node = node;
+    this.lineIndex = lineIndex;
   }
 
   getContext() {
@@ -19,6 +20,10 @@ export default class Element {
     return this.node;
   }
 
+  getLineIndex() {
+    return this.lineIndex;
+  }
+
   setContext(context) {
     this.context = context;
   }
@@ -31,8 +36,12 @@ export default class Element {
     this.node = node;
   }
 
+  setLineIndex(lineIndex) {
+    this.lineIndex = lineIndex;
+  }
+
   async break(context) {
-    await context.break(this.node);
+    this.lineIndex = await context.break(this.node, this.lineIndex);
   }
 
   matchNode(node) { return this.node.match(node); }

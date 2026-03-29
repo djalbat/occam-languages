@@ -73,12 +73,17 @@ export default class FileContext extends Context {
     return string;
   }
 
-  async break(node) {
+  async break(node, lineIndex = null) {
     const filePath = this.filePath,
-          lineIndex = lineIndexFromNodeAndTokens(node, this.tokens),
           releaseContext = this.getReleaseContext();
 
+    if (lineIndex === null) {
+      lineIndex = lineIndexFromNodeAndTokens(node, this.tokens);
+    }
+
     await releaseContext.break(filePath, lineIndex);
+
+    return lineIndex;
   }
 
   async verify() {
