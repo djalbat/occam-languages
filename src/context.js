@@ -70,7 +70,7 @@ export default class Context {
     releaseContext.writeToLog(level, message);
   }
 
-  async break(node, lineIndex = null) { return await this.context.break(node, lineIndex); }
+  async break(node, lineIndex) { return await this.context.break(node, lineIndex); }
 
   static fromNothing(Class, ...remainingArguments) {
     let context = remainingArguments.pop();
