@@ -40,6 +40,10 @@ export default class Element {
     this.lineIndex = lineIndex;
   }
 
+  commit(context) {
+    this.context = context;
+  }
+
   async break(context) {
     this.lineIndex = await context.break(this.node, this.lineIndex);
   }
