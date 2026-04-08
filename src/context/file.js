@@ -55,10 +55,28 @@ export default class FileContext extends Context {
     return typePrefix;
   }
 
-  matchFilePath(filePath) {
-    const filePathMatches = (this.filePath === filePath);
+  setContext(context) {
+    this.context = context;
+  }
 
-    return filePathMatches;
+  setFileContent(fileContent) {
+    this.fileContent = fileContent;
+  }
+
+  setFilePath(filePath) {
+    this.filePath = filePath;
+  }
+
+  setTokens(tokens) {
+    this.tokens = tokens;
+  }
+
+  setNode(node) {
+    this.node = node;
+  }
+
+  setJSON(json) {
+    this.json = json;
   }
 
   nodeAsString(node) {
