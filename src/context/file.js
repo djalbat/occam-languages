@@ -55,6 +55,12 @@ export default class FileContext extends Context {
     return typePrefix;
   }
 
+  matchFilePath(filePath) {
+    const filePathMatches = (this.filePath === filePath);
+
+    return filePathMatches;
+  }
+
   nodeAsString(node) {
     const string = nodeAsString(node, this.tokens);
 
