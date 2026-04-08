@@ -23,6 +23,8 @@ export default class Context {
     return depth;
   }
 
+  isReleased() { return this.context.isReleased(); }
+
   getReleaseContext() { return this.context.getReleaseContext(); }
 
   nodesAsString(node) { return this.context.nodesAsString(node); }
