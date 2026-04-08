@@ -11,10 +11,6 @@ export default class Context {
     return this.context;
   }
 
-  setContext(context) {
-    this.context = context;
-  }
-
   getDepth() {
     let depth = this.context.getDepth();
 
@@ -27,9 +23,25 @@ export default class Context {
 
   getReleaseContext() { return this.context.getReleaseContext(); }
 
+  setNode(node) { this.context.setNode(node); }
+
+  setTokens(tokens) { this.context.setTokens(tokens); }
+
   nodesAsString(node) { return this.context.nodesAsString(node); }
 
   nodeAsString(node) { return this.context.nodeAsString(node); }
+
+  gainTokens(context) {
+    const released = this.isReleased();
+
+    if (released) {
+      return;
+    }
+
+    const tokens = context.getTokens();
+
+    this.setTokens(tokens);
+  }
 
   trace(message) {
     const level = TRACE_LEVEL;
