@@ -55,30 +55,6 @@ export default class FileContext extends Context {
     return typePrefix;
   }
 
-  setContext(context) {
-    this.context = context;
-  }
-
-  setFileContent(fileContent) {
-    this.fileContent = fileContent;
-  }
-
-  setFilePath(filePath) {
-    this.filePath = filePath;
-  }
-
-  setTokens(tokens) {
-    this.tokens = tokens;
-  }
-
-  setNode(node) {
-    this.node = node;
-  }
-
-  setJSON(json) {
-    this.json = json;
-  }
-
   nodeAsString(node) {
     const string = nodeAsString(node, this.tokens);
 
