@@ -49,7 +49,7 @@ export async function asyncMatch(arrayA, arrayB, callback) {
   if (arrayALength === arrayBLength) {
     matches = await asyncBackwardsEvery(arrayA, async (elementA, index) => {
       const elementB = arrayB[index],
-            passed = await callback(elementA, elementB);
+            passed = await callback(elementA, elementB, index);
 
       if (passed) {
         return true;
