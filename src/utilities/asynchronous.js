@@ -40,6 +40,26 @@ export async function asyncEvery(array, callback) {
   return result;
 }
 
+export async function asyncMatch(arrayA, arrayB, callback) {
+  let matches = false;
+
+  const arrayALength = arrayA.length,
+        arrayBLength = arrayB.length;
+
+  if (arrayALength === arrayBLength) {
+    matches = await asyncBackwardsEvery(arrayA, async (elementA, index) => {
+      const elementB = arrayB[index],
+            passed = await callback(elementA, elementB);
+
+      if (passed) {
+        return true;
+      }
+    });
+  }
+
+  return matches;
+}
+
 export async function asyncReduce(array, callback, initialValue) {
   let value = initialValue; ///
 
@@ -166,6 +186,7 @@ export async function asyncBackwardsEvery(array, callback) {
 export default {
   asyncSome,
   asyncEvery,
+  asyncMatch,
   asyncReduce,
   asyncForEach,
   asyncExtract,
