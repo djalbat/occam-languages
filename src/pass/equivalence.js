@@ -1,6 +1,6 @@
 "use strict";
 
-import { nonTerminalNodeQuery, terminalNodeMapFromNodes, areTerminalNodeMapsEqual } from "../utilities/pass";
+import { nonTerminalNodeQuery, areChildNodesCongruent } from "../utilities/pass";
 
 export default class EquivalencePass {
   run(leftNode, rightNode, ...remainingArguments) {
@@ -14,29 +14,18 @@ export default class EquivalencePass {
   }
 
   descend(leftChildNodes, rightChildNodes, ...remainingArguments) {
-    let descended = false;
+    let descended;
 
-    const leftChildNodesLength = leftChildNodes.length,
-      rightChildNodesLength = rightChildNodes.length;
+    descended = leftChildNodes.every((leftChildNode, index) => {
+      const rightChildNode = rightChildNodes[index],
+            leftNode = leftChildNode, ///
+            rightNode = rightChildNode, ///
+            visited = this.visitNode(leftNode, rightNode, ...remainingArguments);
 
-    if (leftChildNodesLength === rightChildNodesLength) {
-      const leftTerminalNodeMap = terminalNodeMapFromNodes(leftChildNodes),
-            rightTerminalNodeMap = terminalNodeMapFromNodes(rightChildNodes),
-            terminalNodeMapsEqual = areTerminalNodeMapsEqual(leftTerminalNodeMap, rightTerminalNodeMap);
-
-      if (terminalNodeMapsEqual) {
-        descended = leftChildNodes.every((leftChildNode, index) => {
-          const rightChildNode = rightChildNodes[index],
-                leftNode = leftChildNode, ///
-                rightNode = rightChildNode, ///
-                visited = this.visitNode(leftNode, rightNode, ...remainingArguments);
-
-          if (visited) {
-            return true;
-          }
-        });
+      if (visited) {
+        return true;
       }
-    }
+    });
 
     return descended;
   }
@@ -95,10 +84,14 @@ export default class EquivalencePass {
                   rightNonTerminalNodeChildNodes = rightNonTerminalNode.getChildNodes(),
                   leftChildNodes = leftNonTerminalNodeChildNodes, ///
                   rightChildNodes = rightNonTerminalNodeChildNodes, ///
-                  descended = this.descend(leftChildNodes, rightChildNodes, ...remainingArguments);
+                  childNodesCongruent = areChildNodesCongruent(leftChildNodes, rightChildNodes);
 
-            if (descended) {
-              visited = true;
+            if (childNodesCongruent) {
+              const descended = this.descend(leftChildNodes, rightChildNodes, ...remainingArguments);
+
+              if (descended) {
+                visited = true;
+              }
             }
           }
 

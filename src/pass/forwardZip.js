@@ -2,7 +2,7 @@
 
 import { nonTerminalNodeQuery, areChildNodesCongruent } from "../utilities/pass";
 
-export default class ZipPass {
+export default class ForwardZipPass {
   run(generalNode, specificNode, ...remainingArguments) {
     let success;
 
@@ -13,26 +13,34 @@ export default class ZipPass {
     return success;
   }
 
-  descend(generalChildNodes, specificChildNodes, ...remainingArguments) {
-    let descended = false;
+  descend(index, generalChildNodes, specificChildNodes, ...remainingArguments) {
+    let descendedForward = false;
 
-    const visited = generalChildNodes.every((generalChildNode, index) => {
-      const specificChildNode = specificChildNodes[index],
-            specificNode = specificChildNode, ///
+    const descendForward = remainingArguments.pop(),  ///
+          generalChildNodesLength = generalChildNodes.length;
+
+    if (index === generalChildNodesLength) {
+      descendedForward = descendForward();
+    } else {
+      const generalChildNode = generalChildNodes[index],
+            specificChildNode = specificChildNodes[index],
             generalNode = generalChildNode, ///
-            visited = this.visitNode(generalNode, specificNode, ...remainingArguments);
+            specificNode = specificChildNode, ///
+            visited = this.visitNode(generalNode, specificNode, ...remainingArguments, () => {
+              remainingArguments.push(descendForward);
+
+              const aheadIndex = index + 1,
+                    descendedForward = this.descend(aheadIndex, generalChildNodes, specificChildNodes, ...remainingArguments);
+
+              return descendedForward;
+            });
 
       if (visited) {
-        return true;
+        descendedForward = true;
       }
-    });
-
-    if (visited) {
-      descended = true;
     }
 
-
-    return descended;
+    return descendedForward;
   }
 
   visitNode(generalNode, specificNode, ...remainingArguments) {
@@ -60,10 +68,17 @@ export default class ZipPass {
     return visited;
   }
 
-  visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments) { ///
-    let visited;
+  visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments) {
+    let visited = false;
 
-    visited = true;
+    const descendForward = remainingArguments.pop(), ///
+          descendedForward = descendForward();
+
+    if (descendedForward) {
+      visited = true;
+    }
+
+    remainingArguments.push(descendForward);
 
     return visited;
   }
@@ -85,14 +100,15 @@ export default class ZipPass {
                 specificNonTerminalNodeRuleName = specificNonTerminalNode.getRuleName(); ///
 
           if (generalNonTerminalNodeRuleName === specificNonTerminalNodeRuleName) {
-            const generalNonTerminalNodeChildNodes = generalNonTerminalNode.getChildNodes(),
+            const index = 0,
+                  generalNonTerminalNodeChildNodes = generalNonTerminalNode.getChildNodes(),
                   specificNonTerminalNodeChildNodes = specificNonTerminalNode.getChildNodes(),
                   generalChildNodes = generalNonTerminalNodeChildNodes, ///
                   specificChildNodes = specificNonTerminalNodeChildNodes, ///
                   childNodesCongruent = areChildNodesCongruent(generalChildNodes, specificChildNodes);
 
             if (childNodesCongruent) {
-              const descended = this.descend(generalChildNodes, specificChildNodes, ...remainingArguments);
+              const descended = this.descend(index, generalChildNodes, specificChildNodes, ...remainingArguments);
 
               if (descended) {
                 visited = true;
@@ -109,7 +125,7 @@ export default class ZipPass {
       const { generalNodeQuery, specificNodeQuery, run } = map;
 
       const generalNode = generalNodeQuery(generalNonTerminalNode),  ///
-            specificNode = specificNodeQuery(specificNonTerminalNode);  ///
+        specificNode = specificNodeQuery(specificNonTerminalNode);  ///
 
       if ((generalNode !== null) && (specificNode !== null)) {
         const success  = run(generalNode, specificNode, ...remainingArguments);

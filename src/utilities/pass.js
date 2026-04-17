@@ -8,14 +8,33 @@ const { match } = arrayUtilities;
 
 export const nonTerminalNodeQuery = nodeQuery("/*");
 
-export function terminalNodeMapFromNodes(nodes) {
+export function areChildNodesCongruent(childNodesA, childNodesB) {
+  let areChildNodesCongruent = false;
+
+  const childNodesALength = childNodesA.length,
+        childNodesBLength = childNodesB.length;
+
+  if (childNodesALength === childNodesBLength) {
+    const specificTerminalNodeMap = terminalNodeMapFromChildNodes(childNodesB),
+          generalTerminalNodeMap = terminalNodeMapFromChildNodes(childNodesA),
+          terminalNodeMapsEqual = areTerminalNodeMapsEqual(generalTerminalNodeMap, specificTerminalNodeMap);
+
+    if (terminalNodeMapsEqual) {
+      areChildNodesCongruent = true;
+    }
+  }
+
+  return areChildNodesCongruent;
+}
+
+function terminalNodeMapFromChildNodes(childNodes) {
   const terminalNodeMap = {};
 
-  nodes.forEach((node, index) => {
-    const nodeTerminalNode = node.isTerminalNode();
+  childNodes.forEach((childNode, index) => {
+    const childNodeTerminalNode = childNode.isTerminalNode();
 
-    if (nodeTerminalNode) {
-      const terminalNode = node;  //
+    if (childNodeTerminalNode) {
+      const terminalNode = childNode;  //
 
       terminalNodeMap[index] = terminalNode;
     }
@@ -24,7 +43,7 @@ export function terminalNodeMapFromNodes(nodes) {
   return terminalNodeMap;
 }
 
-export function areTerminalNodeMapsEqual(generalTerminalNodeMap, specificTerminalNodeMap) {
+function areTerminalNodeMapsEqual(generalTerminalNodeMap, specificTerminalNodeMap) {
   let terminalNodeMapsEqual = false;
 
   const generalIndexes = Object.keys(generalTerminalNodeMap), ///
