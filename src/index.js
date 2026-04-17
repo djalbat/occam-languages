@@ -3,6 +3,7 @@
 export { default as Log } from "./log";
 export { default as Element } from "./element";
 export { default as Context } from "./context";
+export { default as BreakPoint } from "./breakPoint";
 export { default as FileContext } from "./context/file";
 export { default as ReleaseContext } from "./context/release";
 export { default as NonTerminalNode } from "./nonTerminalNode";
