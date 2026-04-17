@@ -448,15 +448,19 @@ export default class ReleaseContext {
     this.initialised = true;
   }
 
-  async break(filePath, lineIndex) {
+  async break(breakPoint) {
     const level = TRACE_LEVEL,
-          message = BREAK_MESSAGE;
+          message = BREAK_MESSAGE,
+          filePath = breakPoint.getFilePath(),
+          lineIndex = breakPoint.getLineIndex();
 
     this.writeToLog(level, message, filePath, lineIndex);
 
     const context = this; ///
 
-    await this.callback(context, filePath, lineIndex);
+    await this.callback(context, breakPoint);
+
+    return breakPoint;
   }
 
   async verify() {

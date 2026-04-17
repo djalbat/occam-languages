@@ -1,8 +1,8 @@
 "use strict";
 
 import Context from '../context';
+import BreakPoint from "../breakPoint";
 
-import { lineIndexFromNodeAndTokens } from "../utilities/lineIndex";
 import { nodeAsString, nodesAsString } from "../utilities/node";
 
 export default class FileContext extends Context {
@@ -73,17 +73,17 @@ export default class FileContext extends Context {
     return string;
   }
 
-  async break(node, lineIndex) {
+  async break(node, breakPoint) {
     const filePath = this.filePath,
           releaseContext = this.getReleaseContext();
 
-    if (lineIndex === null) {
-      lineIndex = lineIndexFromNodeAndTokens(node, this.tokens);
+    if (breakPoint === null) {
+      breakPoint = BreakPoint.fromFilePathNodeAndTokens(filePath, node, this.tokens);
     }
 
-    await releaseContext.break(filePath, lineIndex);
+    await releaseContext.break(breakPoint);
 
-    return lineIndex;
+    return breakPoint;
   }
 
   async verify() {
