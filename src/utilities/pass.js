@@ -9,64 +9,39 @@ const { match } = arrayUtilities;
 export const nonTerminalNodeQuery = nodeQuery("/*");
 
 export function areChildNodesCongruent(childNodesA, childNodesB) {
-  let areChildNodesCongruent = false;
+  const childNodesCongruent = match(childNodesA, childNodesB, (childNodeA, childNodeB) => {
+    const childNodeCongruent = isChildNodeCongruent(childNodeA, childNodeB);
 
-  const childNodesALength = childNodesA.length,
-        childNodesBLength = childNodesB.length;
-
-  if (childNodesALength === childNodesBLength) {
-    const specificTerminalNodeMap = terminalNodeMapFromChildNodes(childNodesB),
-          generalTerminalNodeMap = terminalNodeMapFromChildNodes(childNodesA),
-          terminalNodeMapsEqual = areTerminalNodeMapsEqual(generalTerminalNodeMap, specificTerminalNodeMap);
-
-    if (terminalNodeMapsEqual) {
-      areChildNodesCongruent = true;
-    }
-  }
-
-  return areChildNodesCongruent;
-}
-
-function terminalNodeMapFromChildNodes(childNodes) {
-  const terminalNodeMap = {};
-
-  childNodes.forEach((childNode, index) => {
-    const childNodeTerminalNode = childNode.isTerminalNode();
-
-    if (childNodeTerminalNode) {
-      const terminalNode = childNode;  //
-
-      terminalNodeMap[index] = terminalNode;
+    if (childNodeCongruent) {
+      return true;
     }
   });
 
-  return terminalNodeMap;
+  return childNodesCongruent;
 }
 
-function areTerminalNodeMapsEqual(generalTerminalNodeMap, specificTerminalNodeMap) {
-  let terminalNodeMapsEqual = false;
+function isChildNodeCongruent(childNodeA, childNodeB) {
+  let childNodeCongruent = false;
 
-  const generalIndexes = Object.keys(generalTerminalNodeMap), ///
-        specificIndexes = Object.keys(specificTerminalNodeMap), ///
-        terminalNodeMapKeysMatch = match(generalIndexes, specificIndexes, (generalIndex, specificIndex) => {
-          if (generalIndex === specificIndex) {
-            return true;
-          }
-        });
+  const childNodeANonTerminalNode = childNodeA.isNonTerminalNode(),
+        childNodeBNonTerminalNode = childNodeB.isNonTerminalNode();
 
-  if (terminalNodeMapKeysMatch) {
-    const generalTerminalNodes = Object.values(generalTerminalNodeMap), ///
-          specificTerminalNodes = Object.values(specificTerminalNodeMap), ///
-          terminalNodeMapValuesMatch = match(generalTerminalNodes, specificTerminalNodes, (generalTerminalNode, specificTerminalNode) => {
-            const generalTerminalNodeMatchesSpecificTerminalNode = generalTerminalNode.match(specificTerminalNode);
+  if (childNodeANonTerminalNode && childNodeBNonTerminalNode) {
+    childNodeCongruent = true;
+  } else {
+    const childNodeATerminalNode = !childNodeANonTerminalNode,
+          childNodeBTerminalNode = !childNodeBNonTerminalNode;
 
-            if (generalTerminalNodeMatchesSpecificTerminalNode) {
-              return true;
-            }
-          });
+    if (childNodeATerminalNode && childNodeBTerminalNode) {
+      const terminalNodeA = childNodeA, ///
+            terminalNodeB = childNodeB, ///
+            terminalNodeAMatchesTerminalNodeB = terminalNodeA.match(terminalNodeB);
 
-    terminalNodeMapsEqual = terminalNodeMapValuesMatch; ///
+      if (terminalNodeAMatchesTerminalNodeB) {
+        childNodeCongruent = true;
+      }
+    }
   }
 
-  return terminalNodeMapsEqual;
+  return childNodeCongruent;
 }
