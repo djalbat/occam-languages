@@ -14,18 +14,26 @@ export default class EquivalencePass {
   }
 
   descend(leftChildNodes, rightChildNodes, ...remainingArguments) {
-    let descended;
+    let descended = false;
 
-    descended = leftChildNodes.every((leftChildNode, index) => {
-      const rightChildNode = rightChildNodes[index],
-            leftNode = leftChildNode, ///
-            rightNode = rightChildNode, ///
-            visited = this.visitNode(leftNode, rightNode, ...remainingArguments);
+    const childNodesCongruent = areChildNodesCongruent(leftChildNodes, rightChildNodes);
+
+    if (childNodesCongruent) {
+      const visited = leftChildNodes.every((leftChildNode, index) => {
+        const rightChildNode = rightChildNodes[index],
+              leftNode = leftChildNode, ///
+              rightNode = rightChildNode, ///
+              visited = this.visitNode(leftNode, rightNode, ...remainingArguments);
+
+        if (visited) {
+          return true;
+        }
+      });
 
       if (visited) {
-        return true;
+        descended = true;
       }
-    });
+    }
 
     return descended;
   }
@@ -84,14 +92,10 @@ export default class EquivalencePass {
                   rightNonTerminalNodeChildNodes = rightNonTerminalNode.getChildNodes(),
                   leftChildNodes = leftNonTerminalNodeChildNodes, ///
                   rightChildNodes = rightNonTerminalNodeChildNodes, ///
-                  childNodesCongruent = areChildNodesCongruent(leftChildNodes, rightChildNodes);
+                  descended = this.descend(leftChildNodes, rightChildNodes, ...remainingArguments);
 
-            if (childNodesCongruent) {
-              const descended = this.descend(leftChildNodes, rightChildNodes, ...remainingArguments);
-
-              if (descended) {
-                visited = true;
-              }
+            if (descended) {
+              visited = true;
             }
           }
 

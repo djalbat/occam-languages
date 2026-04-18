@@ -16,27 +16,31 @@ export default class ForwardZipPass {
   descend(index, generalChildNodes, specificChildNodes, ...remainingArguments) {
     let descendedForward = false;
 
-    const descendForward = remainingArguments.pop(),  ///
-          generalChildNodesLength = generalChildNodes.length;
+    const childNodesCongruent = areChildNodesCongruent(generalChildNodes, specificChildNodes);
 
-    if (index === generalChildNodesLength) {
-      descendedForward = descendForward();
-    } else {
-      const generalChildNode = generalChildNodes[index],
-            specificChildNode = specificChildNodes[index],
-            generalNode = generalChildNode, ///
-            specificNode = specificChildNode, ///
-            visited = this.visitNode(generalNode, specificNode, ...remainingArguments, () => {
-              remainingArguments.push(descendForward);
+    if (childNodesCongruent) {
+      const descendForward = remainingArguments.pop(),  ///
+            generalChildNodesLength = generalChildNodes.length;
 
-              const aheadIndex = index + 1,
-                    descendedForward = this.descend(aheadIndex, generalChildNodes, specificChildNodes, ...remainingArguments);
+      if (index === generalChildNodesLength) {
+        descendedForward = descendForward();
+      } else {
+        const generalChildNode = generalChildNodes[index],
+              specificChildNode = specificChildNodes[index],
+              generalNode = generalChildNode, ///
+              specificNode = specificChildNode, ///
+              visited = this.visitNode(generalNode, specificNode, ...remainingArguments, () => {
+                remainingArguments.push(descendForward);
 
-              return descendedForward;
-            });
+                const aheadIndex = index + 1,
+                      descendedForward = this.descend(aheadIndex, generalChildNodes, specificChildNodes, ...remainingArguments);
 
-      if (visited) {
-        descendedForward = true;
+                return descendedForward;
+              });
+
+        if (visited) {
+          descendedForward = true;
+        }
       }
     }
 
@@ -105,14 +109,10 @@ export default class ForwardZipPass {
                   specificNonTerminalNodeChildNodes = specificNonTerminalNode.getChildNodes(),
                   generalChildNodes = generalNonTerminalNodeChildNodes, ///
                   specificChildNodes = specificNonTerminalNodeChildNodes, ///
-                  childNodesCongruent = areChildNodesCongruent(generalChildNodes, specificChildNodes);
+                  descended = this.descend(index, generalChildNodes, specificChildNodes, ...remainingArguments);
 
-            if (childNodesCongruent) {
-              const descended = this.descend(index, generalChildNodes, specificChildNodes, ...remainingArguments);
-
-              if (descended) {
-                visited = true;
-              }
+            if (descended) {
+              visited = true;
             }
           }
 

@@ -16,21 +16,24 @@ export default class ZipPass {
   descend(generalChildNodes, specificChildNodes, ...remainingArguments) {
     let descended = false;
 
-    const visited = generalChildNodes.every((generalChildNode, index) => {
-      const specificChildNode = specificChildNodes[index],
-            specificNode = specificChildNode, ///
-            generalNode = generalChildNode, ///
-            visited = this.visitNode(generalNode, specificNode, ...remainingArguments);
+    const childNodesCongruent = areChildNodesCongruent(generalChildNodes, specificChildNodes);
+
+    if (childNodesCongruent) {
+      const visited = generalChildNodes.every((generalChildNode, index) => {
+        const specificChildNode = specificChildNodes[index],
+              specificNode = specificChildNode, ///
+              generalNode = generalChildNode, ///
+              visited = this.visitNode(generalNode, specificNode, ...remainingArguments);
+
+        if (visited) {
+          return true;
+        }
+      });
 
       if (visited) {
-        return true;
+        descended = true;
       }
-    });
-
-    if (visited) {
-      descended = true;
     }
-
 
     return descended;
   }
@@ -89,14 +92,10 @@ export default class ZipPass {
                   specificNonTerminalNodeChildNodes = specificNonTerminalNode.getChildNodes(),
                   generalChildNodes = generalNonTerminalNodeChildNodes, ///
                   specificChildNodes = specificNonTerminalNodeChildNodes, ///
-                  childNodesCongruent = areChildNodesCongruent(generalChildNodes, specificChildNodes);
+                  descended = this.descend(generalChildNodes, specificChildNodes, ...remainingArguments);
 
-            if (childNodesCongruent) {
-              const descended = this.descend(generalChildNodes, specificChildNodes, ...remainingArguments);
-
-              if (descended) {
-                visited = true;
-              }
+            if (descended) {
+              visited = true;
             }
           }
 
