@@ -274,9 +274,9 @@ function checkProjectDependencyOfPackage(releaseContext, dependentReleased, depe
   let projectDependencyOfPackage = false;
 
   if (dependentReleased) {
-    const released = releaseContext.isReleased();
+    const unreleased = releaseContext.isUnreleased();
 
-    if (!released) {
+    if (unreleased) {
       const { log } = context,
             name = releaseContext.getName(),
             lastDependentName = last(dependentNames),

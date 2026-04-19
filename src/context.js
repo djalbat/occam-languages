@@ -21,6 +21,8 @@ export default class Context {
 
   isReleased() { return this.context.isReleased(); }
 
+  isUnreleased() { return this.context.isUnreleased(); }
+
   getReleaseContext() { return this.context.getReleaseContext(); }
 
   nodesAsString(node) { return this.context.nodesAsString(node); }

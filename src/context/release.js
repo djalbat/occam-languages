@@ -106,6 +106,13 @@ export default class ReleaseContext {
     return released;
   }
 
+  isUnreleased() {
+    const released = this.isReleased(),
+          unreleased = !released;
+
+    return unreleased;
+  }
+
   getTypePrefix() {
     let typePrefix = null;
 
