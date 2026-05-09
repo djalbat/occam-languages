@@ -1,5 +1,6 @@
 "use strict";
 
+import { Dependency } from "occam-model";
 import { arrayUtilities } from "necessary";
 
 import { asyncEvery  } from "../utilities/asynchronous";
@@ -7,10 +8,12 @@ import { SINGLE_SPACE } from "../constants";
 
 const { last } = arrayUtilities;
 
-export async function createReleaseContexts(dependency, context) {
+export async function createReleaseContexts(dependencyName, context) {
   let releaseContextsCreated = false;
 
-  const dependentNames = [],
+  const name = dependencyName,  ///
+        dependency = Dependency.fromName(name),
+        dependentNames = [],
         dependentReleased = false,
         releaseContextCreated = await createReleaseContext(dependency, dependentNames, dependentReleased, context);
 
