@@ -73,6 +73,5 @@ export function releaseContextFromRelease(release, context) {
 export default {
   releaseContextFromJSON,
   releaseContextFromProject,
-  releaseContextFromRelease,
-  releaseContextFromDependency
+  releaseContextFromRelease
 };
