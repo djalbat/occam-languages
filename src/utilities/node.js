@@ -19,8 +19,8 @@ export function nodesAsString(nodes, tokens) {
     const nodeString = nodeAsString(node, tokens);
 
     string = (string === null) ?
-      nodeString :
-      `${string}, ${nodeString}`;
+               nodeString :
+                `${string}, ${nodeString}`;
 
     return string;
   }, null);
@@ -68,12 +68,15 @@ function nodeAsTokens(node, tokens) {
 }
 
 function terminalNodeAsTokens(terminalNode, tokens) {
-  const significantToken = terminalNode.getSignificantToken(),
-        token = significantToken; ///
+  const significantToken = terminalNode.getSignificantToken();
 
-  tokens = [  ///
-    token
-  ];
+  tokens = [];  ///
+
+  if (significantToken !== null) {
+    const token = significantToken; ///
+
+    tokens.push(token);
+  }
 
   return tokens;
 }
