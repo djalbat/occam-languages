@@ -77,11 +77,19 @@ export default class Log {
     return log;
   }
 
+  static fromLogLevel(logLevel) {
+    const messages = null,
+          follow = true,
+          log = new Log(messages, logLevel, follow);
+
+    return log;
+  }
+
   static fromFollowAndLogLevel(follow, logLevel) {
     const messages = follow ?
-                       null :
-                         [],
-          log = new Log(messages, logLevel, follow);
+        null :
+        [],
+      log = new Log(messages, logLevel, follow);
 
     return log;
   }
