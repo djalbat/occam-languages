@@ -12,7 +12,7 @@ export async function asyncSome(array, callback) {
   for (let index = 0; index < length; index += 1) {
     const element = array[index];
 
-    result = await callback(element, index, array);
+    result = !!await callback(element, index, array);
 
     if (result) {
       break;
@@ -30,7 +30,7 @@ export async function asyncEvery(array, callback) {
   for (let index = 0; index < length; index += 1) {
     const element = array[index];
 
-    result = await callback(element, index, array);
+    result = !!await callback(element, index, array);
 
     if (!result) {
       break;
