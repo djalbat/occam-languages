@@ -16,7 +16,6 @@ export { default as ForwardZipPass } from "./pass/forwardZip";
 export { default as EquivalencePass } from "./pass/equivalence";
 
 export { default as nodeUtilities } from "./utilities/node";
-export { default as queryUtilities } from "./utilities/query";
 export { default as fileContextUtilities } from "./utilities/fileContext";
 export { default as verificationUtilities } from "./utilities/verification";
 export { default as asynchronousUtilities } from "./utilities/asynchronous";
