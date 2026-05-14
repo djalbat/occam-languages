@@ -1,7 +1,7 @@
 {
   "name": "occam-languages",
   "author": "James Smith",
-  "version": "0.0.247",
+  "version": "0.0.248",
   "license": "MIT, Anti-996",
   "homepage": "https://github.com/djalbat/occam-languages",
   "description": "Occam's common language functionality.",
@@ -11,9 +11,9 @@
   },
   "dependencies": {
     "necessary": "^17.2.10",
-    "occam-custom-grammars": "^6.0.58",
-    "occam-model": "^1.0.523",
-    "occam-parsers": "^23.1.74"
+    "occam-custom-grammars": "^6.0.60",
+    "occam-model": "^1.0.524",
+    "occam-parsers": "^23.1.77"
   },
   "devDependencies": {
     "@swc/core": "1.13.20",
