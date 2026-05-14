@@ -1,10 +1,10 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
+import { queryUtilities } from "occam-dom";
 
-import { nodeQuery } from "../utilities/query";
-
-const { match } = arrayUtilities;
+const { match } = arrayUtilities,
+      { nodeQuery } = queryUtilities;
 
 export const nonTerminalNodeQuery = nodeQuery("/*");
 
