@@ -1,7 +1,7 @@
 "use strict";
 
 import { arrayUtilities } from "necessary";
-import { queryUtilities } from "occam-dom";
+import { queryUtilities } from "occam-query";
 
 const { match } = arrayUtilities,
       { nodeQuery } = queryUtilities;
