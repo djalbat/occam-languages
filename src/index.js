@@ -15,7 +15,14 @@ export { default as ForwardPass } from "./pass/forward";
 export { default as ForwardZipPass } from "./pass/forwardZip";
 export { default as EquivalencePass } from "./pass/equivalence";
 
+export { default as FurtleLexer } from "./furtle/lexer";
+export { default as FurtleParser } from "./furtle/parser";
+export { default as NominalLexer } from "./nominal/lexer";
+export { default as NominalParser } from "./nominal/parser";
+
 export { default as nodeUtilities } from "./utilities/node";
+export { default as furtleUtilities } from "./utilities/furtle";
+export { default as nominalUtilities } from "./utilities/nominal";
 export { default as fileContextUtilities } from "./utilities/fileContext";
 export { default as verificationUtilities } from "./utilities/verification";
 export { default as asynchronousUtilities } from "./utilities/asynchronous";
