@@ -230,6 +230,28 @@ export default class ReleaseContext {
     return lemmas;
   }
 
+  getSchemas(includeDependencies = true) {
+    const schemas = [];
+
+    this.fileContexts.forEach((fileContext) => {
+      const includeRelease = false,
+            fileContextSchemas = fileContext.getSchemas(includeRelease);
+
+      push(schemas, fileContextSchemas);
+    });
+
+    if (includeDependencies) {
+      this.dependencyReleaseContexts.forEach((releaseContext) => {
+        const includeDependencies = false,
+              releaseContextSchemas = releaseContext.getSchemas(includeDependencies);
+
+        push(schemas, releaseContextSchemas);
+      });
+    }
+
+    return schemas;
+  }
+
   getTheorems(includeDependencies = true) {
     const theorems = [];
 
@@ -272,19 +294,6 @@ export default class ReleaseContext {
     }
 
     return procedures;
-  }
-
-  getMetaLemmas(includeDependencies = true) {
-    const metaLemmas = [];
-
-    this.fileContexts.forEach((fileContext) => {
-      const includeRelease = false,
-            fileContextMetaLemmas = fileContext.getMetaLemmas(includeRelease);
-
-      push(metaLemmas, fileContextMetaLemmas);
-    });
-
-    return metaLemmas;
   }
 
   getConjectures(includeDependencies = true) {
@@ -373,28 +382,6 @@ export default class ReleaseContext {
     }
 
     return constructors;
-  }
-
-  getMetatheorems(includeDependencies = true) {
-    const metatheorems = [];
-
-    this.fileContexts.forEach((fileContext) => {
-      const includeRelease = false,
-            fileContextMetatheorems = fileContext.getMetatheorems(includeRelease);
-
-      push(metatheorems, fileContextMetatheorems);
-    });
-
-    if (includeDependencies) {
-      this.dependencyReleaseContexts.forEach((releaseContext) => {
-        const includeDependencies = false,
-              releaseContextMetatheorems = releaseContext.getMetatheorems(includeDependencies);
-
-        push(metatheorems, releaseContextMetatheorems);
-      });
-    }
-
-    return metatheorems;
   }
 
   getDependencies() { return this.entries.getDependencies(); }
