@@ -296,6 +296,28 @@ export default class ReleaseContext {
     return procedures;
   }
 
+  getGenerators(includeDependencies = true) {
+    const generators = [];
+
+    this.fileContexts.forEach((fileContext) => {
+      const includeRelease = false,
+            fileContextGenerators = fileContext.getGenerators(includeRelease);
+
+      push(generators, fileContextGenerators);
+    });
+
+    if (includeDependencies) {
+      this.dependencyReleaseContexts.forEach((releaseContext) => {
+        const includeDependencies = false,
+              releaseContextGenerators = releaseContext.getGenerators(includeDependencies);
+
+        push(generators, releaseContextGenerators);
+      });
+    }
+
+    return generators;
+  }
+
   getConjectures(includeDependencies = true) {
     const conjectures = [];
 
