@@ -136,10 +136,10 @@ export default class FileContext extends Context {
 
   static fromJSON(Class, json, ...remainingArguments) {
     const { fileContent, filePath } = json,
-      tokens = null,
-      node = null,
-      context = remainingArguments.pop(), ///
-      fileContext = new Class(context, fileContent, filePath, tokens, node, json, ...remainingArguments);
+          tokens = null,
+          node = null,
+          context = remainingArguments.pop(), ///
+          fileContext = new Class(context, fileContent, filePath, tokens, node, json, ...remainingArguments);
 
     return fileContext;
   }
