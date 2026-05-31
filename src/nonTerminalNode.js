@@ -8,7 +8,9 @@ const { first } = arrayUtilities;
 
 export default class NonTerminalNode extends NonTerminalNodeBase {
   someTerminalNode(callback, tokenType) {
-    return this.someChildNode((childNode, index) => {
+    let index = 0;
+
+    return this.someChildNode((childNode) => {
       const childNodeTerminalNode = childNode.isTerminalNode();
 
       if (childNodeTerminalNode) {
@@ -16,7 +18,7 @@ export default class NonTerminalNode extends NonTerminalNodeBase {
               terminalNodeType = terminalNode.getType();
 
         if (terminalNodeType === tokenType) {
-          return callback(terminalNode, index);
+          return callback(terminalNode, index++);
         }
       }
     });
