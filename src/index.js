@@ -19,7 +19,9 @@ export { default as FurtleParser } from "./furtle/parser";
 export { default as NominalLexer } from "./nominal/lexer";
 export { default as NominalParser } from "./nominal/parser";
 
+export { default as nodeMixins } from "./mixins/node";
 export { default as nodeUtilities } from "./utilities/node";
+
 export { default as furtleUtilities } from "./utilities/furtle";
 export { default as nominalUtilities } from "./utilities/nominal";
 export { default as fileContextUtilities } from "./utilities/fileContext";
