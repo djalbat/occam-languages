@@ -6,7 +6,6 @@ export { default as Context } from "./context";
 export { default as BreakPoint } from "./breakPoint";
 export { default as FileContext } from "./context/file";
 export { default as ReleaseContext } from "./context/release";
-export { default as NonTerminalNode } from "./nonTerminalNode";
 
 export { default as ZipPass } from "./pass/zip";
 export { default as AsyncPass } from "./pass/async";
