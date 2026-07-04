@@ -19,6 +19,33 @@ export function ruleFromRuleName(ruleName) {
   return rule;
 }
 
+export function instantiate(placeholderRule, string, context) {
+  let node;
+
+  const lexer = context.getLexer(),
+        parser = context.getParser(),
+        content = `${string}
+`,
+        tokens = lexer.tokenise(content);
+
+  context.setTokens(tokens);
+
+  const startRule = placeholderRule;  ///
+
+  node = parser.parse(tokens, startRule);
+
+  const nonTerminalNode = node; ///
+
+  nonTerminalNode.someChildNode((childNode) => {
+    node = childNode; ///
+
+    return true;
+  });
+
+  return node;
+}
+
 export default {
+  instantiate,
   ruleFromRuleName
 };
