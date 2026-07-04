@@ -23,6 +23,7 @@ export { default as NonTerminalNode } from "./nonTerminalNode";
 
 export { default as nodeMixins } from "./mixins/node";
 
+export { default as bnfUtilities } from "./utilities/bnf";
 export { default as nodeUtilities } from "./utilities/node";
 export { default as furtleUtilities } from "./utilities/furtle";
 export { default as nominalUtilities } from "./utilities/nominal";
