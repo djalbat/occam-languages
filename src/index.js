@@ -22,9 +22,11 @@ export { default as NominalParser } from "./nominal/parser";
 export { default as NonTerminalNode } from "./nonTerminalNode";
 
 export { default as nodeMixins } from "./mixins/node";
+
 export { default as nodeUtilities } from "./utilities/node";
 export { default as furtleUtilities } from "./utilities/furtle";
 export { default as nominalUtilities } from "./utilities/nominal";
+export { default as breakPointUtilities } from "./utilities/breakPoint";
 export { default as fileContextUtilities } from "./utilities/fileContext";
 export { default as verificationUtilities } from "./utilities/verification";
 export { default as asynchronousUtilities } from "./utilities/asynchronous";

@@ -1,5 +1,33 @@
 "use strict";
 
+import BreakPoint from "../breakPoint";
+
+export function breakPointFromJSON(json) {
+  let breakPoint;
+
+  ({ breakPoint } = json);
+
+  if (breakPoint !== null) {
+    const breakPointJSON = breakPoint;  ///
+
+    json = breakPointJSON;  ///
+
+    breakPoint = BreakPoint.fromJSON(json);  ///
+  }
+
+  return breakPoint;
+}
+
+export function breakPointToBreakPointJSON(breakPoint) {
+  let breakPointJSON = null;
+
+  if (breakPoint !== null) {
+    breakPointJSON = breakPoint.toJSON();
+  }
+
+  return breakPointJSON;
+}
+
 export function lineIndexFromNodeAndTokens(node, tokens) {
   let lineIndex = 0;
 
@@ -19,3 +47,9 @@ export function lineIndexFromNodeAndTokens(node, tokens) {
 
   return lineIndex;
 }
+
+export default {
+  breakPointFromJSON,
+  breakPointToBreakPointJSON,
+  lineIndexFromNodeAndTokens
+};
