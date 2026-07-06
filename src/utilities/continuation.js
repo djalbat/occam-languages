@@ -2,15 +2,15 @@
 
 import { arrayUtilities, asynchronousUtilities } from "necessary";
 
-const { filter } = arrayUtilities,
-      { forEach } = asynchronousUtilities;
+const { filter: arrayFilter } = arrayUtilities,
+      { forEach: asynchronousForEach } = asynchronousUtilities;
 
 export function some(array, callback, ...remainingArguments) {
   let success = false;
 
   const continuation = remainingArguments.pop();
 
-  forEach(array, (element, next, done) => {
+  asynchronousForEach(array, (element, next, done) => {
     callback(element, ...remainingArguments, (passed) => {
       if (passed) {
         success = true;
@@ -32,7 +32,7 @@ export function every(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  forEach(array, (element, next, done) => {
+  asynchronousForEach(array, (element, next, done) => {
     callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         success = false;
@@ -47,6 +47,14 @@ export function every(array, callback, ...remainingArguments) {
   }, () => {
     continuation(success);
   });
+}
+
+export function forEach(array, callback, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  asynchronousForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, next);
+  }, continuation);
 }
 
 export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
@@ -85,7 +93,7 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
           return;
         }
 
-        filter(arrayA, (elementA) => {
+        arrayFilter(arrayA, (elementA) => {
           const arrayBIncludesElementA = arrayB.includes(elementA);
 
           if (!arrayBIncludesElementA) {
@@ -160,6 +168,7 @@ export function unbreakable(innerFunction) {
 export default {
   some,
   every,
+  forEach,
   resolve,
   breakable,
   unbreakable
