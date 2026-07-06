@@ -70,7 +70,7 @@ export default class Context {
     releaseContext.writeToLog(level, message);
   }
 
-  break(node, lineIndex) { return this.context.break(node, lineIndex); }
+  break(node, breakPoint, resume) { return this.context.break(node, breakPoint, resume); }
 
   static fromNothing(Class, ...remainingArguments) {
     let context = remainingArguments.pop();
