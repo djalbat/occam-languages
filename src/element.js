@@ -44,8 +44,8 @@ export default class Element {
     this.context = context;
   }
 
-  async break(context) {
-    this.breakPoint = await context.break(this.node, this.breakPoint);
+  break(context, resume) {
+    this.breakPoint = context.break(this.node, this.breakPoint, resume);
   }
 
   matchNode(node) { return this.node.match(node); }

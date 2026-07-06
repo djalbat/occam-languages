@@ -2,21 +2,14 @@
 
 import { arrayUtilities } from "necessary";
 
-import { asyncResolve } from "../utilities/asynchronous";
+import { resolve } from "../utilities/continuation";
 
 const { first, filter, compress } = arrayUtilities;
 
-export async function verifyFileContexts(fileContexts, verifiedFileContexts) {
-  const resolved = await asyncResolve(fileContexts, verifiedFileContexts, async (fileContext) => {
-          const fileContextVerifies = await fileContext.verify();
-
-          if (fileContextVerifies) {
-            return true;
-          }
-        }),
-        fileContextsVerify = resolved;  ///
-
-  return fileContextsVerify;
+export function verifyFileContexts(fileContexts, verifiedFileContexts, contiunation) {
+  resolve(fileContexts, verifiedFileContexts, (fileContext, contiunation) => {
+    fileContext.verify(contiunation);
+  }, contiunation);
 }
 
 export function verifyTypePrefixes(typePrefixes, releaseContext) {

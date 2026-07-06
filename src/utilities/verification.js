@@ -3,6 +3,7 @@
 import { Dependency } from "occam-model";
 import { arrayUtilities } from "necessary";
 
+import { every  } from "../utilities/continuation";
 import { asyncEvery  } from "../utilities/asynchronous";
 import { SINGLE_SPACE } from "../constants";
 
@@ -32,20 +33,10 @@ export function initialiseReleaseContexts(context) {
   });
 }
 
-export async function verifyReleaseContexts(context) {
-  let releaseContextsVerify;
-
+export function verifyReleaseContexts(context, contiunation) {
   const { releaseContexts } = context;
 
-  releaseContextsVerify = await asyncEvery(releaseContexts, async (releaseContext) => {
-    const releaseContextVerifies = await verifyReleaseContext(releaseContext, context);
-
-    if (releaseContextVerifies) {
-      return true;
-    }
-  });
-
-  return releaseContextsVerify;
+  every(releaseContexts, verifyReleaseContext, context, contiunation);
 }
 
 export default {
@@ -54,31 +45,37 @@ export default {
   verifyReleaseContexts
 };
 
-async function verifyReleaseContext(releaseContext, context) {
-  let releaseContextVerifies = false;
+function verifyReleaseContext(releaseContext, context, contiunation) {
+  let releaseContextVerifies;
 
   const released = releaseContext.isReleased(),
         verified = releaseContext.hasVerified();
 
   if (released || verified) {
     releaseContextVerifies = true;
-  } else {
-    const { log } = context,
-          name = releaseContext.getName(),
-          releaseName = name; ///
 
-    log.info(`Verifying the '${releaseName}' project...`);
+    contiunation(releaseContextVerifies);
 
-    const verifies = await releaseContext.verify();
+    return;
+  }
 
+  const { log } = context,
+        name = releaseContext.getName(),
+        releaseName = name; ///
+
+  log.info(`Verifying the '${releaseName}' project...`);
+
+  releaseContextVerifies = false;
+
+  releaseContext.verify((verifies) => {
     if (verifies) {
       log.info(`...verified the '${releaseName}' project.`);
 
       releaseContextVerifies = true;
     }
-  }
 
-  return releaseContextVerifies;
+    contiunation(releaseContextVerifies);
+  });
 }
 
 async function createReleaseContext(dependency, dependentNames, dependentReleased, context) {

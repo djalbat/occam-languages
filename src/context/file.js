@@ -73,7 +73,7 @@ export default class FileContext extends Context {
     return string;
   }
 
-  async break(node, breakPoint) {
+  break(node, breakPoint, resume) {
     const filePath = this.filePath,
           releaseContext = this.getReleaseContext();
 
@@ -81,12 +81,12 @@ export default class FileContext extends Context {
       breakPoint = BreakPoint.fromFilePathNodeAndTokens(filePath, node, this.tokens);
     }
 
-    await releaseContext.break(breakPoint);
+    releaseContext.break(breakPoint, resume);
 
     return breakPoint;
   }
 
-  async verify() {
+  verify() {
     let verifies = false;
 
     if (this.node === null) {
@@ -94,7 +94,7 @@ export default class FileContext extends Context {
     } else {
       this.debug(`Verifying the '${this.filePath}' file...`);
 
-      const fileVerifies = await this.verifyFile();
+      const fileVerifies = this.verifyFile();
 
       if (fileVerifies) {
         verifies = true;

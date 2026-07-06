@@ -464,7 +464,7 @@ export default class ReleaseContext {
     this.initialised = true;
   }
 
-  async break(breakPoint) {
+  break(breakPoint, resume) {
     const level = TRACE_LEVEL,
           message = BREAK_MESSAGE,
           filePath = breakPoint.getFilePath(),
@@ -474,22 +474,27 @@ export default class ReleaseContext {
 
     const context = this; ///
 
-    await this.callback(context, breakPoint);
+    this.callback(breakPoint, resume, context);
 
     return breakPoint;
   }
 
-  async verify() {
+  verify(contiunation) {
     let verifies = false;
 
     const typePrefixes = this.getTypePrefixes(),
           releaseContext = this, ///
           typePrefixesVerify = verifyTypePrefixes(typePrefixes, releaseContext);
 
-    if (typePrefixesVerify) {
-      const verifiedFileContexts = [],
-            fileContextsVerify = await verifyFileContexts(this.fileContexts, verifiedFileContexts);
+    if (!typePrefixesVerify) {
+      contiunation(verifies);
 
+      return;
+    }
+
+    const verifiedFileContexts = [];
+
+    verifyFileContexts(this.fileContexts, verifiedFileContexts, (fileContextsVerify) => {
       if (fileContextsVerify) {
         verifies = true;
 
@@ -497,9 +502,9 @@ export default class ReleaseContext {
 
         this.fileContexts = verifiedFileContexts; ///
       }
-    }
 
-    return verifies;
+      contiunation(verifies);
+    });
   }
 
   toJSON() {
