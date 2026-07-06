@@ -11,6 +11,7 @@ export { default as ZipPass } from "./pass/zip";
 export { default as AsyncPass } from "./pass/async";
 export { default as SimplePass } from "./pass/simple";
 export { default as ForwardPass } from "./pass/forward";
+export { default as AsyncZipPass } from "./pass/asyncZip";
 export { default as ForwardZipPass } from "./pass/forwardZip";
 export { default as EquivalencePass } from "./pass/equivalence";
 
