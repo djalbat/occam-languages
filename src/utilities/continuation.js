@@ -5,11 +5,35 @@ import { arrayUtilities, asynchronousUtilities } from "necessary";
 const { filter } = arrayUtilities,
       { forEach } = asynchronousUtilities;
 
-export function every(array, callback, context, contiunation) {
+export function some(array, callback, ...remainingArguments) {
+  let success = false;
+
+  const continuation = remainingArguments.pop();
+
+  forEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (passed) {
+        success = true;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    continuation(success);
+  });
+}
+
+export function every(array, callback, ...remainingArguments) {
   let success = true;
 
-  forEach(array, (elmeent, next, done) => {
-    callback(elmeent, context, (passed) => {
+  const continuation = remainingArguments.pop();
+
+  forEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         success = false;
 
@@ -21,27 +45,29 @@ export function every(array, callback, context, contiunation) {
       next();
     });
   }, () => {
-    contiunation(success);
+    continuation(success);
   });
 }
 
-export function resolve(arrayA, arrayB, callback, continuation) {
+export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
   arrayA = [  ///
     ...arrayA
   ];
+
+  const continuation = remainingArguments.pop();
 
   function nextPass() {
     const arrayALength = arrayA.length;
 
     if (arrayALength === 0) {
-      const resolved = true;  ///
+      const success = true;  ///
 
-      continuation(resolved);
+      continuation(success);
 
       return;
     }
 
-    let resolved = false;
+    let success = false;
 
     let count = -1;
 
@@ -51,10 +77,10 @@ export function resolve(arrayA, arrayB, callback, continuation) {
       const terminate = (count === arrayALength);
 
       if (terminate) {
-        if (!resolved) {
-          const resolved = false; ///
+        if (!success) {
+          const success = false; ///
 
-          continuation(resolved);
+          continuation(success);
 
           return;
         }
@@ -72,13 +98,13 @@ export function resolve(arrayA, arrayB, callback, continuation) {
         const index = count,  ///
               elementA = arrayA[index];
 
-        callback(elementA, (passed) => {
+        callback(elementA, ...remainingArguments, (passed) => {
           if (passed) {
             const elementB = elementA;  ///
 
             arrayB.push(elementB);
 
-            resolved = true;
+            success = true;
           }
 
           nextElement();
@@ -132,6 +158,7 @@ export function unbreakable(innerFunction) {
 }
 
 export default {
+  some,
   every,
   resolve,
   breakable,

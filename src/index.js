@@ -14,6 +14,7 @@ export { default as ForwardPass } from "./pass/forward";
 export { default as AsyncZipPass } from "./pass/asyncZip";
 export { default as ForwardZipPass } from "./pass/forwardZip";
 export { default as EquivalencePass } from "./pass/equivalence";
+export { default as ContinuationPass } from "./pass/continuation";
 
 export { default as FurtleLexer } from "./furtle/lexer";
 export { default as FurtleParser } from "./furtle/parser";
