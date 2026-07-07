@@ -49,6 +49,22 @@ export function every(array, callback, ...remainingArguments) {
   });
 }
 
+export function reduce(array, initialValue, callback, ...remainingArguments) {
+  let value = initialValue; ///
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousForEach(array, (element, next, done) => {
+    callback(value, element, ...remainingArguments, (nextValue) => {
+      value = nextValue;  ///
+
+      next();
+    });
+  }, () => {
+    continuation(value);
+  });
+}
+
 export function forEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
@@ -168,6 +184,7 @@ export function unbreakable(innerFunction) {
 export default {
   some,
   every,
+  reduce,
   forEach,
   resolve,
   breakable,
