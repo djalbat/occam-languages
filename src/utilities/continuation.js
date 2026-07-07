@@ -69,7 +69,9 @@ export function forEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, next);
+    callback(element, ...remainingArguments, () => {
+      next();
+    });
   }, continuation);
 }
 
