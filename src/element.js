@@ -44,8 +44,8 @@ export default class Element {
     this.context = context;
   }
 
-  break(context, resume) {
-    this.breakPoint = context.break(this.node, this.breakPoint, resume);
+  break(context, continuation) {
+    this.breakPoint = context.break(this.node, this.breakPoint, continuation);
   }
 
   matchNode(node) { return this.node.match(node); }

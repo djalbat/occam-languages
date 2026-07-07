@@ -464,7 +464,7 @@ export default class ReleaseContext {
     this.initialised = true;
   }
 
-  break(breakPoint, resume) {
+  break(breakPoint, continuation) {
     const level = TRACE_LEVEL,
           message = BREAK_MESSAGE,
           filePath = breakPoint.getFilePath(),
@@ -474,7 +474,7 @@ export default class ReleaseContext {
 
     const context = this; ///
 
-    this.callback(breakPoint, resume, context);
+    this.callback(breakPoint, context, continuation);
 
     return breakPoint;
   }

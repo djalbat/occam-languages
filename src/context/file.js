@@ -73,7 +73,7 @@ export default class FileContext extends Context {
     return string;
   }
 
-  break(node, breakPoint, resume) {
+  break(node, breakPoint, continuation) {
     const filePath = this.filePath,
           releaseContext = this.getReleaseContext();
 
@@ -81,7 +81,7 @@ export default class FileContext extends Context {
       breakPoint = BreakPoint.fromFilePathNodeAndTokens(filePath, node, this.tokens);
     }
 
-    releaseContext.break(breakPoint, resume);
+    releaseContext.break(breakPoint, continuation);
 
     return breakPoint;
   }
