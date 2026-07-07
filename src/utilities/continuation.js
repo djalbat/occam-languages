@@ -55,8 +55,8 @@ export function reduce(array, initialValue, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   asynchronousForEach(array, (element, next, done) => {
-    callback(value, element, ...remainingArguments, (nextValue) => {
-      value = nextValue;  ///
+    callback(value, element, ...remainingArguments, (currentValue) => {
+      value = currentValue;  ///
 
       next();
     });
