@@ -268,17 +268,18 @@ export function breakable(innerFunction) {
 
 export function unbreakable(innerFunction) {
   return function(...remainingArguments) {
-    const innerFunctionLength = innerFunction.length,
-          remainingArgumentsLength = remainingArguments.length;
+    const remainingArgumentsLength = remainingArguments.length,
+          innerFunctionLength = innerFunction.length,
+          continuation = remainingArguments.pop(),
+          context = remainingArguments.pop();
 
     if (innerFunctionLength === remainingArgumentsLength) {
-      innerFunction.call(this, ...remainingArguments);
+      innerFunction.call(this, ...remainingArguments, context, continuation);
 
       return;
     }
 
-    const continuation = remainingArguments.pop(),
-          result = innerFunction.call(this, ...remainingArguments);
+    const result = innerFunction.call(this, ...remainingArguments, context);
 
     continuation(result);
   };
