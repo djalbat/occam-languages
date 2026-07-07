@@ -201,6 +201,14 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
   nextPass();
 }
 
+export function sequence(callbacks, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  every(callbacks, (callback, continuation) => {
+    callback(...remainingArguments, continuation);
+  }, continuation);
+}
+
 export function forwardsEvery(array, callback, ...remainingArguments) {
   let success = true;
 
