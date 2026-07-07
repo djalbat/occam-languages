@@ -33,5 +33,4 @@ export { default as breakPointUtilities } from "./utilities/breakPoint";
 export { default as fileContextUtilities } from "./utilities/fileContext";
 export { default as continuationUtilities } from "./utilities/continuation";
 export { default as verificationUtilities } from "./utilities/verification";
-export { default as asynchronousUtilities } from "./utilities/asynchronous";
 export { default as releaseContextUtilities } from "./utilities/releaseContext";

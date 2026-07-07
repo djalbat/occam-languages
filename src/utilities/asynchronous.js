@@ -1,9 +1,5 @@
 "use strict";
 
-import { arrayUtilities } from "necessary";
-
-const { first, filter } = arrayUtilities;
-
 export async function asyncSome(array, callback) {
   let result = false;
 
@@ -40,26 +36,6 @@ export async function asyncEvery(array, callback) {
   return result;
 }
 
-export async function asyncMatch(arrayA, arrayB, callback) {
-  let matches = false;
-
-  const arrayALength = arrayA.length,
-        arrayBLength = arrayB.length;
-
-  if (arrayALength === arrayBLength) {
-    matches = await asyncBackwardsEvery(arrayA, async (elementA, index) => {
-      const elementB = arrayB[index],
-            passed = await callback(elementA, elementB, index);
-
-      if (passed) {
-        return true;
-      }
-    });
-  }
-
-  return matches;
-}
-
 export async function asyncReduce(array, callback, initialValue) {
   let value = initialValue; ///
 
@@ -74,27 +50,6 @@ export async function asyncReduce(array, callback, initialValue) {
   return value;
 }
 
-export async function asyncExtract(array, callback) {
-  let deletedElement = undefined;
-
-  await asyncSome(array, async (element, index) => {
-    const passed = await callback(element, index);
-
-    if (passed) {
-      const start = index,  ///
-            deleteCount = 1,
-            deletedElements = array.splice(start, deleteCount),
-            firstDeletedElement = first(deletedElements);
-
-      deletedElement = firstDeletedElement;  ///
-
-      return true;
-    }
-  });
-
-  return deletedElement;
-}
-
 export async function asyncForEach(array, callback) {
   const length = array.length;
 
@@ -105,92 +60,3 @@ export async function asyncForEach(array, callback) {
   }
 }
 
-export async function asyncResolve(arrayA, arrayB, callback) {
-  let resolved;
-
-  arrayA = [  ///
-    ...arrayA
-  ];
-
-  for (;;) {
-    const arrayALength = arrayA.length;
-
-    if (arrayALength === 0) {
-      break;
-    }
-
-    let resolved = false;
-
-    await asyncForEach(arrayA, async (elementA, index) => {
-      const passed = await callback(elementA, index, arrayA);
-
-      if (passed) {
-        const elementB = elementA;  ///
-
-        arrayB.push(elementB);
-
-        resolved = true;
-      }
-    });
-
-    if (!resolved) {
-      break;
-    }
-
-    filter(arrayA, (elementA) => {
-      const arrayBIncludesElementA = arrayB.includes(elementA);
-
-      if (!arrayBIncludesElementA) {
-        return true;
-      }
-    });
-  }
-
-  const arrayALength = arrayA.length;
-
-  resolved = (arrayALength === 0);
-
-  return resolved;
-}
-
-export async function asyncForwardsEvery(array, callback) {
-  const length = array.length;
-
-  for (let index = 0; index < length; index++) {
-    const element = array[index],
-          passed = await callback(element, index, array);
-
-    if (!passed) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-export async function asyncBackwardsEvery(array, callback) {
-  const length = array.length;
-
-  for (let index = length - 1; index >= 0; index--) {
-    const element = array[index],
-          passed = await callback(element, index, array);
-
-    if (!passed) {
-      return false;
-    }
-  }
-
-  return true;
-}
-
-export default {
-  asyncSome,
-  asyncEvery,
-  asyncMatch,
-  asyncReduce,
-  asyncForEach,
-  asyncExtract,
-  asyncResolve,
-  asyncForwardsEvery,
-  asyncBackwardsEvery
-};

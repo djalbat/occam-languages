@@ -2,8 +2,10 @@
 
 import { arrayUtilities, asynchronousUtilities } from "necessary";
 
-const { filter: arrayFilter } = arrayUtilities,
-      { forEach: asynchronousForEach } = asynchronousUtilities;
+const { first: arrayFirst, filter: arrayFilter } = arrayUtilities,
+      { forEach: asynchronousForEach,
+        forwardsForEach: asynchronousForwardsForEach,
+        backwardsForEach: asynchronousBackwardsForEach } = asynchronousUtilities;
 
 export function some(array, callback, ...remainingArguments) {
   let success = false;
@@ -49,6 +51,34 @@ export function every(array, callback, ...remainingArguments) {
   });
 }
 
+export function match(arrayA, arrayB, callback, ...remainingArguments) {
+  const continuation = remainingArguments.pop(),
+        arrayALength = arrayA.length,
+        arrayBLength = arrayB.length;
+
+  if (arrayALength !== arrayBLength) {
+    const matches = false;
+
+    continuation(matches);
+
+    return;
+  }
+
+  let index = -1;
+
+  every(arrayA, (elementA, continuation) => {
+    index++;
+
+    const elementB = arrayB[index];
+
+    callback(elementA, elementB, ...remainingArguments, continuation);
+  }, (success) => {
+    const matches = success;  ///
+
+    continuation(matches);
+  });
+}
+
 export function reduce(array, initialValue, callback, ...remainingArguments) {
   let value = initialValue; ///
 
@@ -73,6 +103,33 @@ export function forEach(array, callback, ...remainingArguments) {
       next();
     });
   }, continuation);
+}
+
+export function extract(array, callback, ...remainingArguments) {
+  let deletedElement = undefined; ///
+
+  const continuation = remainingArguments.pop();
+
+  let index = -1;
+
+  some(array, (element, continuation) => {
+    index++;
+
+    callback(element, ...remainingArguments, (passed) => {
+      if (passed) {
+        const start = index,  ///
+              deleteCount = 1,
+              deletedElements = array.splice(start, deleteCount),
+              firstDeletedElement = arrayFirst(deletedElements);
+
+        deletedElement = firstDeletedElement;  ///
+      }
+
+      continuation(passed);
+    });
+  }, () => {
+    continuation(deletedElement);
+  });
 }
 
 export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
@@ -144,6 +201,50 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
   nextPass();
 }
 
+export function forwardsEvery(array, callback, ...remainingArguments) {
+  let success = true;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousForwardsForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (!passed) {
+        success = false;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    continuation(success);
+  });
+}
+
+export function backwardsEvery(array, callback, ...remainingArguments) {
+  let success = true;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousBackwardsForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (!passed) {
+        success = false;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    continuation(success);
+  });
+}
+
 export function breakable(innerFunction) {
   return function(...remainingArguments) {
     const remainingArgumentsLength = remainingArguments.length,
@@ -186,9 +287,13 @@ export function unbreakable(innerFunction) {
 export default {
   some,
   every,
+  match,
   reduce,
   forEach,
+  extract,
   resolve,
+  forwardsEvery,
+  backwardsEvery,
   breakable,
   unbreakable
 }
