@@ -301,6 +301,7 @@ export default {
   forEach,
   extract,
   resolve,
+  sequence,
   forwardsEvery,
   backwardsEvery,
   breakable,
