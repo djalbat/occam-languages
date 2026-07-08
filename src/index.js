@@ -8,13 +8,12 @@ export { default as FileContext } from "./context/file";
 export { default as ReleaseContext } from "./context/release";
 
 export { default as ZipPass } from "./pass/zip";
-export { default as AsyncPass } from "./pass/async";
 export { default as SimplePass } from "./pass/simple";
 export { default as ForwardPass } from "./pass/forward";
-export { default as AsyncZipPass } from "./pass/asyncZip";
 export { default as ForwardZipPass } from "./pass/forwardZip";
 export { default as EquivalencePass } from "./pass/equivalence";
 export { default as ContinuationPass } from "./pass/continuation";
+export { default as ContinuationZipPass } from "./pass/continuationZip";
 
 export { default as FurtleLexer } from "./furtle/lexer";
 export { default as FurtleParser } from "./furtle/parser";
