@@ -60,20 +60,28 @@ export default class ContinuationPass {
       }
     ];
 
-    some(maps, (map, continuation) => {
-      const { nodeQuery, run } = map;
+    let node;
 
-      const node = nodeQuery(nonTerminalNode);
+    const map = maps.find((map) => {
+      const { nodeQuery } = map;
 
-      if (node === null) {
-        const visited = false;
+      node = nodeQuery(nonTerminalNode);
 
-        continuation(visited);
-
-        return;
+      if (node !== null) {
+        return true;
       }
+    }) || null;
 
-      run(node, ...remainingArguments, continuation);
-    }, continuation);
+    if (map === null) {
+      const visited = false;
+
+      continuation(visited);
+
+      return;
+    }
+
+    const { run } = map;
+
+    run(node, ...remainingArguments, continuation);
   }
 }

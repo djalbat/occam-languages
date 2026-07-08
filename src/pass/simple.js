@@ -78,21 +78,28 @@ export default class SimplePass {
           return visited;
         }
       }
-    ]
+    ];
 
-    maps.some((map) => {
-      const { nodeQuery, run } = map;
+    let node;
 
-      const node = nodeQuery(nonTerminalNode);
+    const map = maps.find((map) => {
+      const { nodeQuery } = map;
+
+      node = nodeQuery(nonTerminalNode);
 
       if (node !== null) {
-        const success = run(node, ...remainingArguments);
-
-        visited = success;
-
         return true;
       }
-    });
+    }) || null;
+
+    if (map !== null) {
+      const { run } = map,
+            success = run(node, ...remainingArguments);
+
+      if (success) {
+        visited = true;
+      }
+    }
 
     return visited;
   }
