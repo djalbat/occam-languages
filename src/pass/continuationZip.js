@@ -99,23 +99,32 @@ export default class ContinuationZipPass {
           this.descend(generalChildNodes, specificChildNodes, ...remainingArguments, continuation);
         }
       }
-    ]
+    ];
 
-    some(maps, (map, continuation) => {
-      const { generalNodeQuery, specificNodeQuery, run } = map;
+    let generalNode,
+        specificNode;
 
-      const generalNode = generalNodeQuery(generalNonTerminalNode),  ///
-            specificNode = specificNodeQuery(specificNonTerminalNode);  ///
+    const map = maps.find((map) => {
+      const { generalNodeQuery, specificNodeQuery } = map;
 
-      if ((generalNode === null) || (specificNode === null)) {
-        const visited = false;
+      generalNode = generalNodeQuery(generalNonTerminalNode);
+      specificNode = specificNodeQuery(specificNonTerminalNode);
 
-        continuation(visited);
-
-        return;
+      if ((generalNode !== null) && (specificNode !== null)) {
+        return true;
       }
+    }) || null;
 
-      run(generalNode, specificNode, ...remainingArguments, continuation);
-    }, continuation);
+    if (map === null) {
+      const visited = false;
+
+      continuation(visited);
+
+      return;
+    }
+
+    const { run } = map;
+
+    run(generalNode, specificNode, ...remainingArguments, continuation);
   }
 }
