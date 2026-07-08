@@ -2,6 +2,17 @@
 
 import BreakPoint from "../breakPoint";
 
+export function breakable(innerFunction) {
+  return function(...remainingArguments) {
+    const continuation = remainingArguments.pop(),
+          context = remainingArguments.pop();
+
+    this.break(context, () => {
+      innerFunction.call(this, ...remainingArguments, context, continuation);
+    });
+  };
+}
+
 export function breakPointFromJSON(json) {
   let breakPoint;
 
@@ -49,6 +60,7 @@ export function lineIndexFromNodeAndTokens(node, tokens) {
 }
 
 export default {
+  breakable,
   breakPointFromJSON,
   breakPointToBreakPointJSON,
   lineIndexFromNodeAndTokens

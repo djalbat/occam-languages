@@ -261,46 +261,6 @@ export function exists(callbacks, ...remainingArguments) {
   }, continuation);
 }
 
-export function breakable(innerFunction) {
-  return function(...remainingArguments) {
-    const remainingArgumentsLength = remainingArguments.length,
-          innerFunctionLength = innerFunction.length,
-          continuation = remainingArguments.pop(),
-          context = remainingArguments.pop();
-
-    this.break(context, () => {
-      if (innerFunctionLength === remainingArgumentsLength) {
-        innerFunction.call(this, ...remainingArguments, context, continuation);
-
-        return;
-      }
-
-      const result = innerFunction.call(this, ...remainingArguments, context);
-
-      continuation(result);
-    });
-  };
-}
-
-export function unbreakable(innerFunction) {
-  return function(...remainingArguments) {
-    const remainingArgumentsLength = remainingArguments.length,
-          innerFunctionLength = innerFunction.length,
-          continuation = remainingArguments.pop(),
-          context = remainingArguments.pop();
-
-    if (innerFunctionLength === remainingArgumentsLength) {
-      innerFunction.call(this, ...remainingArguments, context, continuation);
-
-      return;
-    }
-
-    const result = innerFunction.call(this, ...remainingArguments, context);
-
-    continuation(result);
-  };
-}
-
 export default {
   some,
   every,
