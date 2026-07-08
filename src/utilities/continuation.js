@@ -201,14 +201,6 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
   nextPass();
 }
 
-export function sequence(callbacks, ...remainingArguments) {
-  const continuation = remainingArguments.pop();
-
-  every(callbacks, (callback, continuation) => {
-    callback(...remainingArguments, continuation);
-  }, continuation);
-}
-
 export function forwardsEvery(array, callback, ...remainingArguments) {
   let success = true;
 
@@ -251,6 +243,22 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
   }, () => {
     continuation(success);
   });
+}
+
+export function all(callbacks, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  every(callbacks, (callback, continuation) => {
+    callback(...remainingArguments, continuation);
+  }, continuation);
+}
+
+export function exists(callbacks, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  some(callbacks, (callback, continuation) => {
+    callback(...remainingArguments, continuation);
+  }, continuation);
 }
 
 export function breakable(innerFunction) {
@@ -301,9 +309,10 @@ export default {
   forEach,
   extract,
   resolve,
-  sequence,
   forwardsEvery,
   backwardsEvery,
+  all,
+  exists,
   breakable,
   unbreakable
 }
