@@ -1,6 +1,6 @@
 "use strict";
 
-import { some, every } from "../utilities/asynchronous";
+import { some, every } from "../utilities/continuation";
 import { nonTerminalNodeQuery, areChildNodesCongruent } from "../utilities/pass";
 
 export default class ContinuationZipPass {
