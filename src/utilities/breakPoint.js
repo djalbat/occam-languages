@@ -8,7 +8,9 @@ export function breakable(innerFunction) {
           context = remainingArguments.pop();
 
     this.break(context, () => {
-      innerFunction.call(this, ...remainingArguments, context, continuation);
+      setImmediate(() => {
+        innerFunction.call(this, ...remainingArguments, context, continuation);
+      });
     });
   };
 }
