@@ -7,6 +7,56 @@ const { first: arrayFirst, filter: arrayFilter } = arrayUtilities,
         forwardsForEach: asynchronousForwardsForEach,
         backwardsForEach: asynchronousBackwardsForEach } = asynchronousUtilities;
 
+export function one(array, callback, ...remainingArguments) {
+  let found = false;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (passed) {
+        if (!found) {
+          found = true;
+        } else {
+          found = false;
+
+          done();
+
+          return;
+        }
+      }
+
+      next();
+    });
+  }, () => {
+    continuation(found);
+  });
+}
+
+export function each(array, callback, ...remainingArguments) {
+  let found = false;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (passed) {
+        found = true;
+      } else {
+        found = false;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    continuation(found);
+  });
+}
+
 export function some(array, callback, ...remainingArguments) {
   let success = false;
 
@@ -246,6 +296,8 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
 }
 
 export default {
+  one,
+  each,
   some,
   every,
   match,
