@@ -2,47 +2,18 @@
 
 import BreakPoint from "../breakPoint";
 
-export function breakable(innerFunction) {
+export function _breakable(innerFunction) {
   return function(...remainingArguments) {
     const continuation = remainingArguments.pop(),
           context = remainingArguments.pop();
 
     this.break(context, () => {
       setImmediate(() => {
-        // 1. Identify what we are about to run
-        const nodeString = this.getString ? this.getString() : 'Unknown Node';
-        const funcName = innerFunction.name || 'anonymous function';
-
-        const watchdog = setTimeout(() => {
-          console.error(`\n🚨 CONTINUATION LEAK DETECTED!`);
-          console.error(`Function: ${funcName}`);
-          console.error(`Node: ${nodeString}`);
-          console.error(`The baton was passed here but never handed back.\n`);
-        }, 2000);
-
-        const safeContinuation = (...args) => {
-          clearTimeout(watchdog);
-          continuation(...args);
-        };
-
-        innerFunction.call(this, ...remainingArguments, context, safeContinuation);
+        innerFunction.call(this, ...remainingArguments, context, continuation);
       });
     });
   };
 }
-
-// export function _breakable(innerFunction) {
-//   return function(...remainingArguments) {
-//     const continuation = remainingArguments.pop(),
-//           context = remainingArguments.pop();
-//
-//     this.break(context, () => {
-//       setImmediate(() => {
-//         innerFunction.call(this, ...remainingArguments, context, continuation);
-//       });
-//     });
-//   };
-// }
 
 export function breakPointFromJSON(json) {
   let breakPoint;
