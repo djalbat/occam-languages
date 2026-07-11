@@ -2,7 +2,7 @@
 
 import BreakPoint from "../breakPoint";
 
-export function _breakable(innerFunction) {
+export function breakable(innerFunction) {
   return function(...remainingArguments) {
     const continuation = remainingArguments.pop(),
           context = remainingArguments.pop();
