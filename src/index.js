@@ -9,8 +9,6 @@ export { default as ReleaseContext } from "./context/release";
 
 export { default as ZipPass } from "./pass/zip";
 export { default as SimplePass } from "./pass/simple";
-export { default as ForwardPass } from "./pass/forward";
-export { default as ForwardZipPass } from "./pass/forwardZip";
 export { default as EquivalencePass } from "./pass/equivalence";
 export { default as ContinuationPass } from "./pass/continuation";
 export { default as ContinuationZipPass } from "./pass/continuationZip";
