@@ -92,9 +92,7 @@ export default class FileContext extends Context {
     if (this.node === null) {
       this.warning(`Unable to verify the '${this.filePath}' file because it cannot be parsed.`);
 
-      continuation(verifies);
-
-      return;
+      return continuation(verifies);
     }
 
     this.debug(`Verifying the '${this.filePath}' file...`);
@@ -112,7 +110,7 @@ export default class FileContext extends Context {
         this.info(`...verified the '${this.filePath}' file.`);
       }
 
-      continuation(verifies);
+      return continuation(verifies);
     });
   }
 

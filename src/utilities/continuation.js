@@ -173,7 +173,7 @@ export function extract(array, callback, ...remainingArguments) {
         deletedElement = firstDeletedElement;  ///
       }
 
-      continuation(passed);
+      return continuation(passed);
     });
   }, () => {
     return continuation(deletedElement);
