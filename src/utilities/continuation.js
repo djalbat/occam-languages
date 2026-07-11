@@ -7,22 +7,6 @@ const { first: arrayFirst, filter: arrayFilter } = arrayUtilities,
         forwardsForEach: asynchronousForwardsForEach,
         backwardsForEach: asynchronousBackwardsForEach } = asynchronousUtilities;
 
-export function all(callbacks, ...remainingArguments) {
-  const continuation = remainingArguments.pop();
-
-  every(callbacks, (callback, continuation) => {
-    callback(...remainingArguments, continuation);
-  }, continuation);
-}
-
-export function exists(callbacks, ...remainingArguments) {
-  const continuation = remainingArguments.pop();
-
-  some(callbacks, (callback, continuation) => {
-    callback(...remainingArguments, continuation);
-  }, continuation);
-}
-
 export function some(array, callback, ...remainingArguments) {
   let success = false;
 
@@ -262,8 +246,6 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
 }
 
 export default {
-  all,
-  exists,
   some,
   every,
   match,
