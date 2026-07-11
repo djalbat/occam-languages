@@ -7,18 +7,18 @@ const { first: arrayFirst, filter: arrayFilter } = arrayUtilities,
         forwardsForEach: asynchronousForwardsForEach,
         backwardsForEach: asynchronousBackwardsForEach } = asynchronousUtilities;
 
-export function one(callbacks, ...remainingArguments) {
-  const continuation = remainingArguments.pop();
-
-  some(callbacks, (callback, continuation) => {
-    callback(...remainingArguments, continuation);
-  }, continuation);
-}
-
 export function all(callbacks, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   every(callbacks, (callback, continuation) => {
+    callback(...remainingArguments, continuation);
+  }, continuation);
+}
+
+export function exists(callbacks, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  some(callbacks, (callback, continuation) => {
     callback(...remainingArguments, continuation);
   }, continuation);
 }
@@ -64,6 +64,34 @@ export function every(array, callback, ...remainingArguments) {
     });
   }, () => {
     continuation(success);
+  });
+}
+
+export function match(arrayA, arrayB, callback, ...remainingArguments) {
+  const continuation = remainingArguments.pop(),
+        arrayALength = arrayA.length,
+        arrayBLength = arrayB.length;
+
+  if (arrayALength !== arrayBLength) {
+    const matches = false;
+
+    continuation(matches);
+
+    return;
+  }
+
+  let index = -1;
+
+  every(arrayA, (elementA, continuation) => {
+    index++;
+
+    const elementB = arrayB[index];
+
+    callback(elementA, elementB, ...remainingArguments, continuation);
+  }, (success) => {
+    const matches = success;  ///
+
+    continuation(matches);
   });
 }
 
@@ -117,34 +145,6 @@ export function extract(array, callback, ...remainingArguments) {
     });
   }, () => {
     continuation(deletedElement);
-  });
-}
-
-export function match(arrayA, arrayB, callback, ...remainingArguments) {
-  const continuation = remainingArguments.pop(),
-    arrayALength = arrayA.length,
-    arrayBLength = arrayB.length;
-
-  if (arrayALength !== arrayBLength) {
-    const matches = false;
-
-    continuation(matches);
-
-    return;
-  }
-
-  let index = -1;
-
-  every(arrayA, (elementA, continuation) => {
-    index++;
-
-    const elementB = arrayB[index];
-
-    callback(elementA, elementB, ...remainingArguments, continuation);
-  }, (success) => {
-    const matches = success;  ///
-
-    continuation(matches);
   });
 }
 
@@ -262,14 +262,14 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
 }
 
 export default {
-  one,
   all,
+  exists,
   some,
   every,
+  match,
   reduce,
   forEach,
   extract,
-  match,
   resolve,
   forwardsEvery,
   backwardsEvery
