@@ -1,6 +1,6 @@
 "use strict";
 
-import { some, every } from "../utilities/continuation";
+import { every } from "../utilities/continuation";
 import { nonTerminalNodeQuery } from "../utilities/pass";
 
 export default class ContinuationPass {
