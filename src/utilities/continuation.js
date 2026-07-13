@@ -114,7 +114,7 @@ export function match(arrayA, arrayB, callback, ...remainingArguments) {
 
   let index = -1;
 
-  every(arrayA, (elementA, continuation) => {
+  return every(arrayA, (elementA, continuation) => {
     index++;
 
     const elementB = arrayB[index];
@@ -160,7 +160,7 @@ export function extract(array, callback, ...remainingArguments) {
 
   let index = -1;
 
-  some(array, (element, continuation) => {
+  return some(array, (element, continuation) => {
     index++;
 
     callback(element, ...remainingArguments, (passed) => {
