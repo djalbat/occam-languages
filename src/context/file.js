@@ -81,9 +81,7 @@ export default class FileContext extends Context {
       breakPoint = BreakPoint.fromFilePathNodeAndTokens(filePath, node, this.tokens);
     }
 
-    releaseContext.break(breakPoint, continuation);
-
-    return breakPoint;
+    return releaseContext.break(breakPoint, continuation);
   }
 
   verify(continuation) {

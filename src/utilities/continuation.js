@@ -119,7 +119,7 @@ export function match(arrayA, arrayB, callback, ...remainingArguments) {
 
     const elementB = arrayB[index];
 
-    callback(elementA, elementB, ...remainingArguments, continuation);
+    return callback(elementA, elementB, ...remainingArguments, continuation);
   }, (success) => {
     const matches = success;  ///
 
@@ -146,7 +146,7 @@ export function reduce(array, initialValue, callback, ...remainingArguments) {
 export function forEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
-  asynchronousForEach(array, (element, next, done) => {
+  return asynchronousForEach(array, (element, next, done) => {
     callback(element, ...remainingArguments, () => {
       next();
     });

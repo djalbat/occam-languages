@@ -7,16 +7,16 @@ export default class ContinuationPass {
   run(node, ...remainingArguments) {
     const continuation = remainingArguments.pop();
 
-    this.visitNode(node, ...remainingArguments, continuation);
+    return this.visitNode(node, ...remainingArguments, continuation);
   }
 
   descend(childNodes, ...remainingArguments) {
     const continuation = remainingArguments.pop();
 
-    every(childNodes, (childNode, continuation) => {
+    return every(childNodes, (childNode, continuation) => {
       const node = childNode; ///
 
-      this.visitNode(node, ...remainingArguments, continuation);
+      return this.visitNode(node, ...remainingArguments, continuation);
     }, continuation);
   }
 
@@ -27,12 +27,12 @@ export default class ContinuationPass {
     if (nodeTerminalNode) {
       const terminalNode = node;  ///
 
-      this.visitTerminalNode(terminalNode, ...remainingArguments, continuation);
-    } else {
-      const nonTerminalNode = node;  ///
-
-      this.visitNonTerminalNode(nonTerminalNode, ...remainingArguments, continuation);
+      return this.visitTerminalNode(terminalNode, ...remainingArguments, continuation);
     }
+
+    const nonTerminalNode = node;  ///
+
+    return this.visitNonTerminalNode(nonTerminalNode, ...remainingArguments, continuation);
   }
 
   visitTerminalNode(terminalNode, ...remainingArguments) {
@@ -55,7 +55,7 @@ export default class ContinuationPass {
           const continuation = remainingArguments.pop(),
                 childNodes = nonTerminalNode.getChildNodes();
 
-          this.descend(childNodes, ...remainingArguments, continuation);
+          return this.descend(childNodes, ...remainingArguments, continuation);
         }
       }
     ];
@@ -80,6 +80,6 @@ export default class ContinuationPass {
 
     const { run } = map;
 
-    run(node, ...remainingArguments, continuation);
+    return run(node, ...remainingArguments, continuation);
   }
 }

@@ -474,9 +474,7 @@ export default class ReleaseContext {
 
     const context = this; ///
 
-    this.callback(breakPoint, context, continuation);
-
-    return breakPoint;
+    return this.callback(breakPoint, context, continuation);
   }
 
   verify(contiunation) {

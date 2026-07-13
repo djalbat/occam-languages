@@ -9,7 +9,7 @@ export function breakable(innerFunction) {
 
     this.break(context, () => {
       setImmediate(() => {
-        innerFunction.call(this, ...remainingArguments, context, continuation);
+        return innerFunction.call(this, ...remainingArguments, context, continuation);
       });
     });
   };

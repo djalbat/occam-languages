@@ -1,5 +1,7 @@
 "use strict";
 
+import breakPoint from "./utilities/breakPoint";
+
 export default class Element {
   constructor(context, string, node, breakPoint) {
     this.context = context;
@@ -45,7 +47,11 @@ export default class Element {
   }
 
   break(context, continuation) {
-    this.breakPoint = context.break(this.node, this.breakPoint, continuation);
+    return context.break(this.node, this.breakPoint, (breakPoint) => {
+      this.breakPoint = breakPoint;
+
+      return continuation();
+    });
   }
 
   matchNode(node) { return this.node.match(node); }
