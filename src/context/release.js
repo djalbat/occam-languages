@@ -485,9 +485,7 @@ export default class ReleaseContext {
           typePrefixesVerify = verifyTypePrefixes(typePrefixes, releaseContext);
 
     if (!typePrefixesVerify) {
-      contiunation(verifies);
-
-      return;
+      return contiunation(verifies);
     }
 
     const verifiedFileContexts = [];

@@ -54,9 +54,7 @@ function verifyReleaseContext(releaseContext, context, contiunation) {
   if (released || verified) {
     releaseContextVerifies = true;
 
-    contiunation(releaseContextVerifies);
-
-    return;
+    return contiunation(releaseContextVerifies);
   }
 
   const { log } = context,
