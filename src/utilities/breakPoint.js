@@ -7,7 +7,7 @@ export function breakable(innerFunction) {
     const continuation = remainingArguments.pop(),
           context = remainingArguments.pop();
 
-    this.break(context, () => {
+    return this.break(context, () => {
       setImmediate(() => {
         return innerFunction.call(this, ...remainingArguments, context, continuation);
       });
