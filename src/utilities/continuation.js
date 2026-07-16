@@ -197,6 +197,26 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
   });
 }
 
+export function forewardsForEach(array, callback, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  return asynchronousForwardsForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, () => {
+      next();
+    });
+  }, continuation);
+}
+
+export function backwardsForEach(array, callback, ...remainingArguments) {
+  const continuation = remainingArguments.pop();
+
+  return asynchronousBackwardsForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, () => {
+      next();
+    });
+  }, continuation);
+}
+
 export function filter(array, callback, ...remainingArguments) {
   const deletedElements = [];
 
@@ -348,8 +368,10 @@ export default {
   forEach,
   forwardsEvery,
   backwardsEvery,
+  forwardsForEach,
+  backwardsForEach,
   filter,
   prune,
   extract,
   resolve
-}
+};
