@@ -197,7 +197,7 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
   });
 }
 
-export function forewardsForEach(array, callback, ...remainingArguments) {
+export function forwardsForEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   return asynchronousForwardsForEach(array, (element, next, done) => {
