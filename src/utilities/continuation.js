@@ -2,7 +2,7 @@
 
 import { arrayUtilities, asynchronousUtilities } from "necessary";
 
-const { first: arrayFirst, filter: arrayFilter } = arrayUtilities,
+const { filter: arrayFilter } = arrayUtilities,
       { forEach: asynchronousForEach,
         forwardsForEach: asynchronousForwardsForEach,
         backwardsForEach: asynchronousBackwardsForEach } = asynchronousUtilities;
@@ -153,6 +153,101 @@ export function forEach(array, callback, ...remainingArguments) {
   }, continuation);
 }
 
+export function forwardsEvery(array, callback, ...remainingArguments) {
+  let success = true;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousForwardsForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (!passed) {
+        success = false;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    return continuation(success);
+  });
+}
+
+export function backwardsEvery(array, callback, ...remainingArguments) {
+  let success = true;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousBackwardsForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (!passed) {
+        success = false;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    return continuation(success);
+  });
+}
+
+export function filter(array, callback, ...remainingArguments) {
+  const deletedElements = [];
+
+  const continuation = remainingArguments.pop();
+
+  let index = array.length;
+
+  return backwardsForEach(array, (element, continuation) => {
+    index--;
+
+    callback(element, ...remainingArguments, (passed) => {
+      if (!passed) {
+        const start = index,  ///
+              deleteCount = 1,
+              deletedElement = array.splice(start, deleteCount).pop();  ///
+
+        deletedElements.unshift(deletedElement);  ///
+      }
+
+      return continuation();
+    });
+  }, () => {
+    return continuation(deletedElements);
+  });
+}
+
+export function prune(array, callback, ...remainingArguments) {
+  let deletedElement = undefined; ///
+
+  const continuation = remainingArguments.pop();
+
+  let index = -1;
+
+  return some(array, (element, continuation) => {
+    index++;
+
+    callback(element, ...remainingArguments, (passed) => {
+      if (!passed) {
+        const start = index,  ///
+              deleteCount = 1;
+
+        deletedElement = array.splice(start, deleteCount).pop() ///
+      }
+
+      return continuation(!passed); ///
+    });
+  }, () => {
+    return continuation(deletedElement);
+  });
+}
+
 export function extract(array, callback, ...remainingArguments) {
   let deletedElement = undefined; ///
 
@@ -166,11 +261,9 @@ export function extract(array, callback, ...remainingArguments) {
     callback(element, ...remainingArguments, (passed) => {
       if (passed) {
         const start = index,  ///
-              deleteCount = 1,
-              deletedElements = array.splice(start, deleteCount),
-              firstDeletedElement = arrayFirst(deletedElements);
+              deleteCount = 1;
 
-        deletedElement = firstDeletedElement;  ///
+        deletedElement = array.splice(start, deleteCount).pop() ///
       }
 
       return continuation(passed);
@@ -245,50 +338,6 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
   nextPass();
 }
 
-export function forwardsEvery(array, callback, ...remainingArguments) {
-  let success = true;
-
-  const continuation = remainingArguments.pop();
-
-  asynchronousForwardsForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
-      if (!passed) {
-        success = false;
-
-        done();
-
-        return;
-      }
-
-      next();
-    });
-  }, () => {
-    return continuation(success);
-  });
-}
-
-export function backwardsEvery(array, callback, ...remainingArguments) {
-  let success = true;
-
-  const continuation = remainingArguments.pop();
-
-  asynchronousBackwardsForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
-      if (!passed) {
-        success = false;
-
-        done();
-
-        return;
-      }
-
-      next();
-    });
-  }, () => {
-    return continuation(success);
-  });
-}
-
 export default {
   one,
   each,
@@ -297,8 +346,10 @@ export default {
   match,
   reduce,
   forEach,
-  extract,
-  resolve,
   forwardsEvery,
-  backwardsEvery
+  backwardsEvery,
+  filter,
+  prune,
+  extract,
+  resolve
 }
