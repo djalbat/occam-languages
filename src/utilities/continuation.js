@@ -261,7 +261,7 @@ export function prune(array, callback, ...remainingArguments) {
         deletedElement = array.splice(start, deleteCount).pop() ///
       }
 
-      return continuation(true);
+      return continuation(!passed);
     });
   }, () => {
     return continuation(deletedElement);
@@ -286,7 +286,7 @@ export function extract(array, callback, ...remainingArguments) {
         deletedElement = array.splice(start, deleteCount).pop() ///
       }
 
-      return continuation(true);
+      return continuation(passed);
     });
   }, () => {
     return continuation(deletedElement);
