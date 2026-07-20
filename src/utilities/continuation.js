@@ -33,6 +33,28 @@ export function one(array, callback, ...remainingArguments) {
   });
 }
 
+export function some(array, callback, ...remainingArguments) {
+  let success = false;
+
+  const continuation = remainingArguments.pop();
+
+  asynchronousForEach(array, (element, next, done) => {
+    callback(element, ...remainingArguments, (passed) => {
+      if (passed) {
+        success = true;
+
+        done();
+
+        return;
+      }
+
+      next();
+    });
+  }, () => {
+    return continuation(success);
+  });
+}
+
 export function each(array, callback, ...remainingArguments) {
   let found = false;
 
@@ -54,28 +76,6 @@ export function each(array, callback, ...remainingArguments) {
     });
   }, () => {
     return continuation(found);
-  });
-}
-
-export function some(array, callback, ...remainingArguments) {
-  let success = false;
-
-  const continuation = remainingArguments.pop();
-
-  asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
-      if (passed) {
-        success = true;
-
-        done();
-
-        return;
-      }
-
-      next();
-    });
-  }, () => {
-    return continuation(success);
   });
 }
 
@@ -360,8 +360,8 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
 
 export default {
   one,
-  each,
   some,
+  each,
   every,
   match,
   reduce,
