@@ -101,32 +101,6 @@ export function every(array, callback, ...remainingArguments) {
   });
 }
 
-export function match(arrayA, arrayB, callback, ...remainingArguments) {
-  const continuation = remainingArguments.pop(),
-        arrayALength = arrayA.length,
-        arrayBLength = arrayB.length;
-
-  if (arrayALength !== arrayBLength) {
-    const matches = false;
-
-    return continuation(matches, ...remainingArguments);
-  }
-
-  let index = -1;
-
-  return every(arrayA, (elementA, continuation) => {
-    index++;
-
-    const elementB = arrayB[index];
-
-    return callback(elementA, elementB, ...remainingArguments, continuation);
-  }, (success) => {
-    const matches = success;  ///
-
-    return continuation(matches, ...remainingArguments);
-  });
-}
-
 export function reduce(array, initialValue, callback, ...remainingArguments) {
   let value = initialValue; ///
 
@@ -299,6 +273,32 @@ export function extract(array, callback, ...remainingArguments) {
   });
 }
 
+export function match(arrayA, arrayB, callback, ...remainingArguments) {
+  const continuation = remainingArguments.pop(),
+        arrayALength = arrayA.length,
+        arrayBLength = arrayB.length;
+
+  if (arrayALength !== arrayBLength) {
+    const matches = false;
+
+    return continuation(matches, ...remainingArguments);
+  }
+
+  let index = -1;
+
+  return every(arrayA, (elementA, continuation) => {
+    index++;
+
+    const elementB = arrayB[index];
+
+    return callback(elementA, elementB, ...remainingArguments, continuation);
+  }, (success) => {
+    const matches = success;  ///
+
+    return continuation(matches, ...remainingArguments);
+  });
+}
+
 export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
   arrayA = [  ///
     ...arrayA
@@ -369,7 +369,6 @@ export default {
   some,
   each,
   every,
-  match,
   reduce,
   forEach,
   forwardsEvery,
@@ -379,5 +378,6 @@ export default {
   filter,
   prune,
   extract,
+  match,
   resolve
 };
