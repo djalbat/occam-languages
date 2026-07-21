@@ -95,7 +95,7 @@ export default class FileContext extends Context {
 
     this.debug(`Verifying the '${this.filePath}' file...`);
 
-    this.verifyFile((fileVerifies) => {
+    return this.verifyFile((fileVerifies) => {
       if (fileVerifies) {
         verifies = true;
       }
