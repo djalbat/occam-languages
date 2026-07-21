@@ -36,7 +36,7 @@ export function initialiseReleaseContexts(context) {
 export function verifyReleaseContexts(context, contiunation) {
   const { releaseContexts } = context;
 
-  every(releaseContexts, verifyReleaseContext, context, contiunation);
+  return every(releaseContexts, verifyReleaseContext, context, contiunation);
 }
 
 export default {
@@ -46,15 +46,13 @@ export default {
 };
 
 function verifyReleaseContext(releaseContext, context, contiunation) {
-  let releaseContextVerifies;
-
   const released = releaseContext.isReleased(),
         verified = releaseContext.hasVerified();
 
   if (released || verified) {
-    releaseContextVerifies = true;
+    const releaseContextVerifies = true;
 
-    return contiunation(releaseContextVerifies);
+    return contiunation(releaseContextVerifies, context);
   }
 
   const { log } = context,
@@ -63,16 +61,16 @@ function verifyReleaseContext(releaseContext, context, contiunation) {
 
   log.info(`Verifying the '${releaseName}' project...`);
 
-  releaseContextVerifies = false;
+  return releaseContext.verify((verifies) => {
+    let releaseContextVerifies = false;
 
-  releaseContext.verify((verifies) => {
     if (verifies) {
       log.info(`...verified the '${releaseName}' project.`);
 
       releaseContextVerifies = true;
     }
 
-    contiunation(releaseContextVerifies);
+    return contiunation(releaseContextVerifies, context);
   });
 }
 
