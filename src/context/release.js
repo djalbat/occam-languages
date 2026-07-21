@@ -490,7 +490,7 @@ export default class ReleaseContext {
 
     const verifiedFileContexts = [];
 
-    verifyFileContexts(this.fileContexts, verifiedFileContexts, (fileContextsVerify) => {
+    return verifyFileContexts(this.fileContexts, verifiedFileContexts, (fileContextsVerify) => {
       if (fileContextsVerify) {
         verifies = true;
 
@@ -499,7 +499,7 @@ export default class ReleaseContext {
         this.fileContexts = verifiedFileContexts; ///
       }
 
-      contiunation(verifies);
+      return contiunation(verifies);
     });
   }
 
