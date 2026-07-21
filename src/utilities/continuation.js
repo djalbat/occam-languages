@@ -29,7 +29,7 @@ export function one(array, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(found);
+    return continuation(found, ...remainingArguments);
   });
 }
 
@@ -51,7 +51,7 @@ export function some(array, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(success);
+    return continuation(success, ...remainingArguments);
   });
 }
 
@@ -75,7 +75,7 @@ export function each(array, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(found);
+    return continuation(found, ...remainingArguments);
   });
 }
 
@@ -97,7 +97,7 @@ export function every(array, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(success);
+    return continuation(success, ...remainingArguments);
   });
 }
 
@@ -109,7 +109,7 @@ export function match(arrayA, arrayB, callback, ...remainingArguments) {
   if (arrayALength !== arrayBLength) {
     const matches = false;
 
-    return continuation(matches);
+    return continuation(matches, ...remainingArguments);
   }
 
   let index = -1;
@@ -123,7 +123,7 @@ export function match(arrayA, arrayB, callback, ...remainingArguments) {
   }, (success) => {
     const matches = success;  ///
 
-    return continuation(matches);
+    return continuation(matches, ...remainingArguments);
   });
 }
 
@@ -139,7 +139,7 @@ export function reduce(array, initialValue, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(value);
+    return continuation(value, ...remainingArguments);
   });
 }
 
@@ -150,7 +150,9 @@ export function forEach(array, callback, ...remainingArguments) {
     callback(element, ...remainingArguments, () => {
       next();
     });
-  }, continuation);
+  }, () => {
+    return continuation(...remainingArguments);
+  });
 }
 
 export function forwardsEvery(array, callback, ...remainingArguments) {
@@ -171,7 +173,7 @@ export function forwardsEvery(array, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(success);
+    return continuation(success, ...remainingArguments);
   });
 }
 
@@ -193,7 +195,7 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
       next();
     });
   }, () => {
-    return continuation(success);
+    return continuation(success, ...remainingArguments);
   });
 }
 
@@ -204,7 +206,9 @@ export function forwardsForEach(array, callback, ...remainingArguments) {
     callback(element, ...remainingArguments, () => {
       next();
     });
-  }, continuation);
+  }, () => {
+    return continuation(...remainingArguments);
+  });
 }
 
 export function backwardsForEach(array, callback, ...remainingArguments) {
@@ -214,7 +218,9 @@ export function backwardsForEach(array, callback, ...remainingArguments) {
     callback(element, ...remainingArguments, () => {
       next();
     });
-  }, continuation);
+  }, () => {
+    return continuation(...remainingArguments);
+  });
 }
 
 export function filter(array, callback, ...remainingArguments) {
@@ -239,7 +245,7 @@ export function filter(array, callback, ...remainingArguments) {
       return continuation();
     });
   }, () => {
-    return continuation(deletedElements);
+    return continuation(deletedElements, ...remainingArguments);
   });
 }
 
@@ -261,10 +267,10 @@ export function prune(array, callback, ...remainingArguments) {
         deletedElement = array.splice(start, deleteCount).pop() ///
       }
 
-      return continuation(!passed);
+      return continuation(passed);
     });
   }, () => {
-    return continuation(deletedElement);
+    return continuation(deletedElement, ...remainingArguments);
   });
 }
 
@@ -289,7 +295,7 @@ export function extract(array, callback, ...remainingArguments) {
       return continuation(passed);
     });
   }, () => {
-    return continuation(deletedElement);
+    return continuation(deletedElement, ...remainingArguments);
   });
 }
 
@@ -306,7 +312,7 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
     if (arrayALength === 0) {
       const success = true;  ///
 
-      return continuation(success);
+      return continuation(success, ...remainingArguments);
     }
 
     let success = false;
@@ -322,7 +328,7 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
         if (!success) {
           const success = false; ///
 
-          return continuation(success);
+          return continuation(success, ...remainingArguments);
         }
 
         arrayFilter(arrayA, (elementA) => {
