@@ -7,7 +7,6 @@ export { default as BreakPoint } from "./breakPoint";
 export { default as FileContext } from "./context/file";
 export { default as ReleaseContext } from "./context/release";
 
-export { default as EquivalencePass } from "./pass/equivalence";
 export { default as ContinuationPass } from "./pass/continuation";
 export { default as ContinuationZipPass } from "./pass/continuationZip";
 

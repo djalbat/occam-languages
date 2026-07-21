@@ -13,13 +13,12 @@ export default class ContinuationPass {
   descend(childNodes, ...remainingArguments) {
     const continuation = remainingArguments.pop();
 
-    return every(childNodes, (childNode, continuation) => {
-      const node = childNode; ///
+    return every(childNodes, (childNode, ...remainingArguments) => {
+      const continuation = remainingArguments.pop(),
+            node = childNode; ///
 
       return this.visitNode(node, ...remainingArguments, continuation);
-    }, (descended) => {
-      return continuation(descended, ...remainingArguments);
-    });
+    }, ...remainingArguments, continuation);
   }
 
   visitNode(node, ...remainingArguments) {

@@ -22,17 +22,16 @@ export default class ContinuationZipPass {
 
     let index = -1;
 
-    return every(generalChildNodes, (generalChildNode, continuation) => {
+    return every(generalChildNodes, (generalChildNode, ...remainingArguments) => {
       index++;
 
-      const specificChildNode = specificChildNodes[index],
-            specificNode = specificChildNode, ///
-            generalNode = generalChildNode; ///
+      const continuation = remainingArguments.pop(),
+            specificChildNode = specificChildNodes[index],
+            generalNode = generalChildNode, ///
+            specificNode = specificChildNode; ///
 
       return this.visitNode(generalNode, specificNode, ...remainingArguments, continuation);
-    }, (descended) => {
-      return continuation(descended, ...remainingArguments);
-    });
+    }, ...remainingArguments, continuation);
   }
 
   visitNode(generalNode, specificNode, ...remainingArguments) {
