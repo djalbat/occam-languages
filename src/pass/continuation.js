@@ -17,7 +17,9 @@ export default class ContinuationPass {
       const node = childNode; ///
 
       return this.visitNode(node, ...remainingArguments, continuation);
-    }, continuation);
+    }, (descended) => {
+      return continuation(descended, ...remainingArguments);
+    });
   }
 
   visitNode(node, ...remainingArguments) {

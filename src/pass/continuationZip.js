@@ -30,7 +30,9 @@ export default class ContinuationZipPass {
             generalNode = generalChildNode; ///
 
       return this.visitNode(generalNode, specificNode, ...remainingArguments, continuation);
-    }, continuation);
+    }, (descended) => {
+      return continuation(descended, ...remainingArguments);
+    });
   }
 
   visitNode(generalNode, specificNode, ...remainingArguments) {
