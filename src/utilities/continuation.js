@@ -12,8 +12,8 @@ export function one(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
+  return asynchronousForEach(array, (element, next, done) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (passed) {
         if (!found) {
           found = true;
@@ -38,8 +38,8 @@ export function some(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
+  return asynchronousForEach(array, (element, next, done) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (passed) {
         success = true;
 
@@ -60,8 +60,8 @@ export function each(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
+  return asynchronousForEach(array, (element, next, done) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (passed) {
         found = true;
       } else {
@@ -84,8 +84,8 @@ export function every(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
+  return asynchronousForEach(array, (element, next, done) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         success = false;
 
@@ -132,8 +132,8 @@ export function reduce(array, initialValue, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousForEach(array, (element, next, done) => {
-    callback(value, element, ...remainingArguments, (currentValue) => {
+  return asynchronousForEach(array, (element, next, done) => {
+    return callback(value, element, ...remainingArguments, (currentValue) => {
       value = currentValue;  ///
 
       next();
@@ -147,7 +147,7 @@ export function forEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   return asynchronousForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, () => {
+    return callback(element, ...remainingArguments, () => {
       next();
     });
   }, () => {
@@ -160,8 +160,8 @@ export function forwardsEvery(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousForwardsForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
+  return asynchronousForwardsForEach(array, (element, next, done) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         success = false;
 
@@ -182,8 +182,8 @@ export function backwardsEvery(array, callback, ...remainingArguments) {
 
   const continuation = remainingArguments.pop();
 
-  asynchronousBackwardsForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, (passed) => {
+  return asynchronousBackwardsForEach(array, (element, next, done) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         success = false;
 
@@ -203,7 +203,7 @@ export function forwardsForEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   return asynchronousForwardsForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, () => {
+    return callback(element, ...remainingArguments, () => {
       next();
     });
   }, () => {
@@ -215,7 +215,7 @@ export function backwardsForEach(array, callback, ...remainingArguments) {
   const continuation = remainingArguments.pop();
 
   return asynchronousBackwardsForEach(array, (element, next, done) => {
-    callback(element, ...remainingArguments, () => {
+    return callback(element, ...remainingArguments, () => {
       next();
     });
   }, () => {
@@ -233,7 +233,7 @@ export function filter(array, callback, ...remainingArguments) {
   return backwardsForEach(array, (element, continuation) => {
     index--;
 
-    callback(element, ...remainingArguments, (passed) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         const start = index,  ///
               deleteCount = 1,
@@ -259,7 +259,7 @@ export function prune(array, callback, ...remainingArguments) {
   return some(array, (element, continuation) => {
     index++;
 
-    callback(element, ...remainingArguments, (passed) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (!passed) {
         const start = index,  ///
               deleteCount = 1;
@@ -284,7 +284,7 @@ export function extract(array, callback, ...remainingArguments) {
   return some(array, (element, continuation) => {
     index++;
 
-    callback(element, ...remainingArguments, (passed) => {
+    return callback(element, ...remainingArguments, (passed) => {
       if (passed) {
         const start = index,  ///
               deleteCount = 1;
@@ -344,7 +344,7 @@ export function resolve(arrayA, arrayB, callback, ...remainingArguments) {
         const index = count,  ///
               elementA = arrayA[index];
 
-        callback(elementA, ...remainingArguments, (passed) => {
+        return callback(elementA, ...remainingArguments, (passed) => {
           if (passed) {
             const elementB = elementA;  ///
 
