@@ -39,7 +39,7 @@ export default class ContinuationPass {
     const visited = true,
           continuation = remainingArguments.pop();
 
-    return continuation(visited);
+    return continuation(visited, ...remainingArguments);
   }
 
   visitNonTerminalNode(nonTerminalNode, ...remainingArguments) {
@@ -75,7 +75,7 @@ export default class ContinuationPass {
     if (map === null) {
       const visited = false;
 
-      return continuation(visited);
+      return continuation(visited, ...remainingArguments);
     }
 
     const { run } = map;

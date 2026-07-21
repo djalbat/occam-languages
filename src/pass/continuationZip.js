@@ -17,7 +17,7 @@ export default class ContinuationZipPass {
     if (!childNodesCongruent) {
       const descended = false;
 
-      return continuation(descended);
+      return continuation(descended, ...remainingArguments);
     }
 
     let index = -1;
@@ -64,7 +64,7 @@ export default class ContinuationZipPass {
     const visited = true,
           continuation = remainingArguments.pop();
 
-    return continuation(visited);
+    return continuation(visited, ...remainingArguments);
   }
 
   visitNonTerminalNode(generalNonTerminalNode, specificNonTerminalNode, ...remainingArguments) {
@@ -85,7 +85,7 @@ export default class ContinuationZipPass {
           if (generalNonTerminalNodeRuleName !== specificNonTerminalNodeRuleName) {
             const visited = false;
 
-            return continuation(visited);
+            return continuation(visited, ...remainingArguments);
           }
 
           const generalNonTerminalNodeChildNodes = generalNonTerminalNode.getChildNodes(),
@@ -115,7 +115,7 @@ export default class ContinuationZipPass {
     if (map === null) {
       const visited = false;
 
-      return continuation(visited);
+      return continuation(visited, ...remainingArguments);
     }
 
     const { run } = map;
