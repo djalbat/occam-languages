@@ -57,7 +57,7 @@ export default class ContinuationZipPass {
 
     const visited = false;
 
-    return continuation(visited);
+    return continuation(visited, ...remainingArguments);
   }
 
   visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments) { ///
