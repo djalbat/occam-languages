@@ -40,8 +40,7 @@ export default class ContinuationZipPass {
           specificNodeTerminalNode = specificNode.isTerminalNode(),
           generalNodeNonTerminalNode = generalNode.isNonTerminalNode(),
           specificNodeNonTerminalNode = specificNode.isNonTerminalNode();
-
-
+    
     if (generalNodeTerminalNode && specificNodeTerminalNode) {
       const generalTerminalNode = generalNode,  ///
             specificTerminalNode = specificNode;  ///

@@ -12,13 +12,13 @@ export function one(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments;  ///
+  let callbackArguments = initialArguments;  ///
 
   return asynchronousForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (passed) {
         if (!success) {
@@ -35,7 +35,7 @@ export function one(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -46,13 +46,13 @@ export function some(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (passed) {
         success = true;
@@ -65,7 +65,7 @@ export function some(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -76,13 +76,13 @@ export function each(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (passed) {
         success = true;
@@ -97,7 +97,7 @@ export function each(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -108,13 +108,13 @@ export function every(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (!passed) {
         success = false;
@@ -127,7 +127,7 @@ export function every(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -138,20 +138,20 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForEach(array, (element, next, done) => {
-    return callback(value, element, ...intermediateArguments, (...callbackArguments) => {
-      const currentValue = callbackArguments.shift();
+    return callback(value, element, ...callbackArguments, (...intermediateArguments) => {
+      const currentValue = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       value = currentValue;  ///
 
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(value, ...finalArguments);
   });
@@ -160,16 +160,16 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
 export function forEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      intermediateArguments = callbackArguments;  ///
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      callbackArguments = intermediateArguments;  ///
 
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(...finalArguments);
   });
@@ -180,13 +180,13 @@ export function forwardsEvery(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForwardsForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (!passed) {
         success = false;
@@ -199,7 +199,7 @@ export function forwardsEvery(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -210,13 +210,13 @@ export function backwardsEvery(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousBackwardsForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (!passed) {
         success = false;
@@ -229,7 +229,7 @@ export function backwardsEvery(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -238,16 +238,16 @@ export function backwardsEvery(array, callback, ...initialArguments) {
 export function forwardsForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForwardsForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      intermediateArguments = callbackArguments;  ///
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      callbackArguments = intermediateArguments;  ///
 
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(...finalArguments);
   });
@@ -256,16 +256,16 @@ export function forwardsForEach(array, callback, ...initialArguments) {
 export function backwardsForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousBackwardsForEach(array, (element, next, done) => {
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      intermediateArguments = callbackArguments;  ///
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      callbackArguments = intermediateArguments;  ///
 
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(...finalArguments);
   });
@@ -276,17 +276,17 @@ export function filter(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   let index = array.length;
 
   return asynchronousBackwardsForEach(array, (element, next, done) => {
     index--;
 
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments; ///
+      callbackArguments = intermediateArguments; ///
 
       if (!passed) {
         const start = index,  ///
@@ -299,7 +299,7 @@ export function filter(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(deletedElements, ...finalArguments);
   });
@@ -310,17 +310,17 @@ export function prune(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   let index = -1;
 
   return asynchronousForEach(array, (element, next, done) => {
     index++;
 
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments; ///
+      callbackArguments = intermediateArguments; ///
 
       if (!passed) {
         const start = index,  ///
@@ -336,7 +336,7 @@ export function prune(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(deletedElement, ...finalArguments);
   });
@@ -347,17 +347,17 @@ export function extract(array, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   let index = -1;
 
   return asynchronousForEach(array, (element, next, done) => {
     index++;
 
-    return callback(element, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(element, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments; ///
+      callbackArguments = intermediateArguments; ///
 
       if (passed) {
         const start = index,  ///
@@ -373,7 +373,7 @@ export function extract(array, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(deletedElement, ...finalArguments);
   });
@@ -395,17 +395,17 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
 
   let index = -1;
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   return asynchronousForEach(arrayA, (elementA, next, done) => {
     index++;
 
     const elementB = arrayB[index];
 
-    return callback(elementA, elementB, ...intermediateArguments, (...callbackArguments) => {
-      const passed = callbackArguments.shift();
+    return callback(elementA, elementB, ...callbackArguments, (...intermediateArguments) => {
+      const passed = intermediateArguments.shift();
 
-      intermediateArguments = callbackArguments;  ///
+      callbackArguments = intermediateArguments;  ///
 
       if (!passed) {
         success = false;
@@ -418,7 +418,7 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
       next();
     });
   }, () => {
-    const finalArguments = intermediateArguments; ///
+    const finalArguments = callbackArguments; ///
 
     return continuation(success, ...finalArguments);
   });
@@ -431,7 +431,7 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
 
   const continuation = initialArguments.pop();
 
-  let intermediateArguments = initialArguments; ///
+  let callbackArguments = initialArguments; ///
 
   function nextPass() {
     let success = false;
@@ -441,7 +441,7 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
     if (arrayALength === 0) {
       success = true;
 
-      const finalArguments = intermediateArguments; ///
+      const finalArguments = callbackArguments; ///
 
       return continuation(success, ...finalArguments);
     }
@@ -457,7 +457,7 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
         if (!success) {
           success = false;
 
-          const finalArguments = intermediateArguments; ///
+          const finalArguments = callbackArguments; ///
 
           return continuation(success, ...finalArguments);
         }
@@ -474,10 +474,10 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
       } else {
         const elementA = arrayA[index];
 
-        return callback(elementA, ...intermediateArguments, (...callbackArguments) => {
-          const passed = callbackArguments.shift();
+        return callback(elementA, ...callbackArguments, (...intermediateArguments) => {
+          const passed = intermediateArguments.shift();
 
-          intermediateArguments = callbackArguments;  ///
+          callbackArguments = intermediateArguments;  ///
 
           if (passed) {
             const elementB = elementA;  ///
