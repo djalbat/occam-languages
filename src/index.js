@@ -21,6 +21,7 @@ export { default as nodeMixins } from "./mixins/node";
 
 export { default as bnfUtilities } from "./utilities/bnf";
 export { default as nodeUtilities } from "./utilities/node";
+export { default as passUtilities } from "./utilities/pass";
 export { default as furtleUtilities } from "./utilities/furtle";
 export { default as nominalUtilities } from "./utilities/nominal";
 export { default as breakPointUtilities } from "./utilities/breakPoint";

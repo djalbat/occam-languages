@@ -45,3 +45,8 @@ function isChildNodeCongruent(childNodeA, childNodeB) {
 
   return childNodeCongruent;
 }
+
+export default {
+  nonTerminalNodeQuery,
+  areChildNodesCongruent
+};
