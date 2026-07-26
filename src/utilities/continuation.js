@@ -638,6 +638,18 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
   return nextPass(...callbackArguments);
 }
 
+export function all(callbacks, ...initialArguments) {
+  return every(callbacks, (callback, ...callbackArguments) => {
+    return callback(...callbackArguments);
+  }, ...initialArguments);
+}
+
+export function exists(callbacks, ...initialArguments) {
+  return some(callbacks, (callback, ...callbackArguments) => {
+    return callback(...callbackArguments);
+  }, ...initialArguments);
+}
+
 export default {
   one,
   some,
@@ -653,5 +665,7 @@ export default {
   prune,
   extract,
   match,
-  resolve
+  resolve,
+  all,
+  exists
 };
