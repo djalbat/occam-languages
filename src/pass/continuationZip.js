@@ -1,6 +1,6 @@
 "use strict";
 
-import { every } from "../utilities/continuation";
+import { match } from "../utilities/continuation";
 import { nonTerminalNodeQuery, areChildNodesCongruent } from "../utilities/pass";
 
 export default class ContinuationZipPass {
@@ -20,13 +20,8 @@ export default class ContinuationZipPass {
       return continuation(descended, ...remainingArguments);
     }
 
-    let index = -1;
-
-    return every(generalChildNodes, (generalChildNode, ...remainingArguments) => {
-      index++;
-
+    return match(generalChildNodes, specificChildNodes, (generalChildNode, specificChildNode, ...remainingArguments) => {
       const continuation = remainingArguments.pop(),
-            specificChildNode = specificChildNodes[index],
             generalNode = generalChildNode, ///
             specificNode = specificChildNode; ///
 
