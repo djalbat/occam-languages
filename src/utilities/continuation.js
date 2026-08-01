@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 
 const { filter: arrayFilter } = arrayUtilities;
 
-export function one(array, callback, ...initialArguments) {
+export function asynchronousOne(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -54,7 +54,7 @@ export function one(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function some(array, callback, ...initialArguments) {
+export function asynchronousSome(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -93,7 +93,7 @@ export function some(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function each(array, callback, ...initialArguments) {
+export function asynchronousEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -135,7 +135,7 @@ export function each(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function every(array, callback, ...initialArguments) {
+export function asynchronousEvery(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -174,7 +174,7 @@ export function every(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function reduce(array, initialValue, callback, ...initialArguments) {
+export function asynchronousReduce(array, initialValue, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -206,7 +206,7 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
   return next(value, ...callbackArguments);
 }
 
-export function forEach(array, callback, ...initialArguments) {
+export function asynchronousForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -237,7 +237,7 @@ export function forEach(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function forwardsEvery(array, callback, ...initialArguments) {
+export function asynchronousForwardsEvery(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -276,7 +276,7 @@ export function forwardsEvery(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function backwardsEvery(array, callback, ...initialArguments) {
+export function asynchronousBackwardsEvery(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -315,7 +315,7 @@ export function backwardsEvery(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function forwardsForEach(array, callback, ...initialArguments) {
+export function asynchronousForwardsForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
     length = array.length;
 
@@ -346,7 +346,7 @@ export function forwardsForEach(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function backwardsForEach(array, callback, ...initialArguments) {
+export function asynchronousBackwardsForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -377,7 +377,7 @@ export function backwardsForEach(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function filter(array, callback, ...initialArguments) {
+export function asynchronousFilter(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -420,7 +420,7 @@ export function filter(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function prune(array, callback, ...initialArguments) {
+export function asynchronousPrune(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -467,7 +467,7 @@ export function prune(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function extract(array, callback, ...initialArguments) {
+export function asynchronousExtract(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
         length = array.length;
 
@@ -514,7 +514,7 @@ export function extract(array, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function match(arrayA, arrayB, callback, ...initialArguments) {
+export function asynchronousMatch(arrayA, arrayB, callback, ...initialArguments) {
   const continuation = initialArguments.pop();
 
   const arrayALength = arrayA.length,
@@ -566,7 +566,7 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
   return next(...callbackArguments);
 }
 
-export function resolve(arrayA, arrayB, callback, ...initialArguments) {
+export function asynchronousResolve(arrayA, arrayB, callback, ...initialArguments) {
   arrayA = [  ///
     ...arrayA
   ];
@@ -638,34 +638,34 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
   return nextPass(...callbackArguments);
 }
 
-export function all(callbacks, ...initialArguments) {
+export function asynchronousAll(callbacks, ...initialArguments) {
   return every(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
   }, ...initialArguments);
 }
 
-export function exists(callbacks, ...initialArguments) {
+export function asynchronousExists(callbacks, ...initialArguments) {
   return some(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
   }, ...initialArguments);
 }
 
 export default {
-  one,
-  some,
-  each,
-  every,
-  reduce,
-  forEach,
-  forwardsEvery,
-  backwardsEvery,
-  forwardsForEach,
-  backwardsForEach,
-  filter,
-  prune,
-  extract,
-  match,
-  resolve,
-  all,
-  exists
+  asynchronousOne,
+  asynchronousSome,
+  asynchronousEach,
+  asynchronousEvery,
+  asynchronousReduce,
+  asynchronousForEach,
+  asynchronousForwardsEvery,
+  asynchronousBackwardsEvery,
+  asynchronousForwardsForEach,
+  asynchronousBackwardsForEach,
+  asynchronousFilter,
+  asynchronousPrune,
+  asynchronousExtract,
+  asynchronousMatch,
+  asynchronousResolve,
+  asynchronousAll,
+  asynchronousExists
 };
