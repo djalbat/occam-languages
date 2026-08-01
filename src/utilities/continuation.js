@@ -639,13 +639,13 @@ export function asynchronousResolve(arrayA, arrayB, callback, ...initialArgument
 }
 
 export function asynchronousAll(callbacks, ...initialArguments) {
-  return every(callbacks, (callback, ...callbackArguments) => {
+  return asynchronousEvery(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
   }, ...initialArguments);
 }
 
 export function asynchronousExists(callbacks, ...initialArguments) {
-  return some(callbacks, (callback, ...callbackArguments) => {
+  return asynchronousSome(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
   }, ...initialArguments);
 }
