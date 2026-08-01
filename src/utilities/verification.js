@@ -3,9 +3,9 @@
 import { Dependency } from "occam-model";
 import { arrayUtilities } from "necessary";
 
-import { asynchronousEvery  } from "../utilities/continuation";
-import { asyncEvery  } from "../utilities/asynchronous";
+import { asyncEvery  } from "../utilities/async";
 import { SINGLE_SPACE } from "../constants";
+import { asynchronousEvery  } from "../utilities/continuation";
 
 const { last } = arrayUtilities;
 
