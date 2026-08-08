@@ -43,6 +43,8 @@ export default class Element {
   }
 
   commit(context) {
+    context = context.commit(); ///
+
     this.context = context;
   }
 

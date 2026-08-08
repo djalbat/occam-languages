@@ -11,8 +11,10 @@ export default class Context {
     return this.context;
   }
 
-  setContext(context) {
-    this.context = context;
+  commit() {
+    const context = this; ///
+
+    return context;
   }
 
   getDepth() {
