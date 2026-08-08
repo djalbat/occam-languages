@@ -33,7 +33,7 @@ export default class Context {
     }
 
     if (context === undefined) {
-      context = this.context
+      context = this.context;
     }
 
     this.merge(context);
