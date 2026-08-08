@@ -43,7 +43,9 @@ export default class Element {
   }
 
   commit(context) {
-    context = context.commit(); ///
+    const recursive = true;
+
+    context = context.commit(recursive);  ///
 
     this.context = context;
   }

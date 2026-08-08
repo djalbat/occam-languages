@@ -1,6 +1,10 @@
 "use strict";
 
+import { jsonUtilities } from "necessary";
+
 import { DOUBLE_SPACE, TRACE_LEVEL, DEBUG_LEVEL, INFO_LEVEL, ERROR_LEVEL, WARNING_LEVEL } from "./constants";
+
+const { isBoolean } = jsonUtilities;
 
 export default class Context {
   constructor(context) {
@@ -11,18 +15,38 @@ export default class Context {
     return this.context;
   }
 
-  commit() {
-    const context = this; ///
-
-    return context;
-  }
-
   getDepth() {
     let depth = this.context.getDepth();
 
     depth++;
 
     return depth;
+  }
+
+  commit(context, recursive = false) {
+    const contextBoolean = isBoolean(context);
+
+    if (contextBoolean) {
+      recursive = context;  ///
+
+      context = undefined;
+    }
+
+    if (context === undefined) {
+      context = this.context
+    }
+
+    this.merge(context);
+
+    if (recursive) {
+      context = context.commit(recursive);
+    }
+
+    return context;
+  }
+
+  merge(context) {
+    ///
   }
 
   isReleased() { return this.context.isReleased(); }
