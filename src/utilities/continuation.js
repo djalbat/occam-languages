@@ -426,14 +426,14 @@ export function asynchronousPrune(array, callback, ...initialArguments) {
 
   let deletedElement;
 
-  let index = length;
+  let index = -1;
 
   let finalArguments;
 
   function next(...callbackArguments) {
-    index--;
+    index++;
 
-    if (index === -1) {
+    if (index === length) {
       deletedElement = undefined;
 
       finalArguments = initialArguments; ///
@@ -473,14 +473,14 @@ export function asynchronousExtract(array, callback, ...initialArguments) {
 
   let deletedElement;
 
-  let index = length;
+  let index = -1;
 
   let finalArguments;
 
   function next(...callbackArguments) {
-    index--;
+    index++;
 
-    if (index === -1) {
+    if (index === length) {
       deletedElement = undefined;
 
       finalArguments = initialArguments; ///
