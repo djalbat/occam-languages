@@ -2,12 +2,12 @@
 
 import { arrayUtilities } from "necessary";
 
-import { asynchronousResolve } from "../utilities/continuation";
+import { resolve } from "../utilities/continuation";
 
 const { first, filter, compress } = arrayUtilities;
 
 export function verifyFileContexts(fileContexts, verifiedFileContexts, contiunation) {
-  return asynchronousResolve(fileContexts, verifiedFileContexts, (fileContext, contiunation) => {
+  return resolve(fileContexts, verifiedFileContexts, (fileContext, contiunation) => {
     return fileContext.verify(contiunation);
   }, contiunation);
 }

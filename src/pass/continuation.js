@@ -1,6 +1,6 @@
 "use strict";
 
-import { asynchronousEvery } from "../utilities/continuation";
+import { every } from "../utilities/continuation";
 import { nonTerminalNodeQuery } from "../utilities/pass";
 
 export default class ContinuationPass {
@@ -13,7 +13,7 @@ export default class ContinuationPass {
   descend(childNodes, ...remainingArguments) {
     const continuation = remainingArguments.pop();
 
-    return asynchronousEvery(childNodes, (childNode, ...remainingArguments) => {
+    return every(childNodes, (childNode, ...remainingArguments) => {
       const continuation = remainingArguments.pop(),
             node = childNode; ///
 

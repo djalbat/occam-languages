@@ -3,9 +3,9 @@
 import { Dependency } from "occam-model";
 import { arrayUtilities } from "necessary";
 
+import { every  } from "../utilities/continuation";
 import { asyncEvery  } from "../utilities/async";
 import { SINGLE_SPACE } from "../constants";
-import { asynchronousEvery  } from "../utilities/continuation";
 
 const { last } = arrayUtilities;
 
@@ -36,7 +36,7 @@ export function initialiseReleaseContexts(context) {
 export function verifyReleaseContexts(context, contiunation) {
   const { releaseContexts } = context;
 
-  return asynchronousEvery(releaseContexts, verifyReleaseContext, context, contiunation);
+  return every(releaseContexts, verifyReleaseContext, context, contiunation);
 }
 
 export default {

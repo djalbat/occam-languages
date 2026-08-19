@@ -1,6 +1,6 @@
 "use strict";
 
-import { asynchronousMatch } from "../utilities/continuation";
+import { match } from "../utilities/continuation";
 import { nonTerminalNodeQuery, areChildNodesCongruent } from "../utilities/pass";
 
 export default class ContinuationZipPass {
@@ -20,7 +20,7 @@ export default class ContinuationZipPass {
       return continuation(descended, ...remainingArguments);
     }
 
-    return asynchronousMatch(generalChildNodes, specificChildNodes, (generalChildNode, specificChildNode, ...remainingArguments) => {
+    return match(generalChildNodes, specificChildNodes, (generalChildNode, specificChildNode, ...remainingArguments) => {
       const continuation = remainingArguments.pop(),
             generalNode = generalChildNode, ///
             specificNode = specificChildNode; ///
