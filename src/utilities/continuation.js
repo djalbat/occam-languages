@@ -5,37 +5,28 @@ import { arrayUtilities } from "necessary";
 const { filter: arrayFilter } = arrayUtilities;
 
 export function one(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const success = (count === 1),
-        finalArguemnts = success ?
-                            nextArguments : ///
-                              initialArguments; ///
-
-      return continuation(success, ...finalArguemnts);
+      return (count === 1) ?
+               forward(...nextArguments) :
+                 back();
     }
 
     const element = array[index];
 
-    return callback(element, ...initialArguments, (success, ...callbackArguments) => {
-      if (success) {
-        count++;
+    return callback(element, ...initialArguments, () => next(index + 1, ...nextArguments), (...callbackArguments) => {
+      count++;
 
-        if (count === 2) {
-          const success = false,
-                finalArguments = initialArguments;  ///
-
-          return continuation(success, ...finalArguments);
-        }
-
-        return next(index + 1, ...callbackArguments);
+      if (count === 2) {
+        return back();
       }
 
-      return next(index + 1, ...nextArguments);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
@@ -45,28 +36,18 @@ export function one(array, callback, ...initialArguments) {
 }
 
 export function some(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length;
 
   function next(index) {
     if (index === length) {
-      const success = false,
-            finalArguments = initialArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return back();
     }
 
     const element = array[index];
 
-    return callback(element, ...initialArguments, (success, ...callbackArguments) => {
-      if (success) {
-        const finalArguments = callbackArguments; ///
-
-        return continuation(success, ...finalArguments);
-      }
-
-      return next(index + 1);
-    });
+    return callback(element, ...initialArguments, () => next(index + 1), forward);
   }
 
   const index = 0;
@@ -75,29 +56,21 @@ export function some(array, callback, ...initialArguments) {
 }
 
 export function each(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const success = (count !== 0),
-        finalArguments = success ?
-                            nextArguments : ///
-                              initialArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return (count !== 0) ?
+               forward(...nextArguments) :
+                 back();
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
-      if (!success) {
-        const finalArguments = initialArguments;  ///
-
-        return continuation(success, ...finalArguments);
-      }
-
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       count++;
 
       return next(index + 1, ...callbackArguments);
@@ -110,27 +83,19 @@ export function each(array, callback, ...initialArguments) {
 }
 
 export function every(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const success = true,
-            finalArguments = nextArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return forward(...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
-      if (!success) {
-        const finalArguments = initialArguments;  ///
-
-        return continuation(success, ...finalArguments);
-      }
-
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       return next(index + 1, ...callbackArguments);
     });
   }
@@ -139,20 +104,19 @@ export function every(array, callback, ...initialArguments) {
 }
 
 export function reduce(array, initialValue, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, value, ...nextArguments) {
     if (index === length) {
-      const finalArguments = nextArguments; ///
-
-      return continuation(value, ...finalArguments);
+      return forward(value, ...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, value, ...nextArguments, (value, ...callbackArguments) => {
+    return callback(element, value, ...nextArguments, back, (value, ...callbackArguments) => {
       return next(index + 1, value, ...callbackArguments);
     });
   }
@@ -161,20 +125,19 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
 }
 
 export function forEach(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const finalArguments = nextArguments; ///
-
-      return continuation(...finalArguments);
+      return forward(...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (...callbackArguments) => {
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       return next(index + 1, ...callbackArguments);
     });
   }
@@ -183,27 +146,19 @@ export function forEach(array, callback, ...initialArguments) {
 }
 
 export function forwardsEvery(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const success = true,
-            finalArguments = nextArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return forward(...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
-      if (!success) {
-        const finalArguments = initialArguments;  ///
-
-        return continuation(success, ...finalArguments);
-      }
-
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       return next(index + 1, ...callbackArguments);
     });
   }
@@ -212,27 +167,19 @@ export function forwardsEvery(array, callback, ...initialArguments) {
 }
 
 export function backwardsEvery(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = length - 1;
 
   function next(index, ...nextArguments) {
     if (index === -1) {
-      const success = true,
-            finalArguments = nextArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return forward(...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
-      if (!success) {
-        const finalArguments = initialArguments;  ///
-
-        return continuation(success, ...finalArguments);
-      }
-
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       return next(index - 1, ...callbackArguments);
     });
   }
@@ -241,20 +188,19 @@ export function backwardsEvery(array, callback, ...initialArguments) {
 }
 
 export function forwardsForEach(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const finalArguments = nextArguments; ///
-
-      return continuation(...finalArguments);
+      return forward(...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (...callbackArguments) => {
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       return next(index + 1, ...callbackArguments);
     });
   }
@@ -263,20 +209,19 @@ export function forwardsForEach(array, callback, ...initialArguments) {
 }
 
 export function backwardsForEach(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = length - 1;
 
   function next(index, ...nextArguments) {
     if (index === -1) {
-      const finalArguments = nextArguments; ///
-
-      return continuation(...finalArguments);
+      return forward(...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (...callbackArguments) => {
+    return callback(element, ...nextArguments, back, (...callbackArguments) => {
       return next(index - 1, ...callbackArguments);
     });
   }
@@ -285,21 +230,20 @@ export function backwardsForEach(array, callback, ...initialArguments) {
 }
 
 export function filter(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         deletedElements = [],
         index = length - 1;
 
   function next(index, ...nextArguments) {
     if (index === -1) {
-      const finalArguments = nextArguments; ///
-
-      return continuation(deletedElements, ...finalArguments);
+      return forward(deletedElements, ...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, (passed, ...callbackArguments) => {
+    return callback(element, ...nextArguments, back, (passed, ...callbackArguments) => {
       if (!passed) {
         const startIndex = index, ///
               deleteCount = 1,
@@ -318,83 +262,79 @@ export function filter(array, callback, ...initialArguments) {
 }
 
 export function prune(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
-  function next(index) {
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const deletedElement = undefined,
-            finalArguments = initialArguments; ///
+      const deletedElement = undefined;
 
-      return continuation(deletedElement, ...finalArguments);
+      return forward(deletedElement, ...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...initialArguments, (passed, ...callbackArguments) => {
+    return callback(element, ...nextArguments, back, (passed, ...callbackArguments) => {
       if (!passed) {
         const startIndex = index, ///
               deleteCount = 1,
-              deletedElement = element, ///
-              finalArguments = callbackArguments; ///
+              deletedElement = element; ///
 
         array.splice(startIndex, deleteCount);
 
-        return continuation(deletedElement, ...finalArguments);
+        return forward(deletedElement, ...callbackArguments);
       }
 
-      return next(index + 1);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  return next(index);
+  return next(index, ...initialArguments);
 }
 
 export function extract(array, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         length = array.length,
         index = 0;
 
-  function next(index) {
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const deletedElement = undefined,
-            finalArguments = initialArguments; ///
+      const deletedElement = undefined;
 
-      return continuation(deletedElement, ...finalArguments);
+      return forward(deletedElement, ...nextArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...initialArguments, (passed, ...callbackArguments) => {
+    return callback(element, ...nextArguments, back, (passed, ...callbackArguments) => {
       if (passed) {
         const startIndex = index, ///
               deleteCount = 1,
-              deletedElement = element, ///
-              finalArguments = callbackArguments; ///
+              deletedElement = element; ///
 
         array.splice(startIndex, deleteCount);
 
-        return continuation(deletedElement, ...finalArguments);
+        return forward(deletedElement, ...callbackArguments);
       }
 
-      return next(index + 1);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  return next(index);
+  return next(index, ...initialArguments);
 }
 
 export function match(arrayA, arrayB, callback, ...initialArguments) {
-  const continuation = initialArguments.pop(),
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
         arrayALength = arrayA.length,
         arrayBLength = arrayB.length;
 
   if (arrayALength !== arrayBLength) {
-    const success = false,
-          finalArguments = initialArguments;  ///
-
-    return continuation(success, ...finalArguments);
+    return back();
   }
 
   const length = arrayALength,  ///
@@ -402,22 +342,13 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
 
   function next(index, ...nextArguments) {
     if (index === length) {
-      const success = true,
-            finalArguments = nextArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return forward(...nextArguments);
     }
 
     const elementA = arrayA[index],
           elementB = arrayB[index];
 
-    return callback(elementA, elementB, ...nextArguments, (success, ...callbackArguments) => {
-      if (!success) {
-        const finalArguments = initialArguments;  ///
-
-        return continuation(success, ...finalArguments);
-      }
-
+    return callback(elementA, elementB, ...nextArguments, back, (...callbackArguments) => {
       return next(index + 1, ...callbackArguments);
     });
   }
@@ -430,24 +361,20 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
     ...arrayA
   ];
 
-  const continuation = initialArguments.pop();
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop();
 
   function nextPass(...nextArguments) {
     const length = arrayA.length; ///
 
     if (length === 0) {
-      const success = true,
-            finalArguments = nextArguments; ///
-
-      return continuation(success, ...finalArguments);
+      return forward(...nextArguments);
     }
 
     function nextElement(index, success, ...currentArguments) {
       if (index === length) {
         if (!success) {
-          const finalArguments = initialArguments; ///
-
-          return continuation(success, ...finalArguments);
+          return back();
         }
 
         arrayFilter(arrayA, (elementA) => {
@@ -463,18 +390,14 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
 
       const elementA = arrayA[index];
 
-      return callback(elementA, ...currentArguments, (passed, ...callbackArguments) => {
-        if (passed) {
-          const elementB = elementA,  ///
-                success = true;
+      return callback(elementA, ...currentArguments, () => nextElement(index + 1, success, ...currentArguments), (...callbackArguments) => {
+          const elementB = elementA;  ///
 
           arrayB.push(elementB);
 
-          return nextElement(index + 1, success, ...callbackArguments);
+          return nextElement(index + 1, true, ...callbackArguments);
         }
-
-        return nextElement(index + 1, success, ...currentArguments);
-      });
+      );
     }
 
     const index = 0,
