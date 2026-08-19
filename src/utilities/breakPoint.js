@@ -4,12 +4,13 @@ import BreakPoint from "../breakPoint";
 
 export function breakable(innerFunction) {
   return function(...remainingArguments) {
-    const continuation = remainingArguments.pop(),
+    const forward = remainingArguments.pop(),
+          back = remainingArguments.pop(),
           context = remainingArguments.pop();
 
-    return this.break(context, () => {
+    return this.break(context, back, () => {
       setImmediate(() => {
-        return innerFunction.call(this, ...remainingArguments, context, continuation);
+        return innerFunction.call(this, ...remainingArguments, context, back, forward);
       });
     });
   };

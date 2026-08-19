@@ -464,7 +464,7 @@ export default class ReleaseContext {
     this.initialised = true;
   }
 
-  break(breakPoint, continuation) {
+  break(breakPoint, back, forward) {
     const level = TRACE_LEVEL,
           message = BREAK_MESSAGE,
           filePath = breakPoint.getFilePath(),
@@ -474,32 +474,26 @@ export default class ReleaseContext {
 
     const context = this; ///
 
-    return this.callback(breakPoint, context, continuation);
+    return this.callback(breakPoint, context, back, forward);
   }
 
-  verify(contiunation) {
-    let verifies = false;
-
+  verify(back, forward) {
     const typePrefixes = this.getTypePrefixes(),
           releaseContext = this, ///
           typePrefixesVerify = verifyTypePrefixes(typePrefixes, releaseContext);
 
     if (!typePrefixesVerify) {
-      return contiunation(verifies);
+      return back();
     }
 
-    const verifiedFileContexts = [];
+    const fileContexts = [];
 
-    return verifyFileContexts(this.fileContexts, verifiedFileContexts, (fileContextsVerify) => {
-      if (fileContextsVerify) {
-        verifies = true;
+    return verifyFileContexts(this.fileContexts, fileContexts, back, () => {
+      this.fileContexts = fileContexts; ///
 
-        this.verifies = verifies;
+      this.verifies = true;
 
-        this.fileContexts = verifiedFileContexts; ///
-      }
-
-      return contiunation(verifies);
+      return forward();
     });
   }
 

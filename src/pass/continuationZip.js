@@ -5,93 +5,68 @@ import { nonTerminalNodeQuery, areChildNodesCongruent } from "../utilities/pass"
 
 export default class ContinuationZipPass {
   run(generalNode, specificNode, ...remainingArguments) {
-    const continuation = remainingArguments.pop();
+    const forward = remainingArguments.pop(),
+          back = remainingArguments.pop();
 
-    return this.visitNode(generalNode, specificNode, ...remainingArguments, continuation);
+    return this.visitNode(generalNode, specificNode, ...remainingArguments, back, forward);
   }
 
   descend(generalChildNodes, specificChildNodes, ...remainingArguments) {
-    const continuation = remainingArguments.pop(),
+    const forward = remainingArguments.pop(),
+          back = remainingArguments.pop(),
           childNodesCongruent = areChildNodesCongruent(generalChildNodes, specificChildNodes);
 
     if (!childNodesCongruent) {
-      const descended = false;
-
-      return continuation(descended, ...remainingArguments);
+      return back();
     }
 
     return match(generalChildNodes, specificChildNodes, (generalChildNode, specificChildNode, ...remainingArguments) => {
-      const continuation = remainingArguments.pop(),
+      const forward = remainingArguments.pop(),
+            back = remainingArguments.pop(),
             generalNode = generalChildNode, ///
             specificNode = specificChildNode; ///
 
-      return this.visitNode(generalNode, specificNode, ...remainingArguments, continuation);
-    }, ...remainingArguments, continuation);
+      return this.visitNode(generalNode, specificNode, ...remainingArguments, back, forward);
+    }, ...remainingArguments, back, forward);
   }
 
   visitNode(generalNode, specificNode, ...remainingArguments) {
-    const continuation = remainingArguments.pop(),
+    const forward = remainingArguments.pop(),
+          back = remainingArguments.pop(),
           generalNodeTerminalNode = generalNode.isTerminalNode(),
           specificNodeTerminalNode = specificNode.isTerminalNode(),
           generalNodeNonTerminalNode = generalNode.isNonTerminalNode(),
           specificNodeNonTerminalNode = specificNode.isNonTerminalNode();
-    
+
     if (generalNodeTerminalNode && specificNodeTerminalNode) {
       const generalTerminalNode = generalNode,  ///
             specificTerminalNode = specificNode;  ///
 
-      return this.visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments, continuation);
+      return this.visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments, back, forward);
     }
 
     if (generalNodeNonTerminalNode && specificNodeNonTerminalNode) {
       const generalNonTerminalNode = generalNode,  ///
-            specificNonTerminalNode = specificNode; ///
+        specificNonTerminalNode = specificNode; ///
 
-      return this.visitNonTerminalNode(generalNonTerminalNode, specificNonTerminalNode, ...remainingArguments, continuation);
+      return this.visitNonTerminalNode(generalNonTerminalNode, specificNonTerminalNode, ...remainingArguments, back, forward);
     }
 
-    const visited = false;
-
-    return continuation(visited, ...remainingArguments);
+    return back();
   }
 
   visitTerminalNode(generalTerminalNode, specificTerminalNode, ...remainingArguments) { ///
-    const visited = true,
-          continuation = remainingArguments.pop();
+    const forward = remainingArguments.pop(),
+          back = remainingArguments.pop();
 
-    return continuation(visited, ...remainingArguments);
+    return forward(...remainingArguments);
   }
 
   visitNonTerminalNode(generalNonTerminalNode, specificNonTerminalNode, ...remainingArguments) {
-    const continuation = remainingArguments.pop();
+    const forward = remainingArguments.pop(),
+          back = remainingArguments.pop();
 
     let { maps } = this.constructor;
-
-    maps = [ ///
-      ...maps,
-      {
-        generalNodeQuery: nonTerminalNodeQuery,
-        specificNodeQuery: nonTerminalNodeQuery,
-        run: (generalNonTerminalNode, specificNonTerminalNode, ...remainingArguments) => {
-          const continuation = remainingArguments.pop(),
-                generalNonTerminalNodeRuleName = generalNonTerminalNode.getRuleName(), ///
-                specificNonTerminalNodeRuleName = specificNonTerminalNode.getRuleName(); ///
-
-          if (generalNonTerminalNodeRuleName !== specificNonTerminalNodeRuleName) {
-            const visited = false;
-
-            return continuation(visited, ...remainingArguments);
-          }
-
-          const generalNonTerminalNodeChildNodes = generalNonTerminalNode.getChildNodes(),
-                specificNonTerminalNodeChildNodes = specificNonTerminalNode.getChildNodes(),
-                generalChildNodes = generalNonTerminalNodeChildNodes, ///
-                specificChildNodes = specificNonTerminalNodeChildNodes; ///
-
-          return this.descend(generalChildNodes, specificChildNodes, ...remainingArguments, continuation);
-        }
-      }
-    ];
 
     let generalNode,
         specificNode;
@@ -107,14 +82,32 @@ export default class ContinuationZipPass {
       }
     }) || null;
 
-    if (map === null) {
-      const visited = false;
+    if (map !== null) {
+      const { run } = map;
 
-      return continuation(visited, ...remainingArguments);
+      return run(generalNode, specificNode, ...remainingArguments, back, forward);
     }
 
-    const { run } = map;
+    generalNode = generalNonTerminalNode; ///
+    specificNode = specificNonTerminalNode; ///
 
-    return run(generalNode, specificNode, ...remainingArguments, continuation);
+    generalNonTerminalNode = nonTerminalNodeQuery(generalNode);
+    specificNonTerminalNode = nonTerminalNodeQuery(specificNode);
+
+    if ((generalNonTerminalNode === null) || (specificNonTerminalNode === null)) {
+      return back();
+    }
+
+    const generalNonTerminalNodeRuleName = generalNonTerminalNode.getRuleName(), ///
+          specificNonTerminalNodeRuleName = specificNonTerminalNode.getRuleName(); ///
+
+    if (generalNonTerminalNodeRuleName !== specificNonTerminalNodeRuleName) {
+      return back();
+    }
+
+    const generalChildNodes = generalNonTerminalNode.getChildNodes(), ///
+          specificChildNodes = specificNonTerminalNode.getChildNodes(); ///
+
+    return this.descend(generalChildNodes, specificChildNodes, ...remainingArguments, back, forward);
   }
 }

@@ -4,25 +4,25 @@ import { Dependency } from "occam-model";
 import { arrayUtilities } from "necessary";
 
 import { every  } from "../utilities/continuation";
-import { asyncEvery  } from "../utilities/async";
 import { SINGLE_SPACE } from "../constants";
 
 const { last } = arrayUtilities;
 
-export async function createReleaseContexts(dependencyName, context) {
-  let releaseContextsCreated = false;
-
+export function createReleaseContexts(dependencyName, context, fail, succeed) {
   const name = dependencyName,  ///
         dependency = Dependency.fromName(name),
         dependentNames = [],
-        dependentReleased = false,
-        releaseContextCreated = await createReleaseContext(dependency, dependentNames, dependentReleased, context);
+        dependentReleased = false;
 
-  if (releaseContextCreated) {
-    releaseContextsCreated = true;
-  }
+  return createReleaseContext(dependency, dependentNames, dependentReleased, context, fail, (releaseContextCreated) => {
+    let releaseContextsCreated = false;
 
-  return releaseContextsCreated;
+    if (releaseContextCreated) {
+      releaseContextsCreated = true;
+    }
+
+    return succeed(releaseContextsCreated);
+  });
 }
 
 export function initialiseReleaseContexts(context) {
@@ -33,10 +33,12 @@ export function initialiseReleaseContexts(context) {
   });
 }
 
-export function verifyReleaseContexts(context, contiunation) {
-  const { releaseContexts } = context;
+export function verifyReleaseContexts(context, fail, succeed) {
+  const { releaseContexts } = context,
+        back = fail,  ///
+        forward = succeed;  ///
 
-  return every(releaseContexts, verifyReleaseContext, context, contiunation);
+  return every(releaseContexts, verifyReleaseContext, context, back, forward);
 }
 
 export default {
@@ -45,14 +47,12 @@ export default {
   verifyReleaseContexts
 };
 
-function verifyReleaseContext(releaseContext, context, contiunation) {
+function verifyReleaseContext(releaseContext, context, back, forward) {
   const released = releaseContext.isReleased(),
         verified = releaseContext.hasVerified();
 
   if (released || verified) {
-    const releaseContextVerifies = true;
-
-    return contiunation(releaseContextVerifies, context);
+    return forward();
   }
 
   const { log } = context,
@@ -61,85 +61,78 @@ function verifyReleaseContext(releaseContext, context, contiunation) {
 
   log.info(`Verifying the '${releaseName}' project...`);
 
-  return releaseContext.verify((verifies) => {
-    let releaseContextVerifies = false;
+  return releaseContext.verify(back, () => {
+    log.info(`...verified the '${releaseName}' project.`);
 
-    if (verifies) {
-      log.info(`...verified the '${releaseName}' project.`);
-
-      releaseContextVerifies = true;
-    }
-
-    return contiunation(releaseContextVerifies, context);
+    return forward();
   });
 }
 
-async function createReleaseContext(dependency, dependentNames, dependentReleased, context) {
-  let releaseContextCreated = false;
-
+function createReleaseContext(dependency, dependentNames, dependentReleased, context, fail, succeed) {
   const { log } = context,
-        dependencyName = dependency.getName();
+        releaseContext = findReleaseContext(dependency, context);
 
-  let releaseContext;
+  if (releaseContext !== null) {
+    const releaseContextCreated = true;
 
-  releaseContext = findReleaseContext(dependency, context);
-
-  const releaseContextFound = (releaseContext !== null);
-
-  if (!releaseContextFound) {
-    const dependentNamesLength = dependentNames.length,
-          dependencyString = dependency.asString();
-
-    if (dependentNamesLength === 0) {
-      log.info(`Creating the '${dependencyName}' package context...`);
-    } else {
-      const lastDependentName = last(dependentNames),
-            dependentName = lastDependentName;  ///
-
-      log.info(`Creating the '${dependencyName}' package context given the '${dependentName}' dependant's '${dependencyString}' dependency...`);
-    }
-
-    const { releaseContextFromDependency } = context;
-
-    releaseContext = await releaseContextFromDependency(dependency, context);
+    return succeed(releaseContextCreated);
   }
 
-  if (releaseContext === null) {
-    log.warning(`The '${dependencyName}' package context could not be created. Perhaps the 'meta.json' file is missing or invalid.`);
+  const dependencyName = dependency.getName(),
+        dependentNamesLength = dependentNames.length;
+
+  if (dependentNamesLength === 0) {
+    log.info(`Creating the '${dependencyName}' package context...`);
   } else {
-    const projectDependencyOfPackage = checkProjectDependencyOfPackage(releaseContext, dependentReleased, dependentNames, context);
+    const lastDependentName = last(dependentNames),
+          dependentName = lastDependentName,  ///
+          dependencyString = dependency.asString();
 
-    if (!projectDependencyOfPackage) {
-      const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
+    log.info(`Creating the '${dependencyName}' package context given the '${dependentName}' dependant's '${dependencyString}' dependency...`);
+  }
 
-      if (releaseMatchesDependency) {
-        if (releaseContextFound) {
-          releaseContextCreated = true;
-        } else {
-          const dependencyReleaseContextsCreated = await createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context);
+  const { releaseContextFromDependency } = context;
 
-          if (dependencyReleaseContextsCreated) {
-            addReleaseContext(releaseContext, context);
+  releaseContextFromDependency(dependency, context, fail, (releaseContext) => {
+    let releaseContextCreated = false;
 
-            releaseContextCreated = true;
-          }
-        }
-      }
+    const releatePresent = checkReleasePresent(releaseContext, dependencyName, context);
+
+    if (!releatePresent) {
+      return succeed(releaseContextCreated);
     }
 
-    if (!releaseContextFound) {
+    const projectDependencyOfPackage = checkProjectDependencyOfPackage(releaseContext, dependentReleased, dependentNames, context);
+
+    if (projectDependencyOfPackage) {
+      return succeed(releaseContextCreated);
+    }
+
+    const releaseMatchesDependency = checkReleaseMatchesDependency(releaseContext, dependency, dependentNames, context);
+
+    if (!releaseMatchesDependency) {
+      return succeed(releaseContextCreated);
+    }
+
+    return createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context, fail, (dependencyReleaseContextsCreated) => {
+      if (dependencyReleaseContextsCreated) {
+        releaseContextCreated = true;
+      }
+
+      if (releaseContextCreated) {
+        addReleaseContext(releaseContext, context);
+      }
+
       releaseContextCreated ?
         log.debug(`...created the '${dependencyName}' package context.`) :
           log.warning(`...unable to create the '${dependencyName}' package context.`);
-    }
-  }
 
-  return releaseContextCreated;
+      return succeed(releaseContextCreated);
+    });
+  });
 }
 
-async function createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context) {
-  let dependencyReleaseContextsCreated;
-
+function createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context, fail, succeed) {
   const name = releaseContext.getName(),
         released = releaseContext.isReleased(),
         dependencies = releaseContext.getDependencies(),
@@ -150,19 +143,19 @@ async function createDependencyReleaseContexts(releaseContext, dependency, depen
 
   const array = dependencies.getArray();
 
-  dependencyReleaseContextsCreated = await asyncEvery(array, async (dependency) => {
+  return every(array, (dependency, back, forward) => {
     const cyclicDependencyPresent = checkCyclicDependencyPresent(dependency, dependentNames, context);
 
-    if (!cyclicDependencyPresent) {
-      const releaseContextCreated = await createReleaseContext(dependency, dependentNames, dependentReleased, context);
-
-      if (releaseContextCreated) {
-        return true;
-      }
+    if (cyclicDependencyPresent) {
+      return back();
     }
-  });
 
-  return dependencyReleaseContextsCreated;
+    return createReleaseContext(dependency, dependentNames, dependentReleased, context, fail, (releaseContextCreated) => {
+      return (releaseContextCreated) ?
+                forward() :
+                  back();
+    });
+  }, () => succeed(false), () => succeed(true));
 }
 
 function addReleaseContext(releaseContext, context) {
@@ -183,6 +176,20 @@ function findReleaseContext(dependency, context) {
         }) || null;
 
   return releaseContext;
+}
+
+function checkReleasePresent(releaseContext, dependencyName, context) {
+  let releasePresent = true;
+
+  if (releaseContext === null) {
+    const { log } = context;
+
+    log.warning(`The '${dependencyName}' package context could not be created. Perhaps the 'meta.json' file is missing or invalid.`);
+
+    releasePresent = false;
+  }
+
+  return releasePresent;
 }
 
 function retrieveReleaseContexts(releaseContext, context, releaseContexts = []) {
