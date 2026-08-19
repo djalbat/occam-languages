@@ -46,8 +46,7 @@ export function one(array, callback, ...initialArguments) {
 
 export function some(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length,
-        index = 0;
+        length = array.length;
 
   function next(index) {
     if (index === length) {
@@ -61,7 +60,7 @@ export function some(array, callback, ...initialArguments) {
 
     return callback(element, ...initialArguments, (success, ...callbackArguments) => {
       if (success) {
-        const finalArguments = callbackArguments; //
+        const finalArguments = callbackArguments; ///
 
         return continuation(success, ...finalArguments);
       }
@@ -69,6 +68,8 @@ export function some(array, callback, ...initialArguments) {
       return next(index + 1);
     });
   }
+
+  const index = 0;
 
   return next(index);
 }
