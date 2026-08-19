@@ -4,401 +4,301 @@ import { arrayUtilities } from "necessary";
 
 const { filter: arrayFilter } = arrayUtilities;
 
-export function asynchronousOne(array, callback, ...initialArguments) {
+export function one(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let count = 0,
-      index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const success = (count === 1);
+      const success = (count === 1),
+        finalArguemnts = success ?
+                            nextArguments : ///
+                              initialArguments; ///
 
-      if (!success) {
-        finalArguments = initialArguments; ///
-      }
-
-      return continuation(success, ...finalArguments);
+      return continuation(success, ...finalArguemnts);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(element, ...initialArguments, (success, ...callbackArguments) => {
       if (success) {
-        if (count === 1) {
-          const success = false;
+        count++;
 
-          finalArguments = initialArguments; ///
+        if (count === 2) {
+          const success = false,
+                finalArguments = initialArguments;  ///
 
           return continuation(success, ...finalArguments);
         }
 
-        finalArguments = intermediateArguments; ///
-
-        count++;
+        return next(index + 1, ...callbackArguments);
       }
 
-      const callbackArguments = initialArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1, ...nextArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
+  let count = 0;
 
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousSome(array, callback, ...initialArguments) {
+export function some(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index) {
     if (index === length) {
-      const success = false;
-
-      finalArguments = initialArguments; ///
+      const success = false,
+            finalArguments = initialArguments; ///
 
       return continuation(success, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(element, ...initialArguments, (success, ...callbackArguments) => {
       if (success) {
-        finalArguments = intermediateArguments; ///
+        const finalArguments = callbackArguments; //
 
         return continuation(success, ...finalArguments);
       }
 
-      const callbackArguments = initialArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index);
 }
 
-export function asynchronousEach(array, callback, ...initialArguments) {
+export function each(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let count = 0,
-      index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const success = (count > 0);
-
-      finalArguments = callbackArguments; ///
+      const success = (count !== 0),
+        finalArguments = success ?
+                            nextArguments : ///
+                              initialArguments; ///
 
       return continuation(success, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
       if (!success) {
-        finalArguments = initialArguments; ///
+        const finalArguments = initialArguments;  ///
 
         return continuation(success, ...finalArguments);
       }
 
       count++;
 
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
+  let count = 0;
 
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousEvery(array, callback, ...initialArguments) {
+export function every(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const success = true;
-
-      finalArguments = callbackArguments; ///
+      const success = true,
+            finalArguments = nextArguments; ///
 
       return continuation(success, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
       if (!success) {
-        finalArguments = initialArguments; ///
+        const finalArguments = initialArguments;  ///
 
         return continuation(success, ...finalArguments);
       }
 
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousReduce(array, initialValue, callback, ...initialArguments) {
+export function reduce(array, initialValue, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let index = -1;
-
-  let finalArguments;
-
-  function next(value, ...callbackArguments) {
-    index++;
-
+  function next(index, value, ...nextArguments) {
     if (index === length) {
-      finalArguments = callbackArguments; ///
+      const finalArguments = nextArguments; ///
 
       return continuation(value, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, value, ...callbackArguments, (value, ...intermediateArguments) => {
-      const callbackArguments = intermediateArguments; ///
-
-      return next(value, ...callbackArguments);
+    return callback(element, value, ...nextArguments, (value, ...callbackArguments) => {
+      return next(index + 1, value, ...callbackArguments);
     });
   }
 
-  const value = initialValue, ///
-        callbackArguments = initialArguments; ///
-
-  return next(value, ...callbackArguments);
+  return next(index, initialValue, ...initialArguments);
 }
 
-export function asynchronousForEach(array, callback, ...initialArguments) {
+export function forEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      finalArguments = callbackArguments; ///
+      const finalArguments = nextArguments; ///
 
       return continuation(...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (...intermediateArguments) => {
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+    return callback(element, ...nextArguments, (...callbackArguments) => {
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousForwardsEvery(array, callback, ...initialArguments) {
+export function forwardsEvery(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const success = true;
-
-      finalArguments = callbackArguments; ///
+      const success = true,
+            finalArguments = nextArguments; ///
 
       return continuation(success, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
       if (!success) {
-        finalArguments = initialArguments; ///
+        const finalArguments = initialArguments;  ///
 
         return continuation(success, ...finalArguments);
       }
 
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousBackwardsEvery(array, callback, ...initialArguments) {
+export function backwardsEvery(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = length - 1;
 
-  let index = length;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index--;
-
+  function next(index, ...nextArguments) {
     if (index === -1) {
-      const success = true;
-
-      finalArguments = callbackArguments; ///
+      const success = true,
+            finalArguments = nextArguments; ///
 
       return continuation(success, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(element, ...nextArguments, (success, ...callbackArguments) => {
       if (!success) {
-        finalArguments = initialArguments; ///
+        const finalArguments = initialArguments;  ///
 
         return continuation(success, ...finalArguments);
       }
 
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+      return next(index - 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousForwardsForEach(array, callback, ...initialArguments) {
+export function forwardsForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-    length = array.length;
+        length = array.length,
+        index = 0;
 
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      finalArguments = callbackArguments; ///
+      const finalArguments = nextArguments; ///
 
       return continuation(...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (...intermediateArguments) => {
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+    return callback(element, ...nextArguments, (...callbackArguments) => {
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousBackwardsForEach(array, callback, ...initialArguments) {
+export function backwardsForEach(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = length - 1;
 
-  let index = length;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index--;
-
+  function next(index, ...nextArguments) {
     if (index === -1) {
-      finalArguments = callbackArguments; ///
+      const finalArguments = nextArguments; ///
 
       return continuation(...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (...intermediateArguments) => {
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+    return callback(element, ...nextArguments, (...callbackArguments) => {
+      return next(index - 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousFilter(array, callback, ...initialArguments) {
+export function filter(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        deletedElements = [],
+        index = length - 1;
 
-  const deletedElements = [];
-
-  let index = length;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index--;
-
+  function next(index, ...nextArguments) {
     if (index === -1) {
-      finalArguments = callbackArguments; ///
+      const finalArguments = nextArguments; ///
 
       return continuation(deletedElements, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (passed, ...intermediateArguments) => {
+    return callback(element, ...nextArguments, (passed, ...callbackArguments) => {
       if (!passed) {
         const startIndex = index, ///
               deleteCount = 1,
@@ -409,138 +309,100 @@ export function asynchronousFilter(array, callback, ...initialArguments) {
         deletedElements.unshift(deletedElement);
       }
 
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+      return next(index - 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousPrune(array, callback, ...initialArguments) {
+export function prune(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let deletedElement;
-
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index) {
     if (index === length) {
-      deletedElement = undefined;
-
-      finalArguments = initialArguments; ///
+      const deletedElement = undefined,
+            finalArguments = initialArguments; ///
 
       return continuation(deletedElement, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (passed, ...intermediateArguments) => {
+    return callback(element, ...initialArguments, (passed, ...callbackArguments) => {
       if (!passed) {
         const startIndex = index, ///
               deleteCount = 1,
-              deletedElement = element; ///
+              deletedElement = element, ///
+              finalArguments = callbackArguments; ///
 
         array.splice(startIndex, deleteCount);
-
-        finalArguments = intermediateArguments; ///
 
         return continuation(deletedElement, ...finalArguments);
       }
 
-      const callbackArguments = initialArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index);
 }
 
-export function asynchronousExtract(array, callback, ...initialArguments) {
+export function extract(array, callback, ...initialArguments) {
   const continuation = initialArguments.pop(),
-        length = array.length;
+        length = array.length,
+        index = 0;
 
-  let deletedElement;
-
-  let index = -1;
-
-  let finalArguments;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index) {
     if (index === length) {
-      deletedElement = undefined;
-
-      finalArguments = initialArguments; ///
+      const deletedElement = undefined,
+            finalArguments = initialArguments; ///
 
       return continuation(deletedElement, ...finalArguments);
     }
 
     const element = array[index];
 
-    return callback(element, ...callbackArguments, (passed, ...intermediateArguments) => {
+    return callback(element, ...initialArguments, (passed, ...callbackArguments) => {
       if (passed) {
         const startIndex = index, ///
               deleteCount = 1,
-              deletedElement = element; ///
+              deletedElement = element, ///
+              finalArguments = callbackArguments; ///
 
         array.splice(startIndex, deleteCount);
-
-        finalArguments = intermediateArguments; ///
 
         return continuation(deletedElement, ...finalArguments);
       }
 
-      const callbackArguments = initialArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index);
 }
 
-export function asynchronousMatch(arrayA, arrayB, callback, ...initialArguments) {
-  const continuation = initialArguments.pop();
-
-  const arrayALength = arrayA.length,
+export function match(arrayA, arrayB, callback, ...initialArguments) {
+  const continuation = initialArguments.pop(),
+        arrayALength = arrayA.length,
         arrayBLength = arrayB.length;
 
-  let finalArguments;
-
   if (arrayALength !== arrayBLength) {
-    const success = false;
-
-    finalArguments = initialArguments; ///
+    const success = false,
+          finalArguments = initialArguments;  ///
 
     return continuation(success, ...finalArguments);
   }
 
-  const length = arrayALength;  ///
+  const length = arrayALength,  ///
+        index = 0;
 
-  let index = -1;
-
-  function next(...callbackArguments) {
-    index++;
-
+  function next(index, ...nextArguments) {
     if (index === length) {
-      const success = true;
-
-      finalArguments = callbackArguments; ///
+      const success = true,
+            finalArguments = nextArguments; ///
 
       return continuation(success, ...finalArguments);
     }
@@ -548,55 +410,40 @@ export function asynchronousMatch(arrayA, arrayB, callback, ...initialArguments)
     const elementA = arrayA[index],
           elementB = arrayB[index];
 
-    return callback(elementA, elementB, ...callbackArguments, (success, ...intermediateArguments) => {
+    return callback(elementA, elementB, ...nextArguments, (success, ...callbackArguments) => {
       if (!success) {
-        finalArguments = initialArguments; ///
+        const finalArguments = initialArguments;  ///
 
         return continuation(success, ...finalArguments);
       }
 
-      const callbackArguments = intermediateArguments; ///
-
-      return next(...callbackArguments);
+      return next(index + 1, ...callbackArguments);
     });
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return next(...callbackArguments);
+  return next(index, ...initialArguments);
 }
 
-export function asynchronousResolve(arrayA, arrayB, callback, ...initialArguments) {
+export function resolve(arrayA, arrayB, callback, ...initialArguments) {
   arrayA = [  ///
     ...arrayA
   ];
 
   const continuation = initialArguments.pop();
 
-  let finalArguments;
-
-  function nextPass(...callbackArguments) {
-    let success = false;
-
+  function nextPass(...nextArguments) {
     const length = arrayA.length; ///
 
     if (length === 0) {
-      success = true;
-
-      finalArguments = callbackArguments; ///
+      const success = true,
+            finalArguments = nextArguments; ///
 
       return continuation(success, ...finalArguments);
     }
 
-    let index = -1;
-
-    function nextElement(...callbackArguments) {
-      index++;
-
+    function nextElement(index, success, ...currentArguments) {
       if (index === length) {
         if (!success) {
-          success = false;
-
           const finalArguments = initialArguments; ///
 
           return continuation(success, ...finalArguments);
@@ -610,62 +457,62 @@ export function asynchronousResolve(arrayA, arrayB, callback, ...initialArgument
           }
         });
 
-        return nextPass(...callbackArguments);
-      } else {
-        const elementA = arrayA[index];
-
-        return callback(elementA, ...callbackArguments, (passed, ...intermediateArguments) => {
-          if (passed) {
-            callbackArguments = intermediateArguments;  ///
-
-            const elementB = elementA;  ///
-
-            arrayB.push(elementB);
-
-            success = true;
-          }
-
-          return nextElement(...callbackArguments);
-        });
+        return nextPass(...currentArguments);
       }
+
+      const elementA = arrayA[index];
+
+      return callback(elementA, ...currentArguments, (passed, ...callbackArguments) => {
+        if (passed) {
+          const elementB = elementA,  ///
+                success = true;
+
+          arrayB.push(elementB);
+
+          return nextElement(index + 1, success, ...callbackArguments);
+        }
+
+        return nextElement(index + 1, success, ...currentArguments);
+      });
     }
 
-    return nextElement(...callbackArguments);
+    const index = 0,
+          success = false;
+
+    return nextElement(index, success, ...nextArguments);
   }
 
-  const callbackArguments = initialArguments; ///
-
-  return nextPass(...callbackArguments);
+  return nextPass(...initialArguments);
 }
 
-export function asynchronousAll(callbacks, ...initialArguments) {
-  return asynchronousEvery(callbacks, (callback, ...callbackArguments) => {
+export function all(callbacks, ...initialArguments) {
+  return every(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
   }, ...initialArguments);
 }
 
-export function asynchronousExists(callbacks, ...initialArguments) {
-  return asynchronousSome(callbacks, (callback, ...callbackArguments) => {
+export function exists(callbacks, ...initialArguments) {
+  return some(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
   }, ...initialArguments);
 }
 
 export default {
-  asynchronousOne,
-  asynchronousSome,
-  asynchronousEach,
-  asynchronousEvery,
-  asynchronousReduce,
-  asynchronousForEach,
-  asynchronousForwardsEvery,
-  asynchronousBackwardsEvery,
-  asynchronousForwardsForEach,
-  asynchronousBackwardsForEach,
-  asynchronousFilter,
-  asynchronousPrune,
-  asynchronousExtract,
-  asynchronousMatch,
-  asynchronousResolve,
-  asynchronousAll,
-  asynchronousExists
+  one,
+  some,
+  each,
+  every,
+  reduce,
+  forEach,
+  forwardsEvery,
+  backwardsEvery,
+  forwardsForEach,
+  backwardsForEach,
+  filter,
+  prune,
+  extract,
+  match,
+  resolve,
+  all,
+  exists
 };
