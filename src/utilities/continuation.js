@@ -250,7 +250,8 @@ export function forEach(array, callback, ...initialArguments) {
 
     return callback(
       element,
-      ...nextArguments, back,
+      ...nextArguments,
+      back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
       },
