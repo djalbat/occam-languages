@@ -37,7 +37,8 @@ export function one(array, callback, ...initialArguments) {
         }
 
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -68,7 +69,8 @@ export function some(array, callback, ...initialArguments) {
 
         return next(index + 1);
       },
-      forward
+      forward,
+      index
     );
   }
 
@@ -100,7 +102,8 @@ export function each(array, callback, ...initialArguments) {
         count++;
 
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -128,7 +131,8 @@ export function every(array, callback, ...initialArguments) {
       back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -155,7 +159,8 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
       back,
       (value, ...callbackArguments) => {
         return next(index + 1, value, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -180,7 +185,8 @@ export function forEach(array, callback, ...initialArguments) {
       ...nextArguments, back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -206,7 +212,8 @@ export function forwardsEvery(array, callback, ...initialArguments) {
       back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -232,7 +239,8 @@ export function backwardsEvery(array, callback, ...initialArguments) {
       back,
       (...callbackArguments) => {
         return next(index - 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -258,7 +266,8 @@ export function forwardsForEach(array, callback, ...initialArguments) {
       back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -284,7 +293,8 @@ export function backwardsForEach(array, callback, ...initialArguments) {
       back,
       (...callbackArguments) => {
         return next(index - 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -321,7 +331,8 @@ export function filter(array, callback, ...initialArguments) {
         }
 
         return next(index - 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -359,7 +370,8 @@ export function prune(array, callback, ...initialArguments) {
         }
 
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -397,7 +409,8 @@ export function extract(array, callback, ...initialArguments) {
         }
 
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -432,7 +445,8 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
       back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
-      }
+      },
+      index
     );
   }
 
@@ -489,7 +503,8 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
           arrayB.push(elementB);
 
           return nextElement(index + 1, true, ...callbackArguments);
-        }
+        },
+        index
       );
     }
 
