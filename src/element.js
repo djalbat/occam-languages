@@ -51,7 +51,7 @@ export default class Element {
   }
 
   break(context, back, forward) {
-    return context.break(this.node, this.breakPoint, (breakPoint) => {
+    return context.break(this.node, this.breakPoint, back, (breakPoint) => {
       this.breakPoint = breakPoint;
 
       return forward();

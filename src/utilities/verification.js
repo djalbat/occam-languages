@@ -93,7 +93,7 @@ function createReleaseContext(dependency, dependentNames, dependentReleased, con
 
   const { releaseContextFromDependency } = context;
 
-  releaseContextFromDependency(dependency, context, fail, (releaseContext) => {
+  return releaseContextFromDependency(dependency, context, fail, (releaseContext) => {
     let releaseContextCreated = false;
 
     const releatePresent = checkReleasePresent(releaseContext, dependencyName, context);
