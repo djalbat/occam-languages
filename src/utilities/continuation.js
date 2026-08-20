@@ -139,6 +139,74 @@ export function every(array, callback, ...initialArguments) {
   return next(index, ...initialArguments);
 }
 
+export function map(array, callback, ...initialArguments) {
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
+        length = array.length,
+        index = 0;
+
+  function next(index, arrayB, ...nextArguments) {
+    if (index === length) {
+      return forward(arrayB, ...nextArguments);
+    }
+
+    const elementA = arrayA[index];
+
+    return callback(
+      elementA,
+      ...nextArguments,
+      back,
+      (elementB, ...callbackArguments) => {
+        arrayB = [  ///
+          ...arrayB,
+          elementB
+        ];
+
+        return next(index + 1, arrayB, ...callbackArguments);
+      },
+      index
+    );
+  }
+
+  const arrayA = array, ///
+        arrayB = [];
+
+  return next(index, arrayB, ...initialArguments);
+}
+
+export function find(array, callback, ...initialArguments) {
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
+        length = array.length,
+        index = 0;
+
+  function next(index, ...nextArguments) {
+    if (index === length) {
+      return back();
+    }
+
+    const element = array[index];
+
+    return callback(
+      element,
+      ...nextArguments,
+      (exception = null) => {
+        if (exception !== null) {
+          return back(exception);
+        }
+
+        return next(index + 1, ...nextArguments);
+      },
+      (...callbackArguments) => {
+        return forward(element, ...callbackArguments);
+      },
+      index
+    );
+  }
+
+  return next(index, ...initialArguments);
+}
+
 export function reduce(array, initialValue, callback, ...initialArguments) {
   const forward = initialArguments.pop(),
         back = initialArguments.pop(),
@@ -185,114 +253,6 @@ export function forEach(array, callback, ...initialArguments) {
       ...nextArguments, back,
       (...callbackArguments) => {
         return next(index + 1, ...callbackArguments);
-      },
-      index
-    );
-  }
-
-  return next(index, ...initialArguments);
-}
-
-export function forwardsEvery(array, callback, ...initialArguments) {
-  const forward = initialArguments.pop(),
-        back = initialArguments.pop(),
-        length = array.length,
-        index = 0;
-
-  function next(index, ...nextArguments) {
-    if (index === length) {
-      return forward(...nextArguments);
-    }
-
-    const element = array[index];
-
-    return callback(
-      element,
-      ...nextArguments,
-      back,
-      (...callbackArguments) => {
-        return next(index + 1, ...callbackArguments);
-      },
-      index
-    );
-  }
-
-  return next(index, ...initialArguments);
-}
-
-export function backwardsEvery(array, callback, ...initialArguments) {
-  const forward = initialArguments.pop(),
-        back = initialArguments.pop(),
-        length = array.length,
-        index = length - 1;
-
-  function next(index, ...nextArguments) {
-    if (index === -1) {
-      return forward(...nextArguments);
-    }
-
-    const element = array[index];
-
-    return callback(
-      element,
-      ...nextArguments,
-      back,
-      (...callbackArguments) => {
-        return next(index - 1, ...callbackArguments);
-      },
-      index
-    );
-  }
-
-  return next(index, ...initialArguments);
-}
-
-export function forwardsForEach(array, callback, ...initialArguments) {
-  const forward = initialArguments.pop(),
-        back = initialArguments.pop(),
-        length = array.length,
-        index = 0;
-
-  function next(index, ...nextArguments) {
-    if (index === length) {
-      return forward(...nextArguments);
-    }
-
-    const element = array[index];
-
-    return callback(
-      element,
-      ...nextArguments,
-      back,
-      (...callbackArguments) => {
-        return next(index + 1, ...callbackArguments);
-      },
-      index
-    );
-  }
-
-  return next(index, ...initialArguments);
-}
-
-export function backwardsForEach(array, callback, ...initialArguments) {
-  const forward = initialArguments.pop(),
-        back = initialArguments.pop(),
-        length = array.length,
-        index = length - 1;
-
-  function next(index, ...nextArguments) {
-    if (index === -1) {
-      return forward(...nextArguments);
-    }
-
-    const element = array[index];
-
-    return callback(
-      element,
-      ...nextArguments,
-      back,
-      (...callbackArguments) => {
-        return next(index - 1, ...callbackArguments);
       },
       index
     );
@@ -517,6 +477,114 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
   return nextPass(...initialArguments);
 }
 
+export function forwardsEvery(array, callback, ...initialArguments) {
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
+        length = array.length,
+        index = 0;
+
+  function next(index, ...nextArguments) {
+    if (index === length) {
+      return forward(...nextArguments);
+    }
+
+    const element = array[index];
+
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      },
+      index
+    );
+  }
+
+  return next(index, ...initialArguments);
+}
+
+export function backwardsEvery(array, callback, ...initialArguments) {
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
+        length = array.length,
+        index = length - 1;
+
+  function next(index, ...nextArguments) {
+    if (index === -1) {
+      return forward(...nextArguments);
+    }
+
+    const element = array[index];
+
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index - 1, ...callbackArguments);
+      },
+      index
+    );
+  }
+
+  return next(index, ...initialArguments);
+}
+
+export function forwardsForEach(array, callback, ...initialArguments) {
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
+        length = array.length,
+        index = 0;
+
+  function next(index, ...nextArguments) {
+    if (index === length) {
+      return forward(...nextArguments);
+    }
+
+    const element = array[index];
+
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      },
+      index
+    );
+  }
+
+  return next(index, ...initialArguments);
+}
+
+export function backwardsForEach(array, callback, ...initialArguments) {
+  const forward = initialArguments.pop(),
+        back = initialArguments.pop(),
+        length = array.length,
+        index = length - 1;
+
+  function next(index, ...nextArguments) {
+    if (index === -1) {
+      return forward(...nextArguments);
+    }
+
+    const element = array[index];
+
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index - 1, ...callbackArguments);
+      },
+      index
+    );
+  }
+
+  return next(index, ...initialArguments);
+}
+
 export function all(callbacks, ...initialArguments) {
   return every(callbacks, (callback, ...callbackArguments) => {
     return callback(...callbackArguments);
@@ -534,17 +602,19 @@ export default {
   some,
   each,
   every,
+  map,
+  find,
   reduce,
   forEach,
-  forwardsEvery,
-  backwardsEvery,
-  forwardsForEach,
-  backwardsForEach,
   filter,
   prune,
   extract,
   match,
   resolve,
+  forwardsEvery,
+  backwardsEvery,
+  forwardsForEach,
+  backwardsForEach,
   all,
   exists
 };
