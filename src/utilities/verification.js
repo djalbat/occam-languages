@@ -64,7 +64,7 @@ function verifyReleaseContext(releaseContext, context, back, forward) {
   return releaseContext.verify(back, () => {
     log.info(`...verified the '${releaseName}' project.`);
 
-    return forward();
+    return forward(context);
   });
 }
 
