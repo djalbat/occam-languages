@@ -19,15 +19,26 @@ export function one(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...initialArguments, () => next(index + 1, ...nextArguments), (...callbackArguments) => {
-      count++;
+    return callback(
+      element,
+      ...initialArguments,
+      (exception = null) => {
+        if (exception !== null) {
+          return back(exception);
+        }
 
-      if (count === 2) {
-        return back();
+        return next(index + 1, ...nextArguments);
+      },
+      (...callbackArguments) => {
+        count++;
+
+        if (count === 2) {
+          return back();
+        }
+
+        return next(index + 1, ...callbackArguments);
       }
-
-      return next(index + 1, ...callbackArguments);
-    });
+    );
   }
 
   let count = 0;
@@ -47,7 +58,18 @@ export function some(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...initialArguments, () => next(index + 1), forward);
+    return callback(
+      element,
+      ...initialArguments,
+      (exception = null) => {
+        if (exception !== null) {
+          return back(exception);
+        }
+
+        return next(index + 1);
+      },
+      forward
+    );
   }
 
   const index = 0;
@@ -70,11 +92,16 @@ export function each(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      count++;
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        count++;
 
-      return next(index + 1, ...callbackArguments);
-    });
+        return next(index + 1, ...callbackArguments);
+      }
+    );
   }
 
   let count = 0;
@@ -95,9 +122,14 @@ export function every(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      return next(index + 1, ...callbackArguments);
-    });
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -116,9 +148,15 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, value, ...nextArguments, back, (value, ...callbackArguments) => {
-      return next(index + 1, value, ...callbackArguments);
-    });
+    return callback(
+      element,
+      value,
+      ...nextArguments,
+      back,
+      (value, ...callbackArguments) => {
+        return next(index + 1, value, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, initialValue, ...initialArguments);
@@ -137,9 +175,13 @@ export function forEach(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      return next(index + 1, ...callbackArguments);
-    });
+    return callback(
+      element,
+      ...nextArguments, back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -158,9 +200,14 @@ export function forwardsEvery(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      return next(index + 1, ...callbackArguments);
-    });
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -179,9 +226,14 @@ export function backwardsEvery(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      return next(index - 1, ...callbackArguments);
-    });
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index - 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -200,9 +252,14 @@ export function forwardsForEach(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      return next(index + 1, ...callbackArguments);
-    });
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -221,9 +278,14 @@ export function backwardsForEach(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (...callbackArguments) => {
-      return next(index - 1, ...callbackArguments);
-    });
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index - 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -243,19 +305,24 @@ export function filter(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (passed, ...callbackArguments) => {
-      if (!passed) {
-        const startIndex = index, ///
-              deleteCount = 1,
-              deletedElement = element; ///
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (passed, ...callbackArguments) => {
+        if (!passed) {
+          const startIndex = index, ///
+                deleteCount = 1,
+                deletedElement = element; ///
 
-        array.splice(startIndex, deleteCount);
+          array.splice(startIndex, deleteCount);
 
-        deletedElements.unshift(deletedElement);
+          deletedElements.unshift(deletedElement);
+        }
+
+        return next(index - 1, ...callbackArguments);
       }
-
-      return next(index - 1, ...callbackArguments);
-    });
+    );
   }
 
   return next(index, ...initialArguments);
@@ -276,19 +343,24 @@ export function prune(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (passed, ...callbackArguments) => {
-      if (!passed) {
-        const startIndex = index, ///
-              deleteCount = 1,
-              deletedElement = element; ///
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (passed, ...callbackArguments) => {
+        if (!passed) {
+          const startIndex = index, ///
+                deleteCount = 1,
+                deletedElement = element; ///
 
-        array.splice(startIndex, deleteCount);
+          array.splice(startIndex, deleteCount);
 
-        return forward(deletedElement, ...callbackArguments);
+          return forward(deletedElement, ...callbackArguments);
+        }
+
+        return next(index + 1, ...callbackArguments);
       }
-
-      return next(index + 1, ...callbackArguments);
-    });
+    );
   }
 
   return next(index, ...initialArguments);
@@ -309,19 +381,24 @@ export function extract(array, callback, ...initialArguments) {
 
     const element = array[index];
 
-    return callback(element, ...nextArguments, back, (passed, ...callbackArguments) => {
-      if (passed) {
-        const startIndex = index, ///
-              deleteCount = 1,
-              deletedElement = element; ///
+    return callback(
+      element,
+      ...nextArguments,
+      back,
+      (passed, ...callbackArguments) => {
+        if (passed) {
+          const startIndex = index, ///
+                deleteCount = 1,
+                deletedElement = element; ///
 
-        array.splice(startIndex, deleteCount);
+          array.splice(startIndex, deleteCount);
 
-        return forward(deletedElement, ...callbackArguments);
+          return forward(deletedElement, ...callbackArguments);
+        }
+
+        return next(index + 1, ...callbackArguments);
       }
-
-      return next(index + 1, ...callbackArguments);
-    });
+    );
   }
 
   return next(index, ...initialArguments);
@@ -348,9 +425,15 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
     const elementA = arrayA[index],
           elementB = arrayB[index];
 
-    return callback(elementA, elementB, ...nextArguments, back, (...callbackArguments) => {
-      return next(index + 1, ...callbackArguments);
-    });
+    return callback(
+      elementA,
+      elementB,
+      ...nextArguments,
+      back,
+      (...callbackArguments) => {
+        return next(index + 1, ...callbackArguments);
+      }
+    );
   }
 
   return next(index, ...initialArguments);
@@ -390,7 +473,17 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
 
       const elementA = arrayA[index];
 
-      return callback(elementA, ...nextElementArguments, () => nextElement(index + 1, success, ...nextElementArguments), (...callbackArguments) => {
+      return callback(
+        elementA,
+        ...nextElementArguments,
+        (exception = null) => {
+          if (exception !== null) {
+            return back(exception);
+          }
+
+          return nextElement(index + 1, success, ...nextElementArguments);
+        },
+        (...callbackArguments) => {
           const elementB = elementA;  ///
 
           arrayB.push(elementB);
