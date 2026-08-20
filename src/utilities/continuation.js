@@ -364,14 +364,14 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
   const forward = initialArguments.pop(),
         back = initialArguments.pop();
 
-  function nextPass(...nextArguments) {
+  function nextPass(...nextPassArguments) {
     const length = arrayA.length; ///
 
     if (length === 0) {
-      return forward(...nextArguments);
+      return forward(...nextPassArguments);
     }
 
-    function nextElement(index, success, ...currentArguments) {
+    function nextElement(index, success, ...nextElementArguments) {
       if (index === length) {
         if (!success) {
           return back();
@@ -385,12 +385,12 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
           }
         });
 
-        return nextPass(...currentArguments);
+        return nextPass(...nextElementArguments);
       }
 
       const elementA = arrayA[index];
 
-      return callback(elementA, ...currentArguments, () => nextElement(index + 1, success, ...currentArguments), (...callbackArguments) => {
+      return callback(elementA, ...nextElementArguments, () => nextElement(index + 1, success, ...nextElementArguments), (...callbackArguments) => {
           const elementB = elementA;  ///
 
           arrayB.push(elementB);
@@ -403,7 +403,7 @@ export function resolve(arrayA, arrayB, callback, ...initialArguments) {
     const index = 0,
           success = false;
 
-    return nextElement(index, success, ...nextArguments);
+    return nextElement(index, success, ...nextPassArguments);
   }
 
   return nextPass(...initialArguments);
