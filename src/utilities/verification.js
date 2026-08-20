@@ -33,10 +33,8 @@ export function initialiseReleaseContexts(context) {
   });
 }
 
-export function verifyReleaseContexts(context, fail, succeed) {
-  const { releaseContexts } = context,
-        back = fail,  ///
-        forward = succeed;  ///
+export function verifyReleaseContexts(context, back, forward) {
+  const { releaseContexts } = context;
 
   return every(releaseContexts, verifyReleaseContext, context, back, forward);
 }
