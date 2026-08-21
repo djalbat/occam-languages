@@ -21,7 +21,8 @@ export default class ContinuationZipPass {
     }
 
     return match(generalChildNodes, specificChildNodes, (generalChildNode, specificChildNode, ...remainingArguments) => {
-      const forward = remainingArguments.pop(),
+      const index = remainingArguments.pop(),
+            forward = remainingArguments.pop(),
             back = remainingArguments.pop(),
             generalNode = generalChildNode, ///
             specificNode = specificChildNode; ///
