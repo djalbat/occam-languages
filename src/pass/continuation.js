@@ -5,10 +5,10 @@ import { nonTerminalNodeQuery } from "../utilities/pass";
 
 export default class ContinuationPass {
   run(node, ...remainingArguments) {
-    const forward = remainingArguments.pop(),
-          back = remainingArguments.pop();
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop();
 
-    return this.visitNode(node, ...remainingArguments, back, forward);
+    return this.visitNode(node, ...remainingArguments, forward, back);
   }
 
   descend(childNodes, ...remainingArguments) {
@@ -17,40 +17,40 @@ export default class ContinuationPass {
 
     return every(childNodes, (childNode, ...remainingArguments) => {
       const index = remainingArguments.pop(),
-            forward = remainingArguments.pop(),
             back = remainingArguments.pop(),
+            forward = remainingArguments.pop(),
             node = childNode; ///
 
-      return this.visitNode(node, ...remainingArguments, back, forward);
-    }, ...remainingArguments, back, forward);
+      return this.visitNode(node, ...remainingArguments, forward, back);
+    }, ...remainingArguments, forward, back);
   }
 
   visitNode(node, ...remainingArguments) {
-    const forward = remainingArguments.pop(),
-          back = remainingArguments.pop(),
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop(),
           nodeTerminalNode = node.isTerminalNode();
 
     if (nodeTerminalNode) {
       const terminalNode = node;  ///
 
-      return this.visitTerminalNode(terminalNode, ...remainingArguments, back, forward);
+      return this.visitTerminalNode(terminalNode, ...remainingArguments, forward, back);
     }
 
     const nonTerminalNode = node;  ///
 
-    return this.visitNonTerminalNode(nonTerminalNode, ...remainingArguments, back, forward);
+    return this.visitNonTerminalNode(nonTerminalNode, ...remainingArguments, forward, back);
   }
 
   visitTerminalNode(terminalNode, ...remainingArguments) {
-    const forward = remainingArguments.pop(),
-          back = remainingArguments.pop();
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop();
 
-    return forward(...remainingArguments);
+    return forward(...remainingArguments, back);
   }
 
   visitNonTerminalNode(nonTerminalNode, ...remainingArguments) {
-    const forward = remainingArguments.pop(),
-          back = remainingArguments.pop();
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop();
 
     let { maps } = this.constructor;
 
@@ -69,7 +69,7 @@ export default class ContinuationPass {
     if (map !== null) {
       const { run } = map;
 
-      return run(node, ...remainingArguments, back, forward);
+      return run(node, ...remainingArguments, forward, back);
     }
 
     node = nonTerminalNode; ///
@@ -82,6 +82,6 @@ export default class ContinuationPass {
 
     const childNodes = nonTerminalNode.getChildNodes();
 
-    return this.descend(childNodes, ...remainingArguments, back, forward);
+    return this.descend(childNodes, ...remainingArguments, forward, back);
   }
 }

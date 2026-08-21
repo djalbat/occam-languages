@@ -6,10 +6,10 @@ import { resolve } from "../utilities/continuation";
 
 const { first, filter, compress } = arrayUtilities;
 
-export function verifyFileContexts(fileContexts, verifiedFileContexts, back, forward) {
-  return resolve(fileContexts, verifiedFileContexts, (fileContext, back, forward) => {
-    return fileContext.verify(back, forward);
-  }, back, forward);
+export function verifyFileContexts(fileContexts, verifiedFileContexts, forward, back) {
+  return resolve(fileContexts, verifiedFileContexts, (fileContext, forward, back) => {
+    return fileContext.verify(forward, back);
+  }, forward, back);
 }
 
 export function verifyTypePrefixes(typePrefixes, releaseContext) {

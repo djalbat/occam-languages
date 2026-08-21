@@ -50,12 +50,12 @@ export default class Element {
     this.context = context;
   }
 
-  break(context, back, forward) {
-    return context.break(this.node, this.breakPoint, back, (breakPoint) => {
+  break(context, forward, back) {
+    return context.break(this.node, this.breakPoint, (breakPoint, back) => {
       this.breakPoint = breakPoint;
 
-      return forward();
-    });
+      return forward(back);
+    }, back);
   }
 
   matchNode(node) { return this.node.match(node); }

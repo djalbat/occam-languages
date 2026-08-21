@@ -73,7 +73,7 @@ export default class FileContext extends Context {
     return string;
   }
 
-  break(node, breakPoint, back, forward) {
+  break(node, breakPoint, forward, back) {
     const filePath = this.filePath,
           releaseContext = this.getReleaseContext();
 
@@ -81,10 +81,10 @@ export default class FileContext extends Context {
       breakPoint = BreakPoint.fromFilePathNodeAndTokens(filePath, node, this.tokens);
     }
 
-    return releaseContext.break(breakPoint, back, forward);
+    return releaseContext.break(breakPoint, forward, back);
   }
 
-  verify(back, forward) {
+  verify(forward, back) {
     if (this.node === null) {
       this.warning(`Unable to verify the '${this.filePath}' file because it cannot be parsed.`);
 
@@ -95,13 +95,13 @@ export default class FileContext extends Context {
 
     this.clear();
 
-    return this.verifyFile(back, () => {
+    return this.verifyFile((back) => {
       this.complete();
 
       this.info(`...verified the '${this.filePath}' file.`);
 
-      return forward();
-    });
+      return forward(back);
+    }, back);
   }
 
   initialise() {

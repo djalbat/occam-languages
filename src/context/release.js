@@ -464,7 +464,7 @@ export default class ReleaseContext {
     this.initialised = true;
   }
 
-  break(breakPoint, back, forward) {
+  break(breakPoint, forward, back) {
     const level = TRACE_LEVEL,
           message = BREAK_MESSAGE,
           filePath = breakPoint.getFilePath(),
@@ -474,10 +474,10 @@ export default class ReleaseContext {
 
     const context = this; ///
 
-    return this.callback(breakPoint, context, back, forward);
+    return this.callback(breakPoint, context, forward, back);
   }
 
-  verify(back, forward) {
+  verify(forward, back) {
     const typePrefixes = this.getTypePrefixes(),
           releaseContext = this, ///
           typePrefixesVerify = verifyTypePrefixes(typePrefixes, releaseContext);
@@ -488,13 +488,13 @@ export default class ReleaseContext {
 
     const fileContexts = [];
 
-    return verifyFileContexts(this.fileContexts, fileContexts, back, () => {
+    return verifyFileContexts(this.fileContexts, fileContexts, (back) => {
       this.fileContexts = fileContexts; ///
 
       this.verifies = true;
 
-      return forward();
-    });
+      return forward(back);
+    }, back);
   }
 
   toJSON() {

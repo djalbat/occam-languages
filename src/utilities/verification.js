@@ -8,13 +8,13 @@ import { SINGLE_SPACE } from "../constants";
 
 const { last } = arrayUtilities;
 
-export function createReleaseContexts(dependencyName, context, fail, succeed) {
+export function createReleaseContexts(dependencyName, context, succeed, fail) {
   const name = dependencyName,  ///
         dependency = Dependency.fromName(name),
         dependentNames = [],
         dependentReleased = false;
 
-  return createReleaseContext(dependency, dependentNames, dependentReleased, context, fail, (releaseContextCreated) => {
+  return createReleaseContext(dependency, dependentNames, dependentReleased, context, (releaseContextCreated) => {
     let releaseContextsCreated = false;
 
     if (releaseContextCreated) {
@@ -22,7 +22,7 @@ export function createReleaseContexts(dependencyName, context, fail, succeed) {
     }
 
     return succeed(releaseContextsCreated);
-  });
+  }, fail);
 }
 
 export function initialiseReleaseContexts(context) {
@@ -33,10 +33,10 @@ export function initialiseReleaseContexts(context) {
   });
 }
 
-export function verifyReleaseContexts(context, back, forward) {
+export function verifyReleaseContexts(context, forward, back) {
   const { releaseContexts } = context;
 
-  return every(releaseContexts, verifyReleaseContext, context, back, forward);
+  return every(releaseContexts, verifyReleaseContext, context, forward, back);
 }
 
 export default {
@@ -45,12 +45,12 @@ export default {
   verifyReleaseContexts
 };
 
-function verifyReleaseContext(releaseContext, context, back, forward) {
+function verifyReleaseContext(releaseContext, context, forward, back) {
   const released = releaseContext.isReleased(),
         verified = releaseContext.hasVerified();
 
   if (released || verified) {
-    return forward();
+    return forward(back);
   }
 
   const { log } = context,
@@ -59,14 +59,14 @@ function verifyReleaseContext(releaseContext, context, back, forward) {
 
   log.info(`Verifying the '${releaseName}' project...`);
 
-  return releaseContext.verify(back, () => {
+  return releaseContext.verify((back) => {
     log.info(`...verified the '${releaseName}' project.`);
 
-    return forward(context);
-  });
+    return forward(context, back);
+  }, back);
 }
 
-function createReleaseContext(dependency, dependentNames, dependentReleased, context, fail, succeed) {
+function createReleaseContext(dependency, dependentNames, dependentReleased, context, succeed, fail) {
   const { log } = context,
         releaseContext = findReleaseContext(dependency, context);
 
@@ -91,7 +91,7 @@ function createReleaseContext(dependency, dependentNames, dependentReleased, con
 
   const { releaseContextFromDependency } = context;
 
-  return releaseContextFromDependency(dependency, context, fail, (releaseContext) => {
+  return releaseContextFromDependency(dependency, context, (releaseContext) => {
     let releaseContextCreated = false;
 
     const releatePresent = checkReleasePresent(releaseContext, dependencyName, context);
@@ -112,7 +112,7 @@ function createReleaseContext(dependency, dependentNames, dependentReleased, con
       return succeed(releaseContextCreated);
     }
 
-    return createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context, fail, (dependencyReleaseContextsCreated) => {
+    return createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context, (dependencyReleaseContextsCreated) => {
       if (dependencyReleaseContextsCreated) {
         releaseContextCreated = true;
       }
@@ -126,11 +126,11 @@ function createReleaseContext(dependency, dependentNames, dependentReleased, con
           log.warning(`...unable to create the '${dependencyName}' package context.`);
 
       return succeed(releaseContextCreated);
-    });
-  });
+    }, fail);
+  }, fail);
 }
 
-function createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context, fail, succeed) {
+function createDependencyReleaseContexts(releaseContext, dependency, dependentNames, context, succeed, fail) {
   const name = releaseContext.getName(),
         released = releaseContext.isReleased(),
         dependencies = releaseContext.getDependencies(),
@@ -141,18 +141,20 @@ function createDependencyReleaseContexts(releaseContext, dependency, dependentNa
 
   const array = dependencies.getArray();
 
-  return every(array, (dependency, back, forward) => {
+  return every(array, (dependency, forward, back) => {
     const cyclicDependencyPresent = checkCyclicDependencyPresent(dependency, dependentNames, context);
 
     if (cyclicDependencyPresent) {
       return back();
     }
 
-    return createReleaseContext(dependency, dependentNames, dependentReleased, context, fail, (releaseContextCreated) => {
-      return (releaseContextCreated) ?
-                forward() :
-                  back();
-    });
+    return createReleaseContext(dependency, dependentNames, dependentReleased, context, (releaseContextCreated) => {
+      if (!releaseContextCreated) {
+        return back();
+      }
+
+      return forward(back);
+    }, fail);
   }, () => succeed(false), () => succeed(true));
 }
 
