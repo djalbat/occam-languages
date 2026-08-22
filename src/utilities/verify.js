@@ -6,8 +6,8 @@ import { resolve } from "../utilities/continuation";
 
 const { first, filter, compress } = arrayUtilities;
 
-export function verifyFileContexts(fileContexts, verifiedFileContexts, forward, back) {
-  return resolve(fileContexts, verifiedFileContexts, (fileContext, forward, back) => {
+export function verifyFileContexts(fileContexts, forward, back) {
+  return resolve(fileContexts, (fileContext, forward, back) => {
     return fileContext.verify(forward, back);
   }, forward, back);
 }

@@ -486,9 +486,7 @@ export default class ReleaseContext {
       return back();
     }
 
-    const fileContexts = [];
-
-    return verifyFileContexts(this.fileContexts, fileContexts, (back) => {
+    return verifyFileContexts(this.fileContexts, (fileContexts, back) => {
       this.fileContexts = fileContexts; ///
 
       this.verifies = true;
