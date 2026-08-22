@@ -155,7 +155,7 @@ function createDependencyReleaseContexts(releaseContext, dependency, dependentNa
 
       return forward(back);
     }, fail);
-  }, () => succeed(false), () => succeed(true));
+  }, () => succeed(true), () => succeed(false));
 }
 
 function addReleaseContext(releaseContext, context) {
