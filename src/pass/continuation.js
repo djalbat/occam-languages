@@ -12,8 +12,8 @@ export default class ContinuationPass {
   }
 
   descend(childNodes, ...remainingArguments) {
-    const forward = remainingArguments.pop(),
-          back = remainingArguments.pop();
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop();
 
     return every(childNodes, (childNode, ...remainingArguments) => {
       const index = remainingArguments.pop(),

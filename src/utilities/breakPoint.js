@@ -4,8 +4,8 @@ import BreakPoint from "../breakPoint";
 
 export function breakable(innerFunction) {
   return function(...remainingArguments) {
-    const forward = remainingArguments.pop(),
-          back = remainingArguments.pop(),
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop(),
           context = remainingArguments.pop();
 
     return this.break(context, (back) => {
