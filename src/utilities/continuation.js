@@ -1,5 +1,13 @@
 "use strict";
 
+export function cut(forward, back) {
+  return (...forwardArguments) => {
+    forwardArguments.pop(); ///
+
+    return forward(...forwardArguments, back);
+  };
+}
+
 export function one(array, callback, ...initialArguments) {
   const back = initialArguments.pop(),
         forward = initialArguments.pop(),
@@ -420,18 +428,18 @@ export function resolve(array, callback, ...initialArguments) {
           element,
           ...callbackArguments,
           (...forwardArguments) => {
-            const success = true;
+            const passed = true;
 
-            return forward(success, ...forwardArguments);
+            return forward(passed, ...forwardArguments);
           },
           (exception) => {
             if (exception) {
               return back(exception);
             }
 
-            const success = false;
+            const passed = false;
 
-            return forward(success, ...callbackArguments, back);
+            return forward(passed, ...callbackArguments, back);
           },
           index
         );
@@ -628,6 +636,7 @@ export function exists(callbacks, ...initialArguments) {
 }
 
 export default {
+  cut,
   one,
   some,
   each,
