@@ -50,7 +50,7 @@ function verifyReleaseContext(releaseContext, context, forward, back) {
         verified = releaseContext.hasVerified();
 
   if (released || verified) {
-    return forward(back);
+    return forward(context, back);
   }
 
   const { log } = context,
