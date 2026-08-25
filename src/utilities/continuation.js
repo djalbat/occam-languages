@@ -419,8 +419,7 @@ export function resolve(array, callback, ...initialArguments) {
         forward = initialArguments.pop();
 
   function next(arrayA, arrayB, ...nextArguments) {
-    const back = nextArguments.pop(),
-          length = arrayA.length;
+    const length = arrayA.length;
 
     if (length === 0) {
       return forward(arrayB, ...nextArguments, back);
@@ -437,6 +436,8 @@ export function resolve(array, callback, ...initialArguments) {
           return back();
         }
 
+        forwardArguments.pop(); ///
+
         return next(
           arrayA.filter((element) => !elements.includes(element)),
           [ ...arrayB, ...elements ],
@@ -450,7 +451,7 @@ export function resolve(array, callback, ...initialArguments) {
   const arrayA = array, ///
         arrayB = [];
 
-  return next(arrayA, arrayB, ...initialArguments, back);
+  return next(arrayA, arrayB, ...initialArguments);
 }
 
 export function match(arrayA, arrayB, callback, ...initialArguments) {
