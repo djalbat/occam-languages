@@ -261,20 +261,24 @@ export function filter(array, callback, ...initialArguments) {
     return callback(
       element,
       ...nextArguments,
-      (passed, ...forwardArguments) => {
-        if (!passed) {
-          const startIndex = index, ///
-                deleteCount = 1,
-                deletedElement = element; ///
-
-          array.splice(startIndex, deleteCount);
-
-          deletedElements.unshift(deletedElement);
-        }
-
+      (...forwardArguments) => {
         return next(index - 1, ...forwardArguments);
       },
-      back,
+      (exception) => {
+        if (exception) {
+          return back(exception);
+        }
+
+        const startIndex = index, ///
+              deleteCount = 1,
+              deletedElement = element; ///
+
+        array.splice(startIndex, deleteCount);
+
+        deletedElements.unshift(deletedElement);
+
+        return next(index - 1, ...nextArguments, back);
+      },
       index
     );
   }
@@ -303,20 +307,22 @@ export function prune(array, callback, ...initialArguments) {
     return callback(
       element,
       ...nextArguments,
-      (passed, ...forwardArguments) => {
-        if (!passed) {
-          const startIndex = index, ///
-                deleteCount = 1,
-                deletedElement = element; ///
-
-          array.splice(startIndex, deleteCount);
-
-          return forward(deletedElement, ...forwardArguments);
-        }
-
+      (...forwardArguments) => {
         return next(index + 1, ...forwardArguments);
       },
-      back,
+      (exception) => {
+        if (exception) {
+          return back(exception);
+        }
+
+        const startIndex = index, ///
+              deleteCount = 1,
+              deletedElement = element; ///
+
+        array.splice(startIndex, deleteCount);
+
+        return forward(deletedElement, ...nextArguments, back);
+      },
       index
     );
   }
@@ -345,20 +351,22 @@ export function extract(array, callback, ...initialArguments) {
     return callback(
       element,
       ...nextArguments,
-      (passed, ...forwardArguments) => {
-        if (passed) {
-          const startIndex = index, ///
-                deleteCount = 1,
-                deletedElement = element; ///
+      (...forwardArguments) => {
+        const startIndex = index, ///
+              deleteCount = 1,
+              deletedElement = element; ///
 
-          array.splice(startIndex, deleteCount);
+        array.splice(startIndex, deleteCount);
 
-          return forward(deletedElement, ...forwardArguments);
+        return forward(deletedElement, ...forwardArguments);
+      },
+      (exception) => {
+        if (exception) {
+          return back(exception);
         }
 
-        return next(index + 1, ...forwardArguments);
+        return next(index + 1, ...nextArguments, back);
       },
-      back,
       index
     );
   }
@@ -386,14 +394,16 @@ export function find(array, callback, ...initialArguments) {
     return callback(
       element,
       ...nextArguments,
-      (passed, ...forwardArguments) => {
-        if (passed) {
-          return next(index + 1, [ ...elements, element ], ...forwardArguments);
+      (...forwardArguments) => {
+        return next(index + 1, [ ...elements, element ], ...forwardArguments);
+      },
+      (exception) => {
+        if (exception) {
+          return back(exception);
         }
 
-        return next(index + 1, elements, ...forwardArguments);
+        return next(index + 1, elements, ...nextArguments, back);
       },
-      back,
       index
     );
   }
@@ -419,31 +429,7 @@ export function resolve(array, callback, ...initialArguments) {
 
     return find(
       arrayA,
-      (element, ...callbackArguments) => {
-        const index = callbackArguments.pop(),
-              back = callbackArguments.pop(),
-              forward = callbackArguments.pop();
-
-        return callback(
-          element,
-          ...callbackArguments,
-          (...forwardArguments) => {
-            const passed = true;
-
-            return forward(passed, ...forwardArguments);
-          },
-          (exception) => {
-            if (exception) {
-              return back(exception);
-            }
-
-            const passed = false;
-
-            return forward(passed, ...callbackArguments, back);
-          },
-          index
-        );
-      },
+      callback,
       ...nextArguments,
       (elements, ...forwardArguments) => {
         const elementsLength = elements.length;
