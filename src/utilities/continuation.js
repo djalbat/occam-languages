@@ -154,7 +154,6 @@ export function map(array, callback, ...initialArguments) {
   const back = initialArguments.pop(),
         forward = initialArguments.pop(),
         arrayA = array, ///
-        arrayB = [],
         length = array.length;
 
   function next(index, arrayB, ...nextArguments) {
@@ -177,7 +176,8 @@ export function map(array, callback, ...initialArguments) {
     );
   }
 
-  const index = 0;
+  const index = 0,
+        arrayB = [];
 
   return next(index, arrayB, ...initialArguments, back);
 }
@@ -246,14 +246,13 @@ export function forEach(array, callback, ...initialArguments) {
 export function filter(array, callback, ...initialArguments) {
   const back = initialArguments.pop(),
         forward = initialArguments.pop(),
-        deletedElements = [],
         length = array.length;
 
-  function next(index, ...nextArguments) {
+  function next(index, array, deletedElements, ...nextArguments) {
     const back = nextArguments.pop();
 
     if (index === -1) {
-      return forward(deletedElements, ...nextArguments, back);
+      return forward(array, deletedElements, ...nextArguments, back);
     }
 
     const element = array[index];
@@ -262,30 +261,31 @@ export function filter(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index - 1, ...forwardArguments);
+        return next(index - 1, array, deletedElements, ...forwardArguments);
       },
       (exception) => {
         if (exception) {
           return back(exception);
         }
 
-        const startIndex = index, ///
-              deleteCount = 1,
-              deletedElement = element; ///
+        const deletedElement = element; ///
 
-        array.splice(startIndex, deleteCount);
-
-        deletedElements.unshift(deletedElement);
-
-        return next(index - 1, ...nextArguments, back);
+        return next(
+          index - 1,
+          [ ...array.slice(0, index), ...array.slice(index + 1) ],
+          [ deletedElement, ...deletedElements ],
+          ...nextArguments,
+          back
+        );
       },
       index
     );
   }
 
-  const index = length - 1;
+  const index = length - 1,
+        deletedElements = [];
 
-  return next(index, ...initialArguments, back);
+  return next(index, array, deletedElements, ...initialArguments, back);
 }
 
 export function prune(array, callback, ...initialArguments) {
@@ -293,13 +293,13 @@ export function prune(array, callback, ...initialArguments) {
         forward = initialArguments.pop(),
         length = array.length;
 
-  function next(index, ...nextArguments) {
+  function next(index, array, ...nextArguments) {
     const back = nextArguments.pop();
 
     if (index === length) {
-      const deletedElement = undefined;
+      const deletedElement = undefined; ///
 
-      return forward(deletedElement, ...nextArguments, back);
+      return forward(array, deletedElement, ...nextArguments, back);
     }
 
     const element = array[index];
@@ -308,20 +308,21 @@ export function prune(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, ...forwardArguments);
+        return next(index + 1, array, ...forwardArguments);
       },
       (exception) => {
         if (exception) {
           return back(exception);
         }
 
-        const startIndex = index, ///
-              deleteCount = 1,
-              deletedElement = element; ///
+        const deletedElement = element; ///
 
-        array.splice(startIndex, deleteCount);
-
-        return forward(deletedElement, ...nextArguments, back);
+        return forward(
+          [ ...array.slice(0, index), ...array.slice(index + 1) ],
+          deletedElement,
+          ...nextArguments,
+          back
+        );
       },
       index
     );
@@ -329,7 +330,7 @@ export function prune(array, callback, ...initialArguments) {
 
   const index = 0;
 
-  return next(index, ...initialArguments, back);
+  return next(index, array, ...initialArguments, back);
 }
 
 export function extract(array, callback, ...initialArguments) {
@@ -337,13 +338,13 @@ export function extract(array, callback, ...initialArguments) {
         forward = initialArguments.pop(),
         length = array.length;
 
-  function next(index, ...nextArguments) {
+  function next(index, array, ...nextArguments) {
     const back = nextArguments.pop();
 
     if (index === length) {
       const deletedElement = undefined;
 
-      return forward(deletedElement, ...nextArguments, back);
+      return forward(array, deletedElement, ...nextArguments, back);
     }
 
     const element = array[index];
@@ -352,20 +353,20 @@ export function extract(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        const startIndex = index, ///
-              deleteCount = 1,
-              deletedElement = element; ///
+        const deletedElement = element; ///
 
-        array.splice(startIndex, deleteCount);
-
-        return forward(deletedElement, ...forwardArguments);
+        return forward(
+          [ ...array.slice(0, index), ...array.slice(index + 1) ],
+          deletedElement,
+          ...forwardArguments
+        );
       },
       (exception) => {
         if (exception) {
           return back(exception);
         }
 
-        return next(index + 1, ...nextArguments, back);
+        return next(index + 1, array, ...nextArguments, back);
       },
       index
     );
@@ -373,13 +374,12 @@ export function extract(array, callback, ...initialArguments) {
 
   const index = 0;
 
-  return next(index, ...initialArguments, back);
+  return next(index, array, ...initialArguments, back);
 }
 
 export function find(array, callback, ...initialArguments) {
   const back = initialArguments.pop(),
         forward = initialArguments.pop(),
-        elements = [],
         length = array.length;
 
   function next(index, elements, ...nextArguments) {
@@ -408,16 +408,15 @@ export function find(array, callback, ...initialArguments) {
     );
   }
 
-  const index = 0;
+  const index = 0,
+        elements = [];
 
   return next(index, elements, ...initialArguments, back);
 }
 
 export function resolve(array, callback, ...initialArguments) {
   const back = initialArguments.pop(),
-        forward = initialArguments.pop(),
-        arrayA = array, ///
-        arrayB = [];
+        forward = initialArguments.pop();
 
   function next(arrayA, arrayB, ...nextArguments) {
     const back = nextArguments.pop(),
@@ -447,6 +446,9 @@ export function resolve(array, callback, ...initialArguments) {
       back
     );
   }
+
+  const arrayA = array, ///
+        arrayB = [];
 
   return next(arrayA, arrayB, ...initialArguments, back);
 }
