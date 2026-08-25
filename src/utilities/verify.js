@@ -2,13 +2,13 @@
 
 import { arrayUtilities } from "necessary";
 
-import { cut, resolve } from "../utilities/continuation";
+import { resolve } from "../utilities/continuation";
 
 const { first, filter, compress } = arrayUtilities;
 
 export function verifyFileContexts(fileContexts, forward, back) {
   return resolve(fileContexts, (fileContext, forward, back) => {
-    return fileContext.verify(cut(forward, back), back);
+    return fileContext.verify(forward, back);
   }, forward, back);
 }
 

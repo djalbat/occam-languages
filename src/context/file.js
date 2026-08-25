@@ -3,6 +3,7 @@
 import Context from '../context';
 import BreakPoint from "../breakPoint";
 
+import { cut } from "../utilities/continuation";
 import { nodeAsString, nodesAsString } from "../utilities/node";
 
 export default class FileContext extends Context {
@@ -85,6 +86,8 @@ export default class FileContext extends Context {
   }
 
   verify(forward, back) {
+    forward = cut(forward, back); ///
+
     if (this.node === null) {
       this.warning(`Unable to verify the '${this.filePath}' file because it cannot be parsed.`);
 
