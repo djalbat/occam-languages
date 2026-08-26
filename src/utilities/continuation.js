@@ -288,6 +288,43 @@ export function filter(array, callback, ...initialArguments) {
   return next(index, array, deletedElements, ...initialArguments, back);
 }
 
+export function find(array, callback, ...initialArguments) {
+  const back = initialArguments.pop(),
+        forward = initialArguments.pop(),
+        length = array.length;
+
+  function next(index, elements, ...nextArguments) {
+    const back = nextArguments.pop();
+
+    if (index === length) {
+      return forward(elements, ...nextArguments, back);
+    }
+
+    const element = array[index];
+
+    return callback(
+      element,
+      ...nextArguments,
+      (...forwardArguments) => {
+        return next(index + 1, [ ...elements, element ], ...forwardArguments);
+      },
+      (exception) => {
+        if (exception) {
+          return back(exception);
+        }
+
+        return next(index + 1, elements, ...nextArguments, back);
+      },
+      index
+    );
+  }
+
+  const index = 0,
+    elements = [];
+
+  return next(index, elements, ...initialArguments, back);
+}
+
 export function prune(array, callback, ...initialArguments) {
   const back = initialArguments.pop(),
         forward = initialArguments.pop(),
@@ -297,9 +334,7 @@ export function prune(array, callback, ...initialArguments) {
     const back = nextArguments.pop();
 
     if (index === length) {
-      const deletedElement = undefined; ///
-
-      return forward(array, deletedElement, ...nextArguments, back);
+      return back();
     }
 
     const element = array[index];
@@ -342,9 +377,7 @@ export function extract(array, callback, ...initialArguments) {
     const back = nextArguments.pop();
 
     if (index === length) {
-      const deletedElement = undefined;
-
-      return forward(array, deletedElement, ...nextArguments, back);
+      return back();
     }
 
     const element = array[index];
@@ -375,43 +408,6 @@ export function extract(array, callback, ...initialArguments) {
   const index = 0;
 
   return next(index, array, ...initialArguments, back);
-}
-
-export function find(array, callback, ...initialArguments) {
-  const back = initialArguments.pop(),
-        forward = initialArguments.pop(),
-        length = array.length;
-
-  function next(index, elements, ...nextArguments) {
-    const back = nextArguments.pop();
-
-    if (index === length) {
-      return forward(elements, ...nextArguments, back);
-    }
-
-    const element = array[index];
-
-    return callback(
-      element,
-      ...nextArguments,
-      (...forwardArguments) => {
-        return next(index + 1, [ ...elements, element ], ...forwardArguments);
-      },
-      (exception) => {
-        if (exception) {
-          return back(exception);
-        }
-
-        return next(index + 1, elements, ...nextArguments, back);
-      },
-      index
-    );
-  }
-
-  const index = 0,
-        elements = [];
-
-  return next(index, elements, ...initialArguments, back);
 }
 
 export function resolve(array, callback, ...initialArguments) {
@@ -634,9 +630,9 @@ export default {
   reduce,
   forEach,
   filter,
+  find,
   prune,
   extract,
-  find,
   resolve,
   match,
   forwardsEvery,
