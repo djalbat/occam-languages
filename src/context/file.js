@@ -94,9 +94,9 @@ export default class FileContext extends Context {
       return back();
     }
 
-    this.debug(`Verifying the '${this.filePath}' file...`);
-
     this.clear();
+
+    this.debug(`Verifying the '${this.filePath}' file...`);
 
     return this.verifyFile((back) => {
       this.complete();
@@ -104,7 +104,15 @@ export default class FileContext extends Context {
       this.info(`...verified the '${this.filePath}' file.`);
 
       return forward(back);
-    }, back);
+    }, (exception) => {
+      if (exception) {
+        return back(exception);
+      }
+
+      this.debug(`Unable to verify the '${this.filePath}' file.`);
+
+      return back();
+    });
   }
 
   initialise() {

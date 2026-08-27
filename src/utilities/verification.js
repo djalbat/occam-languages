@@ -63,7 +63,15 @@ function verifyReleaseContext(releaseContext, context, forward, back) {
     log.info(`...verified the '${releaseName}' project.`);
 
     return forward(context, back);
-  }, back);
+  }, (exception) => {
+    if (exception) {
+      return back(exception);
+    }
+
+    log.info(`Unable to verify the '${releaseName}' project.`);
+
+    return back();
+  });
 }
 
 function createReleaseContext(dependency, dependentNames, dependentReleased, context, succeed, fail) {
