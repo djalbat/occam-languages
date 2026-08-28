@@ -1,11 +1,25 @@
 "use strict";
 
-export function cut(forward, back) {
+export function cut(...initialArguments) {
+  const back = initialArguments.pop(),
+        forward = initialArguments.pop();
+
   return (...forwardArguments) => {
     forwardArguments.pop(); ///
 
     return forward(...forwardArguments, back);
   };
+}
+
+export function isolate(callback, ...initialArguments) {
+  const back = initialArguments.pop(),
+    forward = initialArguments.pop();
+
+  return callback(...initialArguments, (...callbackArguments) => {
+    const back = callbackArguments.pop();
+
+    return forward(...initialArguments, back);
+  }, back);
 }
 
 export function one(array, callback, ...initialArguments) {
@@ -622,6 +636,7 @@ export function exists(callbacks, ...initialArguments) {
 
 export default {
   cut,
+  isolate,
   one,
   some,
   each,
