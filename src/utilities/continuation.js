@@ -13,7 +13,7 @@ export function cut(...initialArguments) {
 
 export function isolate(callback, ...initialArguments) {
   const back = initialArguments.pop(),
-    forward = initialArguments.pop();
+        forward = initialArguments.pop();
 
   return callback(...initialArguments, (...callbackArguments) => {
     const back = callbackArguments.pop();
