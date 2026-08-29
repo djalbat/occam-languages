@@ -334,7 +334,7 @@ export function find(array, callback, ...initialArguments) {
   }
 
   const index = 0,
-    elements = [];
+        elements = [];
 
   return next(index, elements, ...initialArguments, back);
 }
