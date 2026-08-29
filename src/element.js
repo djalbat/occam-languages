@@ -1,7 +1,5 @@
 "use strict";
 
-import breakPoint from "./utilities/breakPoint";
-
 export default class Element {
   constructor(context, string, node, breakPoint) {
     this.context = context;
