@@ -5,14 +5,26 @@ import BreakPoint from "../breakPoint";
 export function breakable(innerFunction) {
   return function(...remainingArguments) {
     const back = remainingArguments.pop(),
-          forward = remainingArguments.pop(),
-          context = remainingArguments.pop();
+      forward = remainingArguments.pop(),
+      context = remainingArguments.pop();
 
     return this.break(context, (back) => {
       setImmediate(() => {
         return innerFunction.call(this, ...remainingArguments, context, forward, back);
       });
     }, back);
+  };
+}
+
+export function unbreakable(innerFunction) {
+  return function(...remainingArguments) {
+    const back = remainingArguments.pop(),
+          forward = remainingArguments.pop(),
+          context = remainingArguments.pop();
+
+    setImmediate(() => {
+      return innerFunction.call(this, ...remainingArguments, context, forward, back);
+    });
   };
 }
 
@@ -64,6 +76,7 @@ export function lineIndexFromNodeAndTokens(node, tokens) {
 
 export default {
   breakable,
+  unbreakable,
   breakPointFromJSON,
   breakPointToBreakPointJSON,
   lineIndexFromNodeAndTokens
