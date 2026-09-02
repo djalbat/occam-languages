@@ -2,6 +2,7 @@
 
 import { arrayUtilities } from "necessary";
 
+import { cut } from "../utilities/continuation";
 import { verifyTypePrefixes, verifyFileContexts } from "../utilities/verify";
 import { combinedCustomGrammarFromReleaseContexts } from "../utilities/customGrammar";
 import { fileContextsFromJSON, fileContextsFromEntries } from "../utilities/fileContext";
@@ -478,21 +479,37 @@ export default class ReleaseContext {
   }
 
   verify(forward, back) {
+    forward = cut(forward, back); ///
+
+    this.info(`Verifying the '${this.name}' project... `);
+
     const typePrefixes = this.getTypePrefixes(),
           releaseContext = this, ///
           typePrefixesVerify = verifyTypePrefixes(typePrefixes, releaseContext);
 
     if (!typePrefixesVerify) {
+      this.info(`Unable to verify the '${this.name}' project. `);
+
       return back();
     }
 
     return verifyFileContexts(this.fileContexts, (fileContexts, back) => {
+      this.info(`...verified the '${this.name}' project. `);
+
       this.fileContexts = fileContexts; ///
 
       this.verifies = true;
 
       return forward(back);
-    }, back);
+    }, (exception) => {
+      if (exception) {
+        return back(exception);
+      }
+
+      this.info(`Unable to verify the '${this.name}' project. `);
+
+      return back();
+    });
   }
 
   toJSON() {
