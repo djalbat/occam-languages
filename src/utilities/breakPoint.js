@@ -33,13 +33,11 @@ export function breakPointFromJSON(json) {
 
   ({ breakPoint } = json);
 
-  if (breakPoint !== null) {
-    const breakPointJSON = breakPoint;  ///
+  const breakPointJSON = breakPoint;  ///
 
-    json = breakPointJSON;  ///
+  json = breakPointJSON;  ///
 
-    breakPoint = BreakPoint.fromJSON(json);  ///
-  }
+  breakPoint = BreakPoint.fromJSON(json);  ///
 
   return breakPoint;
 }
@@ -47,9 +45,7 @@ export function breakPointFromJSON(json) {
 export function breakPointToBreakPointJSON(breakPoint) {
   let breakPointJSON = null;
 
-  if (breakPoint !== null) {
-    breakPointJSON = breakPoint.toJSON();
-  }
+  breakPointJSON = breakPoint.toJSON();
 
   return breakPointJSON;
 }
