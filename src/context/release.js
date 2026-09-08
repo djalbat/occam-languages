@@ -71,6 +71,12 @@ export default class ReleaseContext {
 
   getVersion() { return this.entries.getVersion(); }
 
+  compareReleaseName(releaseName) {
+    const releaseNameCompares = (this.name === releaseName);
+
+    return releaseNameCompares;
+  }
+
   matchDependencyName(dependencyName) {
     const dependencyNameMatches = (this.name === dependencyName);
 
