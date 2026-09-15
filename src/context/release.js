@@ -369,6 +369,19 @@ export default class ReleaseContext {
     return combinators;
   }
 
+  getTypeAliases(includeDependencies = true) {
+    const typeAliases = [];
+
+    this.fileContexts.forEach((fileContext) => {
+      const includeRelease = false,
+            fileContextTypeAliases = fileContext.getTypeAliases(includeRelease);
+
+      push(typeAliases, fileContextTypeAliases);
+    });
+
+    return typeAliases;
+  }
+
   getTypePrefixes(includeDependencies = true) {
     const typePrefixes = [];
 
