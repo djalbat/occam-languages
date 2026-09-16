@@ -4,7 +4,7 @@ import { arrayUtilities } from "necessary";
 
 const { first } = arrayUtilities;
 
-function someTerminalNode(callback, tokenType) {
+function someTerminalNode(callback, tokenType = null) {
   let index = 0;
 
   return this.someChildNode((childNode) => {
@@ -14,7 +14,7 @@ function someTerminalNode(callback, tokenType) {
       const terminalNode = childNode, ///
             terminalNodeType = terminalNode.getType();
 
-      if (terminalNodeType === tokenType) {
+      if ((tokenType === null) || (terminalNodeType === tokenType)) {
         return callback(terminalNode, index++);
       }
     }
