@@ -5,7 +5,7 @@ import { NonTerminalNode } from "occam-grammar-utilities";
 import nodeMixins from "../../mixins/node";
 
 class STatementNode extends NonTerminalNode {
-  static fromRuleNameChildNodesOpacityAndPrecedence(ruleName, childNodes, opacity, precedence) { return NonTerminalNode.fromRuleNameChildNodesOpacityAndPrecedence(STatementNode, ruleName, childNodes, opacity, precedence); }
+  static fromRuleNameChildNodesPrecedenceAndOpacity(ruleName, childNodes, precedence, opacity) { return NonTerminalNode.fromRuleNameChildNodesPrecedenceAndOpacity(STatementNode, ruleName, childNodes, precedence, opacity); }
 }
 
 Object.assign(STatementNode.prototype, nodeMixins);

@@ -5,20 +5,18 @@ import { NonTerminalNode as NonTerminalNodeBase } from "occam-parsers";
 import nodeMixins from "./mixins/node";
 
 class NonTerminalNode extends NonTerminalNodeBase {
-  static fromRuleNameChildNodesOpacityAndPrecedence(Class, ruleName, childNodes, opacity, precedence) {
-    if (precedence === undefined) {
-      precedence = opacity; ///
+  static fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity) {
+    if (opacity === undefined) {
+      opacity = precedence; ///
 
-      opacity = childNodes; ///
-
-      childNodes = ruleName;  ///
+      precedence = childNodes; ///
 
       ruleName = Class; ///
 
       Class = NonTerminalNode;  ///
     }
 
-    const nonTerminalNode = NonTerminalNodeBase.fromRuleNameChildNodesOpacityAndPrecedence(Class, ruleName, childNodes, opacity, precedence);
+    const nonTerminalNode = NonTerminalNodeBase.fromRuleNameChildNodesPrecedenceAndOpacity(Class, ruleName, childNodes, precedence, opacity);
 
     return nonTerminalNode;
   }
