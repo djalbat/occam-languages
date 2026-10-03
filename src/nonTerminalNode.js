@@ -11,6 +11,8 @@ class NonTerminalNode extends NonTerminalNodeBase {
 
       precedence = childNodes; ///
 
+      childNodes = ruleName;  ///
+
       ruleName = Class; ///
 
       Class = NonTerminalNode;  ///
