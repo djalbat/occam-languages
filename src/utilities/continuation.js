@@ -121,7 +121,9 @@ export function each(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, count + 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, count + 1, ...forwardArguments, back);
       },
       back,
       index
@@ -152,7 +154,9 @@ export function every(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, ...forwardArguments, back);
       },
       back,
       index
@@ -183,7 +187,9 @@ export function map(array, callback, ...initialArguments) {
       elementA,
       ...nextArguments,
       (elementB, ...forwardArguments) => {
-        return next(index + 1, [ ...arrayB, elementB ], ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, [ ...arrayB, elementB ], ...forwardArguments, back);
       },
       back,
       index
@@ -215,7 +221,9 @@ export function reduce(array, initialValue, callback, ...initialArguments) {
       value,
       ...nextArguments,
       (value, ...forwardArguments) => {
-        return next(index + 1, value, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, value, ...forwardArguments, back);
       },
       back,
       index
@@ -245,7 +253,9 @@ export function forEach(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, ...forwardArguments, back);
       },
       back,
       index
@@ -275,7 +285,9 @@ export function filter(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index - 1, array, deletedElements, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index - 1, array, deletedElements, ...forwardArguments, back);
       },
       (exception) => {
         if (exception) {
@@ -320,7 +332,9 @@ export function find(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, [ ...elements, element ], ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, [ ...elements, element ], ...forwardArguments, back);
       },
       (exception) => {
         if (exception) {
@@ -357,7 +371,9 @@ export function prune(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, array, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, array, ...forwardArguments, back);
       },
       (exception) => {
         if (exception) {
@@ -490,7 +506,9 @@ export function match(arrayA, arrayB, callback, ...initialArguments) {
       elementB,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, ...forwardArguments, back);
       },
       back,
       index
@@ -520,7 +538,9 @@ export function forwardsEvery(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, ...forwardArguments, back);
       },
       back,
       index
@@ -550,7 +570,9 @@ export function backwardsEvery(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index - 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index - 1, ...forwardArguments, back);
       },
       back,
       index
@@ -580,7 +602,9 @@ export function forwardsForEach(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index + 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index + 1, ...forwardArguments, back);
       },
       back,
       index
@@ -610,7 +634,9 @@ export function backwardsForEach(array, callback, ...initialArguments) {
       element,
       ...nextArguments,
       (...forwardArguments) => {
-        return next(index - 1, ...forwardArguments);
+        const back = forwardArguments.pop();
+
+        return next(index - 1, ...forwardArguments, back);
       },
       back,
       index

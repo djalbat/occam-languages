@@ -1,6 +1,6 @@
 "use strict";
 
-import { NonTerminalNode } from "occam-grammar-utilities";
+import { NonTerminalNode } from "occam-parsers";
 
 import nodeMixins from "../../mixins/node";
 
