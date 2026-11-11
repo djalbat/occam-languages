@@ -15,7 +15,7 @@ const bnfLexer = BNFLexer.fromNothing(),
       bnfParser = BNFParser.fromNothing();
 
 export function ruleFromRuleName(ruleName, delimiter = endOfLine) {
-  const bnf = ` _ ::= ${ruleName}...  ${delimiter}; `,
+  const bnf = ` _ ::= ( ${ruleName} ...  ${delimiter} ) ; `,
         tokens = bnfLexer.tokensFromBNF(bnf),
         rules = bnfParser.rulesFromTokens(tokens),
         firstRule = first(rules),
