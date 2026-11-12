@@ -85,7 +85,7 @@ export default class FileContext extends Context {
     return releaseContext.break(breakPoint, forward, back);
   }
 
-  verify(forward, back) {
+  verify = unbreakable(function (forward, back) {
     forward = cut(forward, back); ///
 
     if (this.node === null) {
@@ -113,7 +113,7 @@ export default class FileContext extends Context {
 
       return back();
     });
-  }
+  });
 
   initialise() {
     const lexer = this.getLexer(),
@@ -156,4 +156,12 @@ export default class FileContext extends Context {
 
     return fileContext;
   }
+}
+
+function unbreakable(innerFunction) {
+  return function(forward, back) {
+    setImmediate(() => {
+      return innerFunction.call(this, forward, back);
+    });
+  };
 }
